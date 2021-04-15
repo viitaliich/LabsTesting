@@ -8,10 +8,19 @@
 #include <memory>
 #include <fstream>
 
+#include "common.h"
+#include "TestGen.h"
+
+// declaretions
 std::string run_program(std::string& path);
+void modify_input_code();
+
+// definitions
 
 std::string run_program(std::string& path) {
 	
+	check_file(path);
+
 	// TODO: it can be replaced with identification by thead number (thread ID)
 
 	size_t index = path.length()-1;
@@ -53,9 +62,9 @@ std::string run_program(std::string& path) {
 	}
 }
 
-void modify_in_code();
-
 void modify_input_code(std::string& data, const std::string& path) {
+	check_file(path);
+
 	std::ofstream file(path);
 	file << data;
 	file.close();
@@ -64,14 +73,9 @@ void modify_input_code(std::string& data, const std::string& path) {
 
 int main(int argc, char** argv) {
 	
-	std::string path1 = "D:\\KPI\\LabsTesting\\LabsTesting\\CompilerLabsTest.exe";
-	std::string res1 = run_program(path1);
+	TestGen* tg = new TestGen("source.py");
+	std::cout << tg->GetStream() << std::endl;
 
-	std::string path2 = ".\\source.exe";
-	std::string res2 = run_program(path2);
-
-	std::cout << res2;
-	
 	//getchar();
 	return 0;
 }
