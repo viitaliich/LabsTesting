@@ -1,24 +1,34 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
+#include "PatternElement.h"
+
+enum class LabNumber : uint8_t {
+	LAB1 = 1
+};
 
 class TestGen
 {
 private:
-	const std::string& path;
-	const std::string stream;	// input file
+	uint8_t lab_num;
+	std::vector <PatternElement*> pattern;
+
 public:
 	// output buffer
 
 private:
 	std::string ReadFile(const std::string& file);
-	void Lex();
-	void Parse();	// ???
-	void Gen();
+	void Correct();
+	void Incorrect();
+	void GenPattern();
 public:
-	TestGen(const std::string& path);
+	TestGen(uint8_t lab_num);
 	~TestGen();
+	
+	void Generate();
 
-	inline const std::string GetStream() const { return stream; };
+	//inline const std::string GetStream() const { return stream; };
 };
 

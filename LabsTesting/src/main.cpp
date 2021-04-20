@@ -73,8 +73,10 @@ void modify_input_code(std::string& data, const std::string& path) {
 
 int main(int argc, char** argv) {
 	
-	TestGen* tg = new TestGen("source.py");
-	std::cout << tg->GetStream() << std::endl;
+	TestGen* tg = new TestGen(1);
+	tg->Generate();
+	std::cout << "DONE";
+
 
 	//getchar();
 	return 0;
