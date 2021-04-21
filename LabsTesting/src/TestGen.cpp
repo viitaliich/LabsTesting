@@ -12,32 +12,86 @@ std::string TestGen::ReadFile(const std::string& path) {
 	return content;
 }
 
-void TestGen::Correct() {
+std::string TestGen::FindKeyword(int mod) {
+	std::vector<Keyword>::iterator it;
+	
+	for (it = keywords.begin(); it != keywords.end(); it++) {
+		if (it->mod == mod) {
+			return it->str;
+		}
+	}
+	//return "";
+	std::cout << "ERROR: element not found [FindKeyword]\n";
+	exit(1);
 
 }
 
-void TestGen::Incorrect() {
+void TestGen::Correct(std::vector <PatternElement*>::iterator it) {
+	ElementType type = (*it)->GetType();
+	//ElementType type = pattern[index]->GetType();
+	// TODO: switch ???
+
+	if (type == ElementType::KEYWORD) {
+		int mod = (*it)->GetMod();		// enum CLASS ???
+		if (mod == KEYWORD_DEF) {
+			ssbuf_cor << FindKeyword(mod);
+
+		}
+		// ... return
+		// TODO: ssbuf_cor, ssbuf_incor -> string -> file
+	}
+	else if (type == ElementType::SPACE) {
+		
+		// declare it somewhere
+		int min_sp_num;
+		int avrg_sp_num = 4;		// random
+		int max_sp_num = 6;
+		
+		ElementType t = (*(it-1))->GetType();
+		if (t == ElementType::KEYWORD) {
+			min_sp_num = 1;		
+
+
+		}
+
+
+	}
+	
+	
+}
+
+void TestGen::Incorrect(std::vector <PatternElement*>::iterator it) {
 
 }
 
 void TestGen::Generate() {
-	Correct();
-	Incorrect();
+	std::vector <PatternElement*>::iterator it;		// iterator
+	for (it = pattern.begin(); it != pattern.end(); it++) {
+	//for (size_t i = 0; i < pattern.size(); i++) {
+		Correct(it);
+		//Correct(i);
+		Incorrect(it);
+		//Incorrect(i);
+	}
+
+	// TODO: ssbuf_cor, ssbuf_incor -> string -> file
+
 }
 
 void TestGen::GenPattern() {
+	// TODO: pattern generation Program -> Data Base ???
 	if (lab_num == 1) {
-		pattern.push_back(new ElemKeyword(KeywordType::KEYWORD_FUNC));
-		pattern.push_back(new ElemSpace(SpaceType::SPACE_SPACE));
+		pattern.push_back(new ElemKeyword(KeywordType::KEYWORD_DEF));
+		pattern.push_back(new ElemSpace(/*SpaceType::SPACE_SPACE*/));
 		pattern.push_back(new ElemFuncName());
-		pattern.push_back(new ElemSpace(SpaceType::SPACE_SPACE));
+		//pattern.push_back(new ElemSpace(SpaceType::SPACE_SPACE));
 		pattern.push_back(new ElemParentheses(ParanType::PARAN_PARENTHESES));
-		pattern.push_back(new ElemSpace(SpaceType::SPACE_SPACE));
+		//pattern.push_back(new ElemSpace(SpaceType::SPACE_SPACE));
 		pattern.push_back(new ElemParentheses(ParanType::PARAN_PARENTHESES));
 		pattern.push_back(new ElemNewLine());
-		pattern.push_back(new ElemSpace(SpaceType::SPACE_SPACE));
+		pattern.push_back(new ElemSpace(/*SpaceType::SPACE_SPACE*/));
 		pattern.push_back(new ElemKeyword(KeywordType::KEYWORD_RETURN));
-		pattern.push_back(new ElemSpace(SpaceType::SPACE_SPACE));
+		pattern.push_back(new ElemSpace(/*SpaceType::SPACE_SPACE*/));
 		pattern.push_back(new ElemValue(ValueType::VALUE_INT));
 	}
 	else {
@@ -48,7 +102,13 @@ void TestGen::GenPattern() {
 
 TestGen::TestGen(uint8_t lab_num)
 	:
-	lab_num(lab_num)
+	lab_num(lab_num),
+	keywords({ 
+		{ KEYWORD_DEF, "def" },
+		{ KEYWORD_RETURN, "return" }
+		})		// ??? could be problems
+
+	
 {
 	GenPattern();
 }

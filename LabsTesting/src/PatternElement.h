@@ -4,22 +4,22 @@
 #include <vector>
 #include <string>
 
-enum class KeywordType : int8_t {
-	KEYWORD_FUNC,
+enum KeywordType {
+	KEYWORD_DEF = 1,
 	KEYWORD_RETURN
 };
 
-enum class SpaceType : int8_t {
-	SPACE_SPACE,
+enum SpaceType {
+	SPACE_SPACE = 1,
 	SPACE_TAB
 };
 
-enum class ParanType: int8_t {
-	PARAN_PARENTHESES,
+enum ParanType {
+	PARAN_PARENTHESES = 1,
 };
 
-enum class ValueType : int8_t {
-	VALUE_INT,
+enum ValueType {
+	VALUE_INT = 1,
 };
 
 enum class ElementType : int8_t {
@@ -31,6 +31,10 @@ enum class ElementType : int8_t {
 	VALUE
 };
 
+
+
+
+
 class PatternElement
 {
 protected:
@@ -41,21 +45,28 @@ protected:
 protected:
 	virtual void GenValue() = 0;
 
+
 	PatternElement(ElementType type, std::string value);
 	~PatternElement();
 
 public:
 	//inline std::string GetValue() const { return values[0]; }		// [0] ???
 	inline std::string GetValue() const { return value; }
+	inline ElementType GetType() const { return type; }
+	
+	virtual inline int GetMod() const { return 0; }		// inline
 };
 
 class ElemKeyword : public PatternElement
 {
 private:
-	KeywordType mod;
+	int mod;
 public:
 	ElemKeyword(KeywordType mod);
 	~ElemKeyword();
+
+	int GetMod() const { return mod; }
+
 	
 private:
 	void GenValue();
@@ -64,11 +75,13 @@ private:
 class ElemSpace : public PatternElement
 {
 private:
-	SpaceType mod;
+	//int mod;
 public:
-	ElemSpace(SpaceType mod);
+	ElemSpace(/*int mod*/);
 	~ElemSpace();
-	
+
+	//int GetMod() const { return mod; }
+
 private:
 	void GenValue();
 };
@@ -86,10 +99,13 @@ private:
 class ElemParentheses : public PatternElement
 {
 private:
-	ParanType mod;
+	int mod;
 public:
-	ElemParentheses(ParanType mod);
+	ElemParentheses(int mod);
 	~ElemParentheses();
+
+	int GetMod() const { return mod; }
+
 
 private:
 	void GenValue();
@@ -108,10 +124,13 @@ private:
 class ElemValue : public PatternElement
 {
 private:
-	ValueType mod;
+	int mod;
 public:
-	ElemValue(ValueType mod);
+	ElemValue(int mod);
 	~ElemValue();
+
+	int GetMod() const { return mod; }
+
 
 private:
 	void GenValue();

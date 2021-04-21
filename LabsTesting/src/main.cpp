@@ -11,7 +11,7 @@
 #include "common.h"
 #include "TestGen.h"
 
-// declaretions
+// declarations
 std::string run_program(std::string& path);
 void modify_input_code();
 
@@ -21,7 +21,7 @@ std::string run_program(std::string& path) {
 	
 	check_file(path);
 
-	// TODO: it can be replaced with identification by thead number (thread ID)
+	// TODO: it can be replaced with identification by thread number (thread ID)
 
 	size_t index = path.length()-1;
 	while (path[index] != '.' && index > 0) {

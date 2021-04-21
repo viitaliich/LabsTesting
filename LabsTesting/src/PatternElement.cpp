@@ -32,9 +32,9 @@ void ElemKeyword::GenValue() {
 
 // ElemSpace
 
-ElemSpace::ElemSpace(SpaceType mod)
+ElemSpace::ElemSpace(/*int mod*/)
 	:
-	mod(mod),
+	//mod(mod),
 	PatternElement(ElementType::SPACE, "")
 {}
 
@@ -65,7 +65,7 @@ void ElemFuncName::GenValue() {
 
 // ElemParentheses
 
-ElemParentheses::ElemParentheses(ParanType mod)
+ElemParentheses::ElemParentheses(int mod)
 	:
 	mod(mod),
 	PatternElement(ElementType::PARENTHESES, "")
@@ -98,7 +98,7 @@ void ElemNewLine::GenValue() {
 
 // ElemValue
 
-ElemValue::ElemValue(ValueType mod)
+ElemValue::ElemValue(int mod)
 	:
 	mod(mod),
 	PatternElement(ElementType::VALUE, "")
