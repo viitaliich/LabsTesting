@@ -23,14 +23,16 @@ std::string TestGen::FindKeyword(int mod) {
 	//return "";
 	std::cout << "ERROR: element not found [FindKeyword]\n";
 	exit(1);
-
 }
+
 
 void TestGen::Correct(std::vector <PatternElement*>::iterator it) {
 	ElementType type = (*it)->GetType();
 	//ElementType type = pattern[index]->GetType();
 	// TODO: switch ???
 
+	// TODO: save original value of the pattern
+	
 	if (type == ElementType::KEYWORD) {
 		int mod = (*it)->GetMod();		// enum CLASS ???
 		if (mod == KEYWORD_DEF) {
@@ -56,6 +58,9 @@ void TestGen::Correct(std::vector <PatternElement*>::iterator it) {
 
 
 	}
+
+	// TODO: restore original value of the pattern
+
 	
 	
 }
@@ -82,17 +87,20 @@ void TestGen::GenPattern() {
 	// TODO: pattern generation Program -> Data Base ???
 	if (lab_num == 1) {
 		pattern.push_back(new ElemKeyword(KeywordType::KEYWORD_DEF));
-		pattern.push_back(new ElemSpace(/*SpaceType::SPACE_SPACE*/));
-		pattern.push_back(new ElemFuncName());
-		//pattern.push_back(new ElemSpace(SpaceType::SPACE_SPACE));
-		pattern.push_back(new ElemParentheses(ParanType::PARAN_PARENTHESES));
-		//pattern.push_back(new ElemSpace(SpaceType::SPACE_SPACE));
-		pattern.push_back(new ElemParentheses(ParanType::PARAN_PARENTHESES));
+		pattern.push_back(new ElemSpace());
+		pattern.push_back(new ElemFuncName("main"));
+		pattern.push_back(new ElemSpace());
+		pattern.push_back(new ElemLeftBracket(BracketType::BRACKET_PAREN));
+		pattern.push_back(new ElemSpace());
+		pattern.push_back(new ElemRightBracket(BracketType::BRACKET_PAREN));
+		pattern.push_back(new ElemSpace());
 		pattern.push_back(new ElemNewLine());
-		pattern.push_back(new ElemSpace(/*SpaceType::SPACE_SPACE*/));
+		pattern.push_back(new ElemSpace());
 		pattern.push_back(new ElemKeyword(KeywordType::KEYWORD_RETURN));
-		pattern.push_back(new ElemSpace(/*SpaceType::SPACE_SPACE*/));
-		pattern.push_back(new ElemValue(ValueType::VALUE_INT));
+		pattern.push_back(new ElemSpace());
+		pattern.push_back(new ElemValue(ValueType::VALUE_INT));		// value as an argument
+
+		std::cout << pattern[0]->GetMod();
 	}
 	else {
 		std::cout << "ERROR: undefined lab number\n";

@@ -14,8 +14,8 @@ enum SpaceType {
 	SPACE_TAB
 };
 
-enum ParanType {
-	PARAN_PARENTHESES = 1,
+enum BracketType {
+	BRACKET_PAREN = 1,
 };
 
 enum ValueType {
@@ -26,7 +26,7 @@ enum class ElementType : int8_t {
 	KEYWORD,
 	SPACE,
 	FUNC_NAME,
-	PARENTHESES,
+	BRACKET,
 	NEW_LINE,
 	VALUE
 };
@@ -37,13 +37,14 @@ enum class ElementType : int8_t {
 
 class PatternElement
 {
-protected:
+//protected:
+public:
 	ElementType type;
 	//std::vector <std::string> values;
 	std::string value;
 
 protected:
-	virtual void GenValue() = 0;
+	virtual void GenValue() = 0;		// ???
 
 
 	PatternElement(ElementType type, std::string value);
@@ -89,24 +90,35 @@ private:
 class ElemFuncName : public PatternElement
 {
 public:
-	ElemFuncName();
+	ElemFuncName(std::string name);
 	~ElemFuncName();
 
 private:
 	void GenValue();
 };
 
-class ElemParentheses : public PatternElement
+class ElemLeftBracket : public PatternElement
 {
 private:
 	int mod;
 public:
-	ElemParentheses(int mod);
-	~ElemParentheses();
+	ElemLeftBracket(int mod);
+	~ElemLeftBracket();
 
 	int GetMod() const { return mod; }
+private:
+	void GenValue();
+};
 
+class ElemRightBracket : public PatternElement
+{
+private:
+	int mod;
+public:
+	ElemRightBracket(int mod);
+	~ElemRightBracket();
 
+	int GetMod() const { return mod; }
 private:
 	void GenValue();
 };

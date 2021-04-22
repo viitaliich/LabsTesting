@@ -26,14 +26,16 @@ private:
 	std::vector <Keyword> keywords;
 
 public:
-	// output buffer
+	// TODO: output buffer for single test
+	// TODO: output buffer for all tests
 
 private:
 	std::string ReadFile(const std::string& file);
 	//void Correct(const size_t index);
-	void Correct(std::vector <PatternElement*>::iterator it);
 	//void Incorrect(const size_t index);
+	void Correct(std::vector <PatternElement*>::iterator it);
 	void Incorrect(std::vector <PatternElement*>::iterator it);
+	
 	void GenPattern();
 
 	std::string FindKeyword(int mod);
@@ -44,6 +46,5 @@ public:
 	
 	void Generate();
 
-	//inline const std::string GetStream() const { return stream; };
 };
 

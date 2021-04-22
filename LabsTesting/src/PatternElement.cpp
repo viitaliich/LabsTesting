@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+
 PatternElement::PatternElement(ElementType type, std::string value)
 	:
 	type(type),
@@ -18,8 +19,19 @@ ElemKeyword::ElemKeyword(KeywordType mod)
 	:
 	mod(mod),
 	PatternElement(ElementType::KEYWORD, "")
+{
+	switch (mod){
+
+	case KEYWORD_DEF:
+		value = "def";
+		break;
+
+	case KEYWORD_RETURN:
+		value = "return";
+		break;
 	
-{}
+	}
+}
 
 ElemKeyword::~ElemKeyword()
 {
@@ -32,10 +44,9 @@ void ElemKeyword::GenValue() {
 
 // ElemSpace
 
-ElemSpace::ElemSpace(/*int mod*/)
+ElemSpace::ElemSpace()
 	:
-	//mod(mod),
-	PatternElement(ElementType::SPACE, "")
+	PatternElement(ElementType::SPACE, " ")
 {}
 
 ElemSpace::~ElemSpace()
@@ -49,9 +60,9 @@ void ElemSpace::GenValue() {
 
 // ElemFuncName
 
-ElemFuncName::ElemFuncName()
+ElemFuncName::ElemFuncName(std::string name)
 	:
-	PatternElement(ElementType::FUNC_NAME, "")
+	PatternElement(ElementType::FUNC_NAME, name)
 {}
 
 ElemFuncName::~ElemFuncName()
@@ -65,18 +76,45 @@ void ElemFuncName::GenValue() {
 
 // ElemParentheses
 
-ElemParentheses::ElemParentheses(int mod)
+ElemLeftBracket::ElemLeftBracket(int mod)
 	:
 	mod(mod),
-	PatternElement(ElementType::PARENTHESES, "")
-{}
+	PatternElement(ElementType::BRACKET, "")
+{
+	switch (mod) {
+	case BRACKET_PAREN:
+		value = "(";
+		break;
+	}
+}
 
-ElemParentheses::~ElemParentheses()
+ElemLeftBracket::~ElemLeftBracket()
 {
 
 }
 
-void ElemParentheses::GenValue() {
+void ElemLeftBracket::GenValue() {
+
+}
+
+ElemRightBracket::ElemRightBracket(int mod)
+	:
+	mod(mod),
+	PatternElement(ElementType::BRACKET, "")
+{
+	switch (mod) {
+	case BRACKET_PAREN:
+		value = ")";
+		break;
+	}
+}
+
+ElemRightBracket::~ElemRightBracket()
+{
+
+}
+
+void ElemRightBracket::GenValue() {
 
 }
 
@@ -84,7 +122,7 @@ void ElemParentheses::GenValue() {
 
 ElemNewLine::ElemNewLine()
 	:
-	PatternElement(ElementType::NEW_LINE, "")
+	PatternElement(ElementType::NEW_LINE, "\n")
 {}
 
 ElemNewLine::~ElemNewLine()
@@ -103,7 +141,13 @@ ElemValue::ElemValue(int mod)
 	mod(mod),
 	PatternElement(ElementType::VALUE, "")
 	
-{}
+{
+	switch (mod) {
+	case VALUE_INT:
+		value = "2";
+		break;
+	}
+}
 
 ElemValue::~ElemValue()
 {
