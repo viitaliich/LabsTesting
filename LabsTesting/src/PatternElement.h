@@ -46,10 +46,14 @@ protected:
 
 public:
 	//inline std::string GetValue() const { return values[0]; }		// [0] ???
-	virtual void SaveOrigElem() = 0;		
+	void SetValue(std::string value);
+
 	void RestoreOrigElem();
+	virtual void SaveOrigElem() = 0;		
+	
 	inline std::string GetValue() const { return value; }
 	inline ElementType GetType() const { return type; }
+	
 	virtual inline int GetMod() const { return 0; }
 
 };
@@ -64,6 +68,7 @@ public:
 
 	void SaveOrigElem();
 	void RestoreOrigElem();
+	
 
 	inline int GetMod() const { return mod; }
 };

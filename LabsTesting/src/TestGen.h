@@ -25,6 +25,9 @@ private:
 
 	std::vector <Keyword> keywords;
 
+	std::string test;
+	std::vector <std::string> tests;
+
 public:
 	// TODO: output buffer for single test
 	// TODO: output buffer for all tests
@@ -35,10 +38,13 @@ private:
 	//void Incorrect(const size_t index);
 	void Correct(std::vector <PatternElement*>::iterator it);
 	void Incorrect(std::vector <PatternElement*>::iterator it);
-	
 	void GenPattern();
 
+	void PatternToText();
+
 	std::string FindKeyword(int mod);
+
+	void SpaceTestGen(std::vector <PatternElement*>::iterator it, const int space_num);
 
 public:
 	TestGen(uint8_t lab_num);

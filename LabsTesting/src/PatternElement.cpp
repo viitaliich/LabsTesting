@@ -16,6 +16,10 @@ void PatternElement::RestoreOrigElem() {
 	memcpy(this, orig_val, sizeof(*orig_val));
 }
 
+void PatternElement::SetValue(std::string value) {
+	this->value = value;
+}
+
 // ElemFuncKeyword
 ElemKeyword::ElemKeyword(int mod)
 	:

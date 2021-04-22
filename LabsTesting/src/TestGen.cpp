@@ -1,7 +1,10 @@
 #include <fstream>
 #include <iostream>
+#include <random>
 
 #include "TestGen.h"
+
+
 
 // TODO: not sure about realization ???
 std::string TestGen::ReadFile(const std::string& path) {
@@ -25,6 +28,25 @@ std::string TestGen::FindKeyword(int mod) {
 	exit(1);
 }
 
+void TestGen::SpaceTestGen(std::vector <PatternElement*>::iterator it, const int space_num){
+	std::string val_sp(space_num, ' ');	// space as char
+	(*it)->SetValue(val_sp);
+	PatternToText();
+
+	std::string val_tab(space_num, '\t');	// space as char
+	(*it)->SetValue(val_tab);
+	PatternToText();
+}
+
+void TestGen::PatternToText() {
+	std::vector <PatternElement*>::iterator it;		
+	for (it = pattern.begin(); it != pattern.end(); it++) {
+		test += (*it)->GetValue();
+	}
+	tests.push_back(test);
+	test = "";
+}
+
 void TestGen::Correct(std::vector <PatternElement*>::iterator it) {
 	(*it)->SaveOrigElem();
 	
@@ -34,25 +56,32 @@ void TestGen::Correct(std::vector <PatternElement*>::iterator it) {
 		int mod = (*it)->GetMod();		// enum CLASS ???
 
 		if (mod == KEYWORD_DEF) {
-			ssbuf_cor << FindKeyword(mod);
+			// DO NOTHING
 
+			//ssbuf_cor << FindKeyword(mod);
 		}
-		// ... return
-		// TODO: ssbuf_cor, ssbuf_incor -> string -> file
+		// TODO: return
 	}
 	else if (type == ElementType::SPACE) {
-		
 		// declare it somewhere
-		int min_sp_num;
-		int avrg_sp_num = 4;		// random
-		int max_sp_num = 6;
+		int min_sp_num = 0;
+		int rand_sp_num;		
+		const int max_sp_num = 6;		// why 6 ???
 		
 		ElementType t = (*(it-1))->GetType();
 		if (t == ElementType::KEYWORD) {
 			min_sp_num = 1;		
-
 		}
 
+		// random
+		std::default_random_engine generator;
+		std::uniform_int_distribution<int> distribution(min_sp_num, max_sp_num);
+		rand_sp_num = distribution(generator); 
+
+		// generation
+		SpaceTestGen(it, min_sp_num);
+		SpaceTestGen(it, rand_sp_num);
+		SpaceTestGen(it, max_sp_num);
 	}
 
 	(*it)->RestoreOrigElem();		// ???
@@ -101,6 +130,7 @@ void TestGen::GenPattern() {
 TestGen::TestGen(uint8_t lab_num)
 	:
 	lab_num(lab_num),
+	test(""),
 	keywords({ 
 		{ KEYWORD_DEF, "def" },
 		{ KEYWORD_RETURN, "return" }
