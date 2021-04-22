@@ -32,30 +32,26 @@ enum class ElementType : int8_t {
 };
 
 
-
-
-
 class PatternElement
 {
-//protected:
-public:
+protected:
 	ElementType type;
-	//std::vector <std::string> values;
+	std::vector <std::string> values;		// ???
 	std::string value;
+	PatternElement* orig_val;
 
 protected:
-	virtual void GenValue() = 0;		// ???
-
-
 	PatternElement(ElementType type, std::string value);
 	~PatternElement();
 
 public:
 	//inline std::string GetValue() const { return values[0]; }		// [0] ???
+	virtual void SaveOrigElem() = 0;		
+	void RestoreOrigElem();
 	inline std::string GetValue() const { return value; }
 	inline ElementType GetType() const { return type; }
-	
-	virtual inline int GetMod() const { return 0; }		// inline
+	virtual inline int GetMod() const { return 0; }
+
 };
 
 class ElemKeyword : public PatternElement
@@ -63,28 +59,23 @@ class ElemKeyword : public PatternElement
 private:
 	int mod;
 public:
-	ElemKeyword(KeywordType mod);
+	ElemKeyword(int mod);
 	~ElemKeyword();
 
-	int GetMod() const { return mod; }
+	void SaveOrigElem();
+	void RestoreOrigElem();
 
-	
-private:
-	void GenValue();
+	inline int GetMod() const { return mod; }
 };
 
 class ElemSpace : public PatternElement
 {
-private:
-	//int mod;
 public:
-	ElemSpace(/*int mod*/);
+	ElemSpace();
 	~ElemSpace();
 
-	//int GetMod() const { return mod; }
-
-private:
-	void GenValue();
+	void SaveOrigElem();
+	void RestoreOrigElem();
 };
 
 class ElemFuncName : public PatternElement
@@ -93,8 +84,8 @@ public:
 	ElemFuncName(std::string name);
 	~ElemFuncName();
 
-private:
-	void GenValue();
+	void SaveOrigElem();
+	void RestoreOrigElem();
 };
 
 class ElemLeftBracket : public PatternElement
@@ -105,9 +96,10 @@ public:
 	ElemLeftBracket(int mod);
 	~ElemLeftBracket();
 
-	int GetMod() const { return mod; }
-private:
-	void GenValue();
+	void SaveOrigElem();
+	void RestoreOrigElem();
+	
+	inline int GetMod() const { return mod; }
 };
 
 class ElemRightBracket : public PatternElement
@@ -118,9 +110,10 @@ public:
 	ElemRightBracket(int mod);
 	~ElemRightBracket();
 
-	int GetMod() const { return mod; }
-private:
-	void GenValue();
+	void SaveOrigElem();
+	void RestoreOrigElem();
+	
+	inline int GetMod() const { return mod; }
 };
 
 class ElemNewLine : public PatternElement
@@ -128,9 +121,9 @@ class ElemNewLine : public PatternElement
 public:
 	ElemNewLine();
 	~ElemNewLine();
-
-private:
-	void GenValue();
+	
+	void SaveOrigElem();
+	void RestoreOrigElem();
 };
 
 class ElemValue : public PatternElement
@@ -141,9 +134,8 @@ public:
 	ElemValue(int mod);
 	~ElemValue();
 
-	int GetMod() const { return mod; }
-
-
-private:
-	void GenValue();
+	void SaveOrigElem();
+	void RestoreOrigElem();
+	
+	inline int GetMod() const { return mod; }
 };

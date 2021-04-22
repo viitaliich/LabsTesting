@@ -25,16 +25,14 @@ std::string TestGen::FindKeyword(int mod) {
 	exit(1);
 }
 
-
 void TestGen::Correct(std::vector <PatternElement*>::iterator it) {
-	ElementType type = (*it)->GetType();
-	//ElementType type = pattern[index]->GetType();
-	// TODO: switch ???
-
-	// TODO: save original value of the pattern
+	(*it)->SaveOrigElem();
 	
+	ElementType type = (*it)->GetType();
+
 	if (type == ElementType::KEYWORD) {
 		int mod = (*it)->GetMod();		// enum CLASS ???
+
 		if (mod == KEYWORD_DEF) {
 			ssbuf_cor << FindKeyword(mod);
 
@@ -53,16 +51,11 @@ void TestGen::Correct(std::vector <PatternElement*>::iterator it) {
 		if (t == ElementType::KEYWORD) {
 			min_sp_num = 1;		
 
-
 		}
-
 
 	}
 
-	// TODO: restore original value of the pattern
-
-	
-	
+	(*it)->RestoreOrigElem();		// ???
 }
 
 void TestGen::Incorrect(std::vector <PatternElement*>::iterator it) {
@@ -80,7 +73,6 @@ void TestGen::Generate() {
 	}
 
 	// TODO: ssbuf_cor, ssbuf_incor -> string -> file
-
 }
 
 void TestGen::GenPattern() {
@@ -99,8 +91,6 @@ void TestGen::GenPattern() {
 		pattern.push_back(new ElemKeyword(KeywordType::KEYWORD_RETURN));
 		pattern.push_back(new ElemSpace());
 		pattern.push_back(new ElemValue(ValueType::VALUE_INT));		// value as an argument
-
-		std::cout << pattern[0]->GetMod();
 	}
 	else {
 		std::cout << "ERROR: undefined lab number\n";
@@ -115,12 +105,10 @@ TestGen::TestGen(uint8_t lab_num)
 		{ KEYWORD_DEF, "def" },
 		{ KEYWORD_RETURN, "return" }
 		})		// ??? could be problems
-
 	
 {
 	GenPattern();
 }
 
 TestGen::~TestGen(){
-
 }
