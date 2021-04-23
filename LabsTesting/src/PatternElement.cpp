@@ -93,7 +93,7 @@ ElemLeftBracket::ElemLeftBracket(int mod)
 	PatternElement(ElementType::BRACKET, "")
 {
 	switch (mod) {
-	case BRACKET_PAREN:
+	case BRACKET_LPAREN:
 		value = "(";
 		break;
 	}
@@ -117,7 +117,7 @@ ElemRightBracket::ElemRightBracket(int mod)
 	PatternElement(ElementType::BRACKET, "")
 {
 	switch (mod) {
-	case BRACKET_PAREN:
+	case BRACKET_RPAREN:
 		value = ")";
 		break;
 	}
@@ -134,6 +134,20 @@ void ElemRightBracket::SaveOrigElem() {
 //void ElemRightBracket::RestoreOrigElem() {
 //	memcpy(this, orig_val, sizeof(*orig_val));
 //}
+
+// ElemColon
+ElemColon::ElemColon()
+	:
+	PatternElement(ElementType::COLON, ":")
+{}
+
+ElemColon::~ElemColon()
+{
+}
+
+void ElemColon::SaveOrigElem() {
+	orig_val = new ElemColon();
+}
 
 // ElemNewLine
 ElemNewLine::ElemNewLine()
@@ -161,7 +175,7 @@ ElemValue::ElemValue(int mod)
 	PatternElement(ElementType::VALUE, "")
 {
 	switch (mod) {
-	case VALUE_INT:
+	case VALUE_INT_DEC:
 		value = "2";
 		break;
 	}

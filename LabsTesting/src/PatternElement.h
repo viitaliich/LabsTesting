@@ -15,11 +15,17 @@ enum SpaceType {
 };
 
 enum BracketType {
-	BRACKET_PAREN = 1,
+	BRACKET_LPAREN = 1,
+	BRACKET_RPAREN,
 };
 
 enum ValueType {
-	VALUE_INT = 1,
+	VALUE_INT_DEC = 1,
+	VALUE_INT_BIN,
+	VALUE_INT_OCT,
+	VALUE_INT_HEX,
+	VALUE_FLOAT,
+	VALUE_STR
 };
 
 enum class ElementType : int8_t {
@@ -27,6 +33,7 @@ enum class ElementType : int8_t {
 	SPACE,
 	FUNC_NAME,
 	BRACKET,
+	COLON,
 	NEW_LINE,
 	VALUE
 };
@@ -119,6 +126,16 @@ public:
 	void RestoreOrigElem();
 	
 	inline int GetMod() const { return mod; }
+};
+
+class ElemColon : public PatternElement
+{
+public:
+	ElemColon();
+	~ElemColon();
+
+	void SaveOrigElem();
+	void RestoreOrigElem();
 };
 
 class ElemNewLine : public PatternElement
