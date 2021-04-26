@@ -175,9 +175,30 @@ ElemValue::ElemValue(int mod)
 	PatternElement(ElementType::VALUE, "")
 {
 	switch (mod) {
-	case VALUE_INT_DEC:
+	case VALUE_INT_DEC: {
 		value = "2";
 		break;
+	}
+	case VALUE_INT_BIN: {
+		value = "0b11";
+		break;
+	}
+	case VALUE_INT_OCT: {
+		value = "0o7";
+		break;
+	}
+	case VALUE_INT_HEX: {
+		value = "0xAA";
+		break;
+	}
+	case VALUE_FLOAT: {
+		value = "3.14";
+		break;
+	}
+	case VALUE_STR: {
+		value = "hello";
+		break;
+	}
 	}
 }
 

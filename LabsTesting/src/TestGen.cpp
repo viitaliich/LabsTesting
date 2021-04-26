@@ -10,8 +10,12 @@
 #define LAST_ASCII_UP_LETTER 90
 #define FIRST_ASCII_NUMBER 48
 #define LAST_ASCII_NUMBER 57
-#define ASCII_ZERO 48
-#define ASCII_ONE 49
+#define ASCII_0 48
+#define ASCII_1 49
+#define ASCII_7 55
+#define ASCII_9 57
+#define ASCII_A 65
+#define ASCII_F 70
 
 
 
@@ -40,15 +44,17 @@ std::string TestGen::FindKeyword(int mod) {
 
 
 void TestGen::PatternToText() {
-	std::vector <PatternElement*>::iterator it;		
-	for (it = pattern.begin(); it != pattern.end(); it++) {
-		test += (*it)->GetValue();
+	std::vector <PatternElement*>::iterator iter;		
+	for (iter = pattern.begin(); iter != pattern.end(); iter++) {
+		test += (*iter)->GetValue();
 	}
 	correct_tests.push_back(test);
 	test = "";
 }
 
 void TestGen::SpaceTestGen(const int space_num) {
+	// TODO: add rules
+
 	// space
 	std::string val_sp(space_num, ' ');	// space as char
 
@@ -137,6 +143,158 @@ void TestGen::FuncNameTestGen(RuleName rule) {
 	}
 }
 
+void TestGen::IntDecTestGen() {
+	// TODO: add rules
+
+	std::default_random_engine generator;		// TODO: make it single instance as static outside all scopes in this file
+	std::uniform_int_distribution<int> distribution(0, INT_MAX);
+	int num = distribution(generator);
+
+	std::string val = std::to_string(num);
+
+	(*it)->SetValue(val);
+	PatternToText();
+}
+void TestGen::IntBinTestGen() {
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> distribution(1, 28);
+	int len = distribution(generator);
+
+	std::string val = "0b0";
+	for (int i = 0; i < len; i++) {
+		std::uniform_int_distribution<int> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
+		char sym = (char)dist(generator);
+		val += sym;
+	}
+
+	(*it)->SetValue(val);
+	PatternToText();
+}
+
+void TestGen::IntOctTestGen() {
+	// TODO: IN THIS VERSION OF MY PYTHON-ASM COMILER OCTALS ARE [0o...], NOT [0...] (0o11 / 011)
+
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> distribution(1, 10);
+	int len = distribution(generator);
+
+	std::string val = "0o0";
+	for (int i = 0; i < len; i++) {
+		std::uniform_int_distribution<int> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
+		char sym = (char)dist(generator);
+		val += sym;
+	}
+
+	(*it)->SetValue(val);
+	PatternToText();
+}
+
+void TestGen::IntHexTestGen() {
+	std::default_random_engine generator;
+	// len 3 + 4 = 7
+	std::uniform_int_distribution<int> distr_num(1, 3);
+	std::uniform_int_distribution<int> distr_sym(1, 4);
+	int len_num = distr_num(generator);
+	int len_sym = distr_sym(generator);
+
+	std::string val = "0x0";
+	for (int i = 0; i < len_num; i++) {
+		std::uniform_int_distribution<int> dist(ASCII_0, ASCII_9);
+		char sym = (char)dist(generator);
+		val += sym;
+	}
+	for (int i = 0; i < len_sym; i++) {
+		std::uniform_int_distribution<int> dist(ASCII_A, ASCII_F);
+		char sym = (char)dist(generator);
+		val += sym;
+	}
+
+	(*it)->SetValue(val);
+	PatternToText();
+}
+
+void TestGen::FloatTestGen() {
+	// TODO: proper random float generation
+
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> dist_one(0, 10);
+	std::uniform_int_distribution<int> dist_two(1, 100);
+	int num_one = dist_one(generator);
+	int num_two = dist_two(generator);
+
+	std::string val = std::to_string(num_one);
+	val += '.';
+	val += std::to_string(num_two);
+
+	(*it)->SetValue(val);
+	PatternToText();
+}
+
+void TestGen::StringTestGen() {
+	std::string val = "";
+	const int len = 5;		// ???
+
+	std::default_random_engine generator;
+	std::uniform_int_distribution<int> distribution(FIRST_ASCII_LOW_LETTER, LAST_ASCII_LOW_LETTER);
+	for (int i = 0; i <= len; i++) {
+		val += distribution(generator);		// append symbol to string
+	}
+
+	(*it)->SetValue(val);
+	PatternToText();
+}
+
+void TestGen::KeywordTestGen(std::string value, RuleName rule) {		// maybe do reference ???
+	std::default_random_engine generator;
+	std::string val = value;
+
+	switch (rule)
+	{
+	case RuleName::UPPER_CASE: {
+		std::transform(val.begin(), val.end(), val.begin(), ::toupper);		// TODO: use boost library here ???
+
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	}
+	
+	case RuleName::NUMBER:
+		// TODO: maybe
+		break;
+	case RuleName::UNDERSCORE:
+		// TODO: maybe
+		break;
+	case RuleName::CHANGE: {
+		std::uniform_int_distribution<int> distribution(FIRST_ASCII_LOW_LETTER, LAST_ASCII_LOW_LETTER);
+		val += (char)distribution(generator);
+		
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	}
+
+	case RuleName::ABSENT: {
+		val = "";
+		
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	}
+
+	case RuleName::SUBSTITUTE_KEYWORD:
+		// TODO
+
+		break;
+	default:
+		std::cout << "ERROR: something went wrong\n";
+		exit(1);
+		break;
+	}
+	
+	(*it)->SetValue(val);
+	PatternToText();
+}
+
 void TestGen::Correct() {
 	(*it)->SaveOrigElem();
 	
@@ -153,7 +311,7 @@ void TestGen::Correct() {
 		}
 	}
 	else if (type == ElementType::SPACE) {
-		// declare it somewhere
+		// declare it somewhere ???
 		int min_sp_num = 0;
 		int rand_sp_num;		
 		const int max_sp_num = 6;		// why 6 ???
@@ -207,60 +365,71 @@ void TestGen::Correct() {
 
 		if (mod == ValueType::VALUE_INT_DEC) {
 			
-			std::default_random_engine generator;
-			std::uniform_int_distribution<int> distribution(0, INT_MAX);
-			int num = distribution(generator);
-			
-			std::string val = std::to_string(num);
+			IntDecTestGen();
+			IntDecTestGen();
 
-			(*it)->SetValue(val);
-			PatternToText();
 		}
 		else if (mod == ValueType::VALUE_INT_BIN) {
 			
-			std::default_random_engine generator;
-			std::uniform_int_distribution<int> distribution(1, 28);
-			int len = distribution(generator);
+			IntBinTestGen();
+			IntBinTestGen();
 
-			std::string val = "0b0";
-			for (int i = 0; i < len; i++) {
-				std::uniform_int_distribution<int> dist(ASCII_ZERO, ASCII_ONE);		// is zero or/and one included in this range ???
-				char sym = (char)dist(generator);
-				val += sym;
-			}
-
-			(*it)->SetValue(val);
-			PatternToText();
 		}
 		else if (mod == ValueType::VALUE_INT_OCT) {
-			// TODO
+			IntOctTestGen();
+			IntOctTestGen();
 		}
 		else if (mod == ValueType::VALUE_INT_HEX) {
-			// TODO
+			IntHexTestGen();
+			IntHexTestGen();
 		}
 		else if (mod == ValueType::VALUE_FLOAT) {
-			// TODO
+			FloatTestGen();
+			FloatTestGen();
+
 		}
 		else if (mod == ValueType::VALUE_STR) {
-			std::string val = "";
-			const int len = 5;		// ???
-			
-			std::default_random_engine generator;
-			std::uniform_int_distribution<int> distribution(FIRST_ASCII_LOW_LETTER, LAST_ASCII_LOW_LETTER);
-			for (int i = 0; i <= len; i++) {
-				val += distribution(generator);		// append symbol to string
-			}
-
-			(*it)->SetValue(val);
-			PatternToText();
+			StringTestGen();
+			StringTestGen();
 		}
 	}
 
-	(*it)->RestoreOrigElem();		// ???
+	(*it)->RestoreOrigElem();		
 }
 
 void TestGen::Incorrect() {
+	(*it)->SaveOrigElem();
 
+	ElementType type = (*it)->GetType();
+
+	if (type == ElementType::KEYWORD) {
+		int mod = (*it)->GetMod();		// enum CLASS ???
+
+		if (mod == KEYWORD_DEF) {
+			
+			// TODO
+			KeywordTestGen((*it)->GetValue(), RuleName::UPPER_CASE);
+			KeywordTestGen((*it)->GetValue(), RuleName::CHANGE);
+			KeywordTestGen((*it)->GetValue(), RuleName::ABSENT);
+			KeywordTestGen((*it)->GetValue(), RuleName::SUBSTITUTE_KEYWORD);
+			// ...
+
+		}
+		else if (mod == KEYWORD_RETURN) {
+			// ...
+		}
+	}
+	else if (type == ElementType::SPACE) {
+
+		ElementType t = (*(it - 1))->GetType();
+		if (t == ElementType::KEYWORD || t == ElementType::NEW_LINE) {
+			int min_sp_num = 0;
+			SpaceTestGen(min_sp_num);
+		}
+		// else DO NOTHING		???
+	}
+	// TODO
+	// ...
 }
 
 void TestGen::Generate() {
@@ -309,6 +478,14 @@ void TestGen::GenPattern() {
 		pattern.push_back(new ElemKeyword(KeywordType::KEYWORD_RETURN));
 		pattern.push_back(new ElemSpace());
 		pattern.push_back(new ElemValue(ValueType::VALUE_INT_DEC));		// value as an argument
+
+		//pattern.push_back(new ElemValue(ValueType::VALUE_INT_DEC));		// value as an argument
+		//pattern.push_back(new ElemValue(ValueType::VALUE_INT_BIN));		// value as an argument
+		//pattern.push_back(new ElemValue(ValueType::VALUE_INT_OCT));		// value as an argument
+		//pattern.push_back(new ElemValue(ValueType::VALUE_INT_HEX));		// value as an argument
+		//pattern.push_back(new ElemValue(ValueType::VALUE_FLOAT));		// value as an argument
+		//pattern.push_back(new ElemValue(ValueType::VALUE_STR));		// value as an argument
+
 	}
 	else {
 		std::cout << "ERROR: undefined lab number\n";

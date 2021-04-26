@@ -21,6 +21,10 @@ enum class RuleName : int {
 	LOWER_CASE,
 	NUMBER,
 	UNDERSCORE,
+
+	CHANGE,
+	ABSENT,
+	CHECK_KEYWORD,
 };
 
 class TestGen
@@ -54,8 +58,15 @@ private:
 
 	std::string FindKeyword(int mod);
 
+	void KeywordTestGen(std::string value, RuleName rule);
 	void SpaceTestGen(const int space_num);
 	void FuncNameTestGen(RuleName rule);
+	void IntDecTestGen();
+	void IntBinTestGen();
+	void IntOctTestGen();
+	void IntHexTestGen();
+	void FloatTestGen();
+	void StringTestGen();
 
 public:
 	TestGen(uint8_t lab_num);
