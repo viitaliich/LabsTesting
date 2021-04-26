@@ -10,6 +10,9 @@
 #define LAST_ASCII_UP_LETTER 90
 #define FIRST_ASCII_NUMBER 48
 #define LAST_ASCII_NUMBER 57
+#define ASCII_ZERO 48
+#define ASCII_ONE 49
+
 
 
 // TODO: not sure about realization ???
@@ -214,7 +217,20 @@ void TestGen::Correct() {
 			PatternToText();
 		}
 		else if (mod == ValueType::VALUE_INT_BIN) {
-			// TODO
+			
+			std::default_random_engine generator;
+			std::uniform_int_distribution<int> distribution(1, 28);
+			int len = distribution(generator);
+
+			std::string val = "0b0";
+			for (int i = 0; i < len; i++) {
+				std::uniform_int_distribution<int> dist(ASCII_ZERO, ASCII_ONE);		// is zero or/and one included in this range ???
+				char sym = (char)dist(generator);
+				val += sym;
+			}
+
+			(*it)->SetValue(val);
+			PatternToText();
 		}
 		else if (mod == ValueType::VALUE_INT_OCT) {
 			// TODO
