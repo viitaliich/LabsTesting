@@ -11,6 +11,11 @@ struct Keyword {
 	std::string str;
 };
 
+struct Bracket {
+	BracketType mod;
+	std::string str;
+};
+
 enum class LabNumber : uint8_t {
 	LAB1 = 1
 };
@@ -19,12 +24,17 @@ enum class RuleName : int {
 	// 0 for combination of rules maybe
 	UPPER_CASE = 1,
 	LOWER_CASE,
-	NUMBER,
-	UNDERSCORE,
+	ADD_NUMBER,
+	ADD_UNDERSCORE,
 
-	CHANGE,
+	ADD_CHAR,
 	ABSENT,
-	CHECK_KEYWORD,
+	SUBSTITUTE,
+
+	ADD_SPECIAL_SYM,
+	TO_NUMBER,
+	TO_KEYWORD,
+	FIRST_NUMBER,
 };
 
 class TestGen
@@ -37,6 +47,7 @@ private:
 	std::stringstream ssbuf_incor;
 
 	std::vector <Keyword> keywords;
+	std::vector <Bracket> brackets;
 
 	std::string test;
 	std::vector <std::string> correct_tests;
@@ -61,6 +72,7 @@ private:
 	void KeywordTestGen(std::string value, RuleName rule);
 	void SpaceTestGen(const int space_num);
 	void FuncNameTestGen(RuleName rule);
+	void BracketTestGen(RuleName rule);
 	void IntDecTestGen();
 	void IntBinTestGen();
 	void IntOctTestGen();

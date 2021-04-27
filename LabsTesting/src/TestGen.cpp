@@ -4,18 +4,20 @@
 
 #include "TestGen.h"
 
-#define FIRST_ASCII_LOW_LETTER 97
-#define LAST_ASCII_LOW_LETTER 122
-#define FIRST_ASCII_UP_LETTER 65
-#define LAST_ASCII_UP_LETTER 90
-#define FIRST_ASCII_NUMBER 48
-#define LAST_ASCII_NUMBER 57
+#define ASCII_FIRST_LOW_LETTER 97
+#define ASCII_LAST_LOW_LETTER 122
+#define ASCII_FIRST_UP_LETTER 65
+#define ASCII_LAST_UP_LETTER 90
+#define ASCII_FIRST_NUMBER 48
+#define ASCII_LAST_NUMBER 57
 #define ASCII_0 48
 #define ASCII_1 49
 #define ASCII_7 55
 #define ASCII_9 57
 #define ASCII_A 65
 #define ASCII_F 70
+#define ASCII_EXCLAMATION 33
+#define ASCII_SLASH 47
 
 
 
@@ -81,7 +83,7 @@ void TestGen::FuncNameTestGen(RuleName rule) {
 	switch (rule) {
 	case RuleName::UPPER_CASE: {
 
-		std::uniform_int_distribution<int> distribution(FIRST_ASCII_UP_LETTER, LAST_ASCII_UP_LETTER);
+		std::uniform_int_distribution<int> distribution(ASCII_FIRST_UP_LETTER, ASCII_LAST_UP_LETTER);
 		for (int i = 0; i <= len; i++) {
 			val += distribution(generator);		// append symbol to string
 		}
@@ -94,7 +96,7 @@ void TestGen::FuncNameTestGen(RuleName rule) {
 
 	case RuleName::LOWER_CASE: {
 
-		std::uniform_int_distribution<int> distribution(FIRST_ASCII_LOW_LETTER, LAST_ASCII_LOW_LETTER);
+		std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
 		for (int i = 0; i <= len; i++) {
 			val += distribution(generator);		// append symbol to string
 		}
@@ -104,14 +106,14 @@ void TestGen::FuncNameTestGen(RuleName rule) {
 
 		break;
 	}
-	case RuleName::NUMBER: {
+	case RuleName::ADD_NUMBER: {
 
-		std::uniform_int_distribution<int> distribution_one(FIRST_ASCII_LOW_LETTER, LAST_ASCII_LOW_LETTER);
+		std::uniform_int_distribution<int> distribution_one(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
 		for (int i = 0; i <= len; i++) {
 			val += distribution_one(generator);		// append symbol to string
 		}
 
-		std::uniform_int_distribution<int> distribution_two(FIRST_ASCII_NUMBER, LAST_ASCII_NUMBER);
+		std::uniform_int_distribution<int> distribution_two(ASCII_FIRST_NUMBER, ASCII_LAST_NUMBER);
 		val += distribution_two(generator);		// append number to string
 
 		val += val;
@@ -121,9 +123,9 @@ void TestGen::FuncNameTestGen(RuleName rule) {
 
 		break;
 	}
-	case RuleName::UNDERSCORE: {
+	case RuleName::ADD_UNDERSCORE: {
 
-		std::uniform_int_distribution<int> distribution(FIRST_ASCII_LOW_LETTER, LAST_ASCII_LOW_LETTER);
+		std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
 		for (int i = 0; i <= len; i++) {
 			val += distribution(generator);		// append symbol to string
 		}
@@ -137,10 +139,95 @@ void TestGen::FuncNameTestGen(RuleName rule) {
 
 		break;
 	}
+	case RuleName::ABSENT: {
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	}
+	case RuleName::ADD_SPECIAL_SYM: {
+		// TODO: not all symbols are taken into account
+		val = (*it)->GetValue();
+		
+		std::uniform_int_distribution<int> distribution(ASCII_EXCLAMATION, ASCII_SLASH);
+		val += (char)distribution(generator);		
+
+		val += (*it)->GetValue();
+
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	}
+	case RuleName::TO_NUMBER: {
+		std::uniform_int_distribution<int> distribution(0, INT_MAX);
+		int num = distribution(generator);
+		std::string val = std::to_string(num);
+
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	}
+	case RuleName::TO_KEYWORD: {
+		// TODO ...
+		break;
+	}
+	case RuleName::FIRST_NUMBER: {
+		std::uniform_int_distribution<int> distribution(ASCII_FIRST_NUMBER, ASCII_LAST_NUMBER);
+		val += (char)distribution(generator);
+		val += (*it)->GetValue();
+
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	}
+
 	default:
 		// TODO
 		break;
 	}
+}
+
+void TestGen::BracketTestGen(RuleName rule) {
+	int mod = (*it)->GetMod();
+	std::string val = "";
+
+	switch (rule)
+	{
+	case RuleName::ABSENT:		// TODO absent rule as separate function
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	case RuleName::SUBSTITUTE:
+		// TODO
+		if (mod == BracketType::BRACKET_LPAREN) {
+			// TODO
+		}
+		else if (mod == BracketType::BRACKET_RPAREN) {
+			// TODO
+		}
+		// ...
+		// TODO
+		break;
+	case RuleName::TO_NUMBER:
+		// TODO
+		// TODO to_char
+		break;
+	case RuleName::ADD_COUNT: {
+		// TODO
+		// ...
+
+		// as spaces...
+	}
+
+
+	
+
+
+	default:
+		break;
+	}
+
+
+
 }
 
 void TestGen::IntDecTestGen() {
@@ -235,7 +322,7 @@ void TestGen::StringTestGen() {
 	const int len = 5;		// ???
 
 	std::default_random_engine generator;
-	std::uniform_int_distribution<int> distribution(FIRST_ASCII_LOW_LETTER, LAST_ASCII_LOW_LETTER);
+	std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
 	for (int i = 0; i <= len; i++) {
 		val += distribution(generator);		// append symbol to string
 	}
@@ -258,14 +345,14 @@ void TestGen::KeywordTestGen(std::string value, RuleName rule) {		// maybe do re
 		break;
 	}
 	
-	case RuleName::NUMBER:
+	case RuleName::ADD_NUMBER:
 		// TODO: maybe
 		break;
-	case RuleName::UNDERSCORE:
+	case RuleName::ADD_UNDERSCORE:
 		// TODO: maybe
 		break;
-	case RuleName::CHANGE: {
-		std::uniform_int_distribution<int> distribution(FIRST_ASCII_LOW_LETTER, LAST_ASCII_LOW_LETTER);
+	case RuleName::ADD_CHAR: {
+		std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
 		val += (char)distribution(generator);
 		
 		(*it)->SetValue(val);
@@ -281,7 +368,7 @@ void TestGen::KeywordTestGen(std::string value, RuleName rule) {		// maybe do re
 		break;
 	}
 
-	case RuleName::SUBSTITUTE_KEYWORD:
+	case RuleName::SUBSTITUTE:
 		// TODO
 
 		break;
@@ -341,8 +428,8 @@ void TestGen::Correct() {
 		// Currently only "main" supports	??? TODO
 		FuncNameTestGen(RuleName::LOWER_CASE);
 		FuncNameTestGen(RuleName::UPPER_CASE);
-		FuncNameTestGen(RuleName::NUMBER);
-		FuncNameTestGen(RuleName::UNDERSCORE);
+		FuncNameTestGen(RuleName::ADD_NUMBER);
+		FuncNameTestGen(RuleName::ADD_UNDERSCORE);
 	}
 	else if (type == ElementType::BRACKET) {
 		int mod = (*it)->GetMod();		// enum CLASS ???
@@ -409,9 +496,9 @@ void TestGen::Incorrect() {
 			
 			// TODO
 			KeywordTestGen((*it)->GetValue(), RuleName::UPPER_CASE);
-			KeywordTestGen((*it)->GetValue(), RuleName::CHANGE);
+			KeywordTestGen((*it)->GetValue(), RuleName::ADD_CHAR);
 			KeywordTestGen((*it)->GetValue(), RuleName::ABSENT);
-			KeywordTestGen((*it)->GetValue(), RuleName::SUBSTITUTE_KEYWORD);
+			KeywordTestGen((*it)->GetValue(), RuleName::SUBSTITUTE);
 			// ...
 
 		}
@@ -420,16 +507,54 @@ void TestGen::Incorrect() {
 		}
 	}
 	else if (type == ElementType::SPACE) {
+		// TODO: make cosmetic enhancements ???
 
 		ElementType t = (*(it - 1))->GetType();
-		if (t == ElementType::KEYWORD || t == ElementType::NEW_LINE) {
+		int m = (*(it - 1))->GetMod();
+		if (t == ElementType::KEYWORD) {
 			int min_sp_num = 0;
 			SpaceTestGen(min_sp_num);
 		}
+		else if (t == ElementType::BRACKET && m == BRACKET_LPAREN) {
+			// def main ( [name here] ). Incorrect test
+
+			std::string val = "";
+			std::default_random_engine generator;
+			const int min_len = 1;
+			const int max_len = 10;		// ???
+			std::uniform_int_distribution<int> distribution(min_len, max_len);
+			int len = distribution(generator);	
+			std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+			for (int i = 0; i <= len; i++) {
+				val += distribution(generator);		// append symbol to string
+			}
+
+			(*it)->SetValue(val);
+			PatternToText();
+		}
 		// else DO NOTHING		???
 	}
+	else if (type == ElementType::FUNC_NAME) {
+		// Currently only "main" supports	??? TODO
+
+		FuncNameTestGen(RuleName::ABSENT);		
+		FuncNameTestGen(RuleName::ADD_SPECIAL_SYM);
+		FuncNameTestGen(RuleName::TO_NUMBER);
+		FuncNameTestGen(RuleName::TO_KEYWORD);
+		FuncNameTestGen(RuleName::FIRST_NUMBER);	// double it maybe ???
+		//FuncNameTestGen(RuleName::FIRST_NUMBER);	// double it maybe ???
+
+	}
+	else if (type == ElementType::BRACKET) {
+		BracketTestGen(RuleName::ABSENT);
+x		
+
+	}
+
 	// TODO
 	// ...
+
+	(*it)->RestoreOrigElem();
 }
 
 void TestGen::Generate() {
@@ -500,8 +625,20 @@ TestGen::TestGen(uint8_t lab_num)
 	keywords({ 
 		{ KEYWORD_DEF, "def" },
 		{ KEYWORD_RETURN, "return" }
-		})		// ??? could be problems
-	
+		}),		// ??? could be problems
+	brackets({
+		{ BRACKET_LPAREN, "(" },
+		{ BRACKET_RPAREN, ")" },
+		{ BRACKET_LSQUARE, "[" },
+		{ BRACKET_RSQUARE, "]" },
+		{ BRACKET_LBRACE, "{" },
+		{ BRACKET_RBRACE, "}" },
+		{ BRACKET_QUOTE, "\"" },
+		{ BRACKET_SINGLE_QUOTE, "\'" },
+		{ BRACKET_LANGLE, "<" },
+		{ BRACKET_RANGLE, ">" },
+		})
+
 {
 	GenPattern();
 }
