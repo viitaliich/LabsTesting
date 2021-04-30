@@ -4,17 +4,18 @@
 #include <vector>
 #include <string>
 
-enum KeywordType : int8_t {
+enum ModKeyword : uint8_t {
 	KEYWORD_DEF = 1,
 	KEYWORD_RETURN
 };
 
-enum SpaceType : int8_t {
+// do we need this ???
+enum ModSpace : uint8_t {
 	SPACE_SPACE = 1,
 	SPACE_TAB
 };
 
-enum BracketType : int8_t {
+enum ModBracket : uint8_t {
 	BRACKET_LPAREN = 1,
 	BRACKET_RPAREN,
 	BRACKET_LSQUARE,
@@ -27,7 +28,7 @@ enum BracketType : int8_t {
 	BRACKET_RANGLE,
 };
 
-enum ValueType : int8_t {
+enum ModValue : uint8_t {
 	VALUE_INT_DEC = 1,
 	VALUE_INT_BIN,
 	VALUE_INT_OCT,
@@ -36,8 +37,8 @@ enum ValueType : int8_t {
 	VALUE_STR
 };
 
-enum class ElementType : int8_t {
-	TYPE_KEYWORD,
+enum class ElementType : uint8_t {
+	TYPE_KEYWORD = 1,
 	TYPE_SPACE,
 	TYPE_NAME,
 	TYPE_BRACKET,
@@ -74,14 +75,12 @@ public:
 class ElemKeyword : public PatternElement
 {
 private:
-	int mod;
+	uint8_t mod;
 public:
-	ElemKeyword(int mod);
+	ElemKeyword(uint8_t mod);
 	~ElemKeyword();
 
 	void SaveOrigElem();
-	void RestoreOrigElem();
-	
 
 	inline int GetMod() const { return mod; }
 };
@@ -93,29 +92,26 @@ public:
 	~ElemSpace();
 
 	void SaveOrigElem();
-	void RestoreOrigElem();
 };
 
-class ElemFuncName : public PatternElement
+class ElemName : public PatternElement
 {
 public:
-	ElemFuncName(std::string name);
-	~ElemFuncName();
+	ElemName(std::string name);
+	~ElemName();
 
 	void SaveOrigElem();
-	void RestoreOrigElem();
 };
 
 class ElemLeftBracket : public PatternElement
 {
 private:
-	int mod;
+	uint8_t mod;
 public:
-	ElemLeftBracket(int mod);
+	ElemLeftBracket(uint8_t mod);
 	~ElemLeftBracket();
 
 	void SaveOrigElem();
-	void RestoreOrigElem();
 	
 	inline int GetMod() const { return mod; }
 };
@@ -123,13 +119,12 @@ public:
 class ElemRightBracket : public PatternElement
 {
 private:
-	int mod;
+	uint8_t mod;
 public:
-	ElemRightBracket(int mod);
+	ElemRightBracket(uint8_t mod);
 	~ElemRightBracket();
 
 	void SaveOrigElem();
-	void RestoreOrigElem();
 	
 	inline int GetMod() const { return mod; }
 };
@@ -141,7 +136,6 @@ public:
 	~ElemColon();
 
 	void SaveOrigElem();
-	void RestoreOrigElem();
 };
 
 class ElemNewLine : public PatternElement
@@ -151,19 +145,17 @@ public:
 	~ElemNewLine();
 	
 	void SaveOrigElem();
-	void RestoreOrigElem();
 };
 
 class ElemValue : public PatternElement
 {
 private:
-	int mod;
+	uint8_t mod;
 public:
-	ElemValue(int mod);
+	ElemValue(uint8_t mod);
 	~ElemValue();
 
 	void SaveOrigElem();
-	void RestoreOrigElem();
 	
 	inline int GetMod() const { return mod; }
 };

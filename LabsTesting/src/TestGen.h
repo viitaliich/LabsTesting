@@ -13,12 +13,12 @@ struct Element {
 
 // ???
 struct Keyword {
-	KeywordType mod;
+	ModKeyword mod;
 	std::string str;
 };
 // ???
 struct Bracket {
-	BracketType mod;
+	ModBracket mod;
 	std::string str;
 };
 
@@ -26,22 +26,56 @@ enum class LabNumber : uint8_t {
 	LAB1 = 1
 };
 
-enum class RuleName : int {
+enum class Rules : uint8_t{
 	// 0 for combination of rules maybe
-	UPPER_CASE = 1,
-	LOWER_CASE,
-	ADD_NUMBER,
-	ADD_UNDERSCORE,
+	CORRECT_UPPER_CASE = 1,
+	CORRECT_LOWER_CASE,
+	CORRECT_ADD_NUMBER,
+	CORRECT_ADD_UNDERSCORE,
+	CORRECT_SPACES,
+	CORRECT_ADD_CHAR,
+	CORRECT_ABSENT,
+	CORRECT_SUBSTITUTE,
+	CORRECT_ADD_SPECIAL_SYM,
+	CORRECT_TO_NUMBER,
+	CORRECT_TO_KEYWORD,
+	CORRECT_FIRST_NUMBER,
+	CORRECT_ADD_COUNT,
 
-	ADD_CHAR,
-	ABSENT,
-	SUBSTITUTE,
+	INCORRECT_UPPER_CASE,
+	INCORRECT_LOWER_CASE,
+	INCORRECT_ADD_NUMBER,
+	INCORRECT_ADD_UNDERSCORE,
+	INCORRECT_SPACES,
 
-	ADD_SPECIAL_SYM,
-	TO_NUMBER,
-	TO_KEYWORD,
-	FIRST_NUMBER,
-	ADD_COUNT,
+	INCORRECT_ADD_CHAR,
+	INCORRECT_ABSENT,
+	INCORRECT_SUBSTITUTE,
+
+	INCORRECT_ADD_SPECIAL_SYM,
+	INCORRECT_TO_NUMBER,
+	INCORRECT_TO_KEYWORD,
+	INCORRECT_FIRST_NUMBER,
+	INCORRECT_ADD_COUNT,
+};
+
+enum class IncorrectRules : uint8_t {
+	// 0 for combination of rules maybe
+	INCORRECT_UPPER_CASE = 1,
+	INCORRECT_LOWER_CASE,
+	INCORRECT_ADD_NUMBER,
+	INCORRECT_ADD_UNDERSCORE,
+	INCORRECT_SPACES,
+
+	INCORRECT_ADD_CHAR,
+	INCORRECT_ABSENT,
+	INCORRECT_SUBSTITUTE,
+
+	INCORRECT_ADD_SPECIAL_SYM,
+	INCORRECT_TO_NUMBER,
+	INCORRECT_TO_KEYWORD,
+	INCORRECT_FIRST_NUMBER,
+	INCORRECT_ADD_COUNT,
 };
 
 class TestGen
@@ -72,21 +106,22 @@ private:
 	void Incorrect();
 
 	void GenPattern();
-	void PatternToText();
+	void CorrectToText();
+	void IncorrectToText();
 
 	std::string FindKeyword(int mod);
 
-	void KeywordTestGen(std::string value, RuleName rule);
-	void SpaceTestGen(const int space_num);
-	void FuncNameTestGen(RuleName rule);
-	void BracketTestGen(RuleName rule);
-	void ColonTestGen(RuleName rule);
-	void IntDecTestGen(RuleName rule);
-	void IntBinTestGen(RuleName rule);
-	void IntOctTestGen(RuleName rule);
-	void IntHexTestGen(RuleName rule);
-	void FloatTestGen(RuleName rule);
-	void StringTestGen(RuleName rule);
+	void KeywordTestGen(std::string value, Rules rule);
+	void SpaceTestGen(Rules rule, const int space_num);
+	void FuncNameTestGen(Rules rule);
+	void BracketTestGen(Rules rule);
+	void ColonTestGen(Rules rule);
+	void IntDecTestGen(Rules rule);
+	void IntBinTestGen(Rules rule);
+	void IntOctTestGen(Rules rule);
+	void IntHexTestGen(Rules rule);
+	void FloatTestGen(Rules rule);
+	void StringTestGen(Rules rule);
 
 public:
 	TestGen(uint8_t lab_num /* variant*/);		// ???

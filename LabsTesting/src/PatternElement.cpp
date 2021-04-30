@@ -1,6 +1,6 @@
-#include "PatternElement.h"
-
 #include <iostream>
+
+#include "PatternElement.h"
 
 
 PatternElement::PatternElement(ElementType type, std::string value)
@@ -21,12 +21,12 @@ void PatternElement::SetValue(std::string value) {
 }
 
 // ElemFuncKeyword
-ElemKeyword::ElemKeyword(int mod)
+ElemKeyword::ElemKeyword(uint8_t mod)
 	:
 	mod(mod),
 	PatternElement(ElementType::TYPE_KEYWORD, "")
 {
-	switch (mod){
+	switch (mod) {
 
 	case KEYWORD_DEF:
 		value = "def";
@@ -35,6 +35,9 @@ ElemKeyword::ElemKeyword(int mod)
 	case KEYWORD_RETURN:
 		value = "return";
 		break;
+	default:
+		std::cout << "ERROR: ElemKeyword constructor\n";
+		exit(1);
 	}
 }
 
@@ -45,10 +48,6 @@ ElemKeyword::~ElemKeyword()
 void ElemKeyword::SaveOrigElem() {
 	orig_val = new ElemKeyword(mod);
 }
-
-//void ElemKeyword::RestoreOrigElem() {
-//	memcpy(this, orig_val, sizeof(*orig_val));
-//}
 
 // ElemSpace
 ElemSpace::ElemSpace()
@@ -64,30 +63,22 @@ void ElemSpace::SaveOrigElem() {
 	orig_val = new ElemSpace();
 }
 
-//void ElemSpace::`OrigElem() {
-//	memcpy(this, orig_val, sizeof(*orig_val));
-//}
-
-// ElemFuncName
-ElemFuncName::ElemFuncName(std::string name)
+// ElemName
+ElemName::ElemName(std::string name)
 	:
 	PatternElement(ElementType::TYPE_NAME, name)
 {}
 
-ElemFuncName::~ElemFuncName()
+ElemName::~ElemName()
 {
 }
 
-void ElemFuncName::SaveOrigElem() {
-	orig_val = new ElemFuncName(this->value);		// ???
+void ElemName::SaveOrigElem() {
+	orig_val = new ElemName(this->value);		// take name iterator points at
 }
 
-//void ElemFuncName::RestoreOrigElem() {
-//	memcpy(this, orig_val, sizeof(*orig_val));
-//}
-
-// ElemBrackets
-ElemLeftBracket::ElemLeftBracket(int mod)
+// ElemLeftBracket
+ElemLeftBracket::ElemLeftBracket(uint8_t mod)
 	:
 	mod(mod),
 	PatternElement(ElementType::TYPE_BRACKET, "")
@@ -96,6 +87,9 @@ ElemLeftBracket::ElemLeftBracket(int mod)
 	case BRACKET_LPAREN:
 		value = "(";
 		break;
+	default:
+		std::cout << "ERROR: ElemLeftBracket constructor\n";
+		exit(1);
 	}
 }
 
@@ -107,11 +101,8 @@ void ElemLeftBracket::SaveOrigElem() {
 	orig_val = new ElemLeftBracket(mod);
 }
 
-//void ElemLeftBracket::RestoreOrigElem() {
-//	memcpy(this, orig_val, sizeof(*orig_val));
-//}
-
-ElemRightBracket::ElemRightBracket(int mod)
+// ElemRightBracket
+ElemRightBracket::ElemRightBracket(uint8_t mod)
 	:
 	mod(mod),
 	PatternElement(ElementType::TYPE_BRACKET, "")
@@ -120,6 +111,9 @@ ElemRightBracket::ElemRightBracket(int mod)
 	case BRACKET_RPAREN:
 		value = ")";
 		break;
+	default:
+		std::cout << "ERROR: ElemRightBracket constructor\n";
+		exit(1);
 	}
 }
 
@@ -130,10 +124,6 @@ ElemRightBracket::~ElemRightBracket()
 void ElemRightBracket::SaveOrigElem() {
 	orig_val = new ElemRightBracket(mod);
 }
-
-//void ElemRightBracket::RestoreOrigElem() {
-//	memcpy(this, orig_val, sizeof(*orig_val));
-//}
 
 // ElemColon
 ElemColon::ElemColon()
@@ -163,13 +153,8 @@ void ElemNewLine::SaveOrigElem() {
 	orig_val = new ElemNewLine();
 }
 
-//void ElemNewLine::RestoreOrigElem() {
-//	memcpy(this, orig_val, sizeof(*orig_val));
-//}
-
 // ElemValue
-
-ElemValue::ElemValue(int mod)
+ElemValue::ElemValue(uint8_t mod)
 	:
 	mod(mod),
 	PatternElement(ElementType::TYPE_VALUE, "")
@@ -199,6 +184,9 @@ ElemValue::ElemValue(int mod)
 		value = "hello";
 		break;
 	}
+	default:
+		std::cout << "ERROR: ElemValue constructor\n";
+		exit(1);
 	}
 }
 
@@ -209,7 +197,3 @@ ElemValue::~ElemValue()
 void ElemValue::SaveOrigElem() {
 	orig_val = new ElemValue(mod);
 }
-
-//void ElemValue::RestoreOrigElem() {
-//	memcpy(this, orig_val, sizeof(*orig_val));
-//}
