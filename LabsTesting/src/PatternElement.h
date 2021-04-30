@@ -4,17 +4,17 @@
 #include <vector>
 #include <string>
 
-enum KeywordType {
+enum KeywordType : int8_t {
 	KEYWORD_DEF = 1,
 	KEYWORD_RETURN
 };
 
-enum SpaceType {
+enum SpaceType : int8_t {
 	SPACE_SPACE = 1,
 	SPACE_TAB
 };
 
-enum BracketType {
+enum BracketType : int8_t {
 	BRACKET_LPAREN = 1,
 	BRACKET_RPAREN,
 	BRACKET_LSQUARE,
@@ -27,7 +27,7 @@ enum BracketType {
 	BRACKET_RANGLE,
 };
 
-enum ValueType {
+enum ValueType : int8_t {
 	VALUE_INT_DEC = 1,
 	VALUE_INT_BIN,
 	VALUE_INT_OCT,
@@ -37,13 +37,13 @@ enum ValueType {
 };
 
 enum class ElementType : int8_t {
-	KEYWORD,
-	SPACE,
-	FUNC_NAME,
-	BRACKET,
-	COLON,
-	NEW_LINE,
-	VALUE
+	TYPE_KEYWORD,
+	TYPE_SPACE,
+	TYPE_NAME,
+	TYPE_BRACKET,
+	TYPE_COLON,
+	TYPE_NEW_LINE,
+	TYPE_VALUE
 };
 
 
@@ -51,7 +51,6 @@ class PatternElement
 {
 protected:
 	ElementType type;
-	std::vector <std::string> values;		// ???
 	std::string value;
 	PatternElement* orig_val;
 
@@ -60,11 +59,10 @@ protected:
 	~PatternElement();
 
 public:
-	//inline std::string GetValue() const { return values[0]; }		// [0] ???
 	void SetValue(std::string value);
 
-	void RestoreOrigElem();
 	virtual void SaveOrigElem() = 0;		
+	void RestoreOrigElem();
 	
 	inline std::string GetValue() const { return value; }
 	inline ElementType GetType() const { return type; }

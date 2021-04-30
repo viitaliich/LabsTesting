@@ -6,11 +6,17 @@
 
 #include "PatternElement.h"
 
+struct Element {
+	int8_t mod;
+	std::string val;
+};
+
+// ???
 struct Keyword {
 	KeywordType mod;
 	std::string str;
 };
-
+// ???
 struct Bracket {
 	BracketType mod;
 	std::string str;
@@ -35,6 +41,7 @@ enum class RuleName : int {
 	TO_NUMBER,
 	TO_KEYWORD,
 	FIRST_NUMBER,
+	ADD_COUNT,
 };
 
 class TestGen
@@ -43,28 +50,28 @@ private:
 	uint8_t lab_num;
 	std::vector <PatternElement*> pattern;
 	std::vector <PatternElement*>::iterator it;
+
+	// Do we need this ???
 	std::stringstream ssbuf_cor;
 	std::stringstream ssbuf_incor;
 
-	std::vector <Keyword> keywords;
-	std::vector <Bracket> brackets;
+	std::vector <Element> keywords;		// Element -> Keyword if there are problems 
+	std::vector <Element> brackets;		// Element -> Bracket if there are problems 
 
-	std::string test;
+	std::string test;					// generated test
 	std::vector <std::string> correct_tests;
 	std::vector <std::string> incorrect_tests;
 
 public:
-	// TODO: output buffer for single test
-	// TODO: output buffer for all tests
+	// TODO: output buffer for single test		???
+	// TODO: output buffer for all tests		???
 
 private:
-	std::string ReadFile(const std::string& file);
-	//void Correct(const size_t index);
-	//void Incorrect(const size_t index);
+	std::string ReadFile(const std::string& file);		// do we need this here ???
 	void Correct();
 	void Incorrect();
-	void GenPattern();
 
+	void GenPattern();
 	void PatternToText();
 
 	std::string FindKeyword(int mod);
@@ -73,15 +80,16 @@ private:
 	void SpaceTestGen(const int space_num);
 	void FuncNameTestGen(RuleName rule);
 	void BracketTestGen(RuleName rule);
-	void IntDecTestGen();
-	void IntBinTestGen();
-	void IntOctTestGen();
-	void IntHexTestGen();
-	void FloatTestGen();
-	void StringTestGen();
+	void ColonTestGen(RuleName rule);
+	void IntDecTestGen(RuleName rule);
+	void IntBinTestGen(RuleName rule);
+	void IntOctTestGen(RuleName rule);
+	void IntHexTestGen(RuleName rule);
+	void FloatTestGen(RuleName rule);
+	void StringTestGen(RuleName rule);
 
 public:
-	TestGen(uint8_t lab_num);
+	TestGen(uint8_t lab_num /* variant*/);		// ???
 	~TestGen();
 	
 	void Generate();

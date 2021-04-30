@@ -24,7 +24,7 @@ void PatternElement::SetValue(std::string value) {
 ElemKeyword::ElemKeyword(int mod)
 	:
 	mod(mod),
-	PatternElement(ElementType::KEYWORD, "")
+	PatternElement(ElementType::TYPE_KEYWORD, "")
 {
 	switch (mod){
 
@@ -53,7 +53,7 @@ void ElemKeyword::SaveOrigElem() {
 // ElemSpace
 ElemSpace::ElemSpace()
 	:
-	PatternElement(ElementType::SPACE, " ")
+	PatternElement(ElementType::TYPE_SPACE, " ")
 {}
 
 ElemSpace::~ElemSpace()
@@ -71,7 +71,7 @@ void ElemSpace::SaveOrigElem() {
 // ElemFuncName
 ElemFuncName::ElemFuncName(std::string name)
 	:
-	PatternElement(ElementType::FUNC_NAME, name)
+	PatternElement(ElementType::TYPE_NAME, name)
 {}
 
 ElemFuncName::~ElemFuncName()
@@ -90,7 +90,7 @@ void ElemFuncName::SaveOrigElem() {
 ElemLeftBracket::ElemLeftBracket(int mod)
 	:
 	mod(mod),
-	PatternElement(ElementType::BRACKET, "")
+	PatternElement(ElementType::TYPE_BRACKET, "")
 {
 	switch (mod) {
 	case BRACKET_LPAREN:
@@ -114,7 +114,7 @@ void ElemLeftBracket::SaveOrigElem() {
 ElemRightBracket::ElemRightBracket(int mod)
 	:
 	mod(mod),
-	PatternElement(ElementType::BRACKET, "")
+	PatternElement(ElementType::TYPE_BRACKET, "")
 {
 	switch (mod) {
 	case BRACKET_RPAREN:
@@ -138,7 +138,7 @@ void ElemRightBracket::SaveOrigElem() {
 // ElemColon
 ElemColon::ElemColon()
 	:
-	PatternElement(ElementType::COLON, ":")
+	PatternElement(ElementType::TYPE_COLON, ":")
 {}
 
 ElemColon::~ElemColon()
@@ -152,7 +152,7 @@ void ElemColon::SaveOrigElem() {
 // ElemNewLine
 ElemNewLine::ElemNewLine()
 	:
-	PatternElement(ElementType::NEW_LINE, "\n")
+	PatternElement(ElementType::TYPE_NEW_LINE, "\n")
 {}
 
 ElemNewLine::~ElemNewLine()
@@ -172,7 +172,7 @@ void ElemNewLine::SaveOrigElem() {
 ElemValue::ElemValue(int mod)
 	:
 	mod(mod),
-	PatternElement(ElementType::VALUE, "")
+	PatternElement(ElementType::TYPE_VALUE, "")
 {
 	switch (mod) {
 	case VALUE_INT_DEC: {

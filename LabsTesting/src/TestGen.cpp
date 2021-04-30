@@ -31,11 +31,12 @@ std::string TestGen::ReadFile(const std::string& path) {
 }
 
 std::string TestGen::FindKeyword(int mod) {
-	std::vector<Keyword>::iterator it;
+	//std::vector<Keyword>::iterator it;
+	std::vector<Element>::iterator it;
 	
 	for (it = keywords.begin(); it != keywords.end(); it++) {
 		if (it->mod == mod) {
-			return it->str;
+			return it->val;
 		}
 	}
 	//return "";
@@ -181,7 +182,8 @@ void TestGen::FuncNameTestGen(RuleName rule) {
 	}
 
 	default:
-		// TODO
+		std::cout << "ERROR: something went wrong.\n";
+		exit(1);
 		break;
 	}
 }
@@ -196,7 +198,7 @@ void TestGen::BracketTestGen(RuleName rule) {
 		(*it)->SetValue(val);
 		PatternToText();
 		break;
-	case RuleName::SUBSTITUTE:
+	case RuleName::SUBSTITUTE:		// substitute on left or right respectively or opposite
 		// TODO
 		if (mod == BracketType::BRACKET_LPAREN) {
 			// TODO
@@ -211,27 +213,58 @@ void TestGen::BracketTestGen(RuleName rule) {
 		// TODO
 		// TODO to_char
 		break;
-	case RuleName::ADD_COUNT: {
+	case RuleName::ADD_COUNT: {  // TODO: also add it to CORRECT tests 
 		// TODO
-		// ...
-
 		// as spaces...
 	}
-
-
-	
-
-
 	default:
+		std::cout << "ERROR: something went wrong.\n";
+		exit(1);
 		break;
 	}
-
-
-
 }
 
-void TestGen::IntDecTestGen() {
-	// TODO: add rules
+void TestGen::ColonTestGen(RuleName rule) {
+	std::string val = "";
+	
+	switch (rule)
+	{
+	case RuleName::ABSENT:	
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	case RuleName::SUBSTITUTE:	
+		// TODO: other symbols
+		val = ";";
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	//case RuleName::TO_CHAR:
+		// TODO
+		// TODO to_char
+		// ???
+		//break;
+	default:
+		std::cout << "ERROR: something went wrong.\n";
+		exit(1);
+		break;
+	}
+}
+
+void TestGen::IntDecTestGen(RuleName rule) {
+	// TODO: add rules correctly
+	std::string val = "";
+	switch (rule)
+	{
+	case RuleName::ABSENT:
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	default:
+		std::cout << "ERROR: something went wrong\n";
+		exit(1);
+		break;
+	}
 
 	std::default_random_engine generator;		// TODO: make it single instance as static outside all scopes in this file
 	std::uniform_int_distribution<int> distribution(0, INT_MAX);
@@ -242,7 +275,21 @@ void TestGen::IntDecTestGen() {
 	(*it)->SetValue(val);
 	PatternToText();
 }
-void TestGen::IntBinTestGen() {
+void TestGen::IntBinTestGen(RuleName rule) {
+	// TODO: add rules correctly
+	std::string val = "";
+	switch (rule)
+	{
+	case RuleName::ABSENT:
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	default:
+		std::cout << "ERROR: something went wrong\n";
+		exit(1);
+		break;
+	}
+
 	std::default_random_engine generator;
 	std::uniform_int_distribution<int> distribution(1, 28);
 	int len = distribution(generator);
@@ -258,8 +305,22 @@ void TestGen::IntBinTestGen() {
 	PatternToText();
 }
 
-void TestGen::IntOctTestGen() {
+void TestGen::IntOctTestGen(RuleName rule) {
 	// TODO: IN THIS VERSION OF MY PYTHON-ASM COMILER OCTALS ARE [0o...], NOT [0...] (0o11 / 011)
+
+		// TODO: add rules correctly
+	std::string val = "";
+	switch (rule)
+	{
+	case RuleName::ABSENT:
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	default:
+		std::cout << "ERROR: something went wrong\n";
+		exit(1);
+		break;
+	}
 
 	std::default_random_engine generator;
 	std::uniform_int_distribution<int> distribution(1, 10);
@@ -276,7 +337,22 @@ void TestGen::IntOctTestGen() {
 	PatternToText();
 }
 
-void TestGen::IntHexTestGen() {
+void TestGen::IntHexTestGen(RuleName rule) {
+
+	// TODO: add rules correctly
+	std::string val = "";
+	switch (rule)
+	{
+	case RuleName::ABSENT:
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	default:
+		std::cout << "ERROR: something went wrong\n";
+		exit(1);
+		break;
+	}
+
 	std::default_random_engine generator;
 	// len 3 + 4 = 7
 	std::uniform_int_distribution<int> distr_num(1, 3);
@@ -300,8 +376,22 @@ void TestGen::IntHexTestGen() {
 	PatternToText();
 }
 
-void TestGen::FloatTestGen() {
+void TestGen::FloatTestGen(RuleName rule) {
 	// TODO: proper random float generation
+
+		// TODO: add rules correctly
+	std::string val = "";
+	switch (rule)
+	{
+	case RuleName::ABSENT:
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	default:
+		std::cout << "ERROR: something went wrong\n";
+		exit(1);
+		break;
+	}
 
 	std::default_random_engine generator;
 	std::uniform_int_distribution<int> dist_one(0, 10);
@@ -317,7 +407,22 @@ void TestGen::FloatTestGen() {
 	PatternToText();
 }
 
-void TestGen::StringTestGen() {
+void TestGen::StringTestGen(RuleName rule) {
+
+	// TODO: add rules correctly
+	std::string val = "";
+	switch (rule)
+	{
+	case RuleName::ABSENT:
+		(*it)->SetValue(val);
+		PatternToText();
+		break;
+	default:
+		std::cout << "ERROR: something went wrong\n";
+		exit(1);
+		break;
+	}
+
 	std::string val = "";
 	const int len = 5;		// ???
 
@@ -332,6 +437,8 @@ void TestGen::StringTestGen() {
 }
 
 void TestGen::KeywordTestGen(std::string value, RuleName rule) {		// maybe do reference ???
+
+
 	std::default_random_engine generator;
 	std::string val = value;
 
@@ -387,7 +494,7 @@ void TestGen::Correct() {
 	
 	ElementType type = (*it)->GetType();
 
-	if (type == ElementType::KEYWORD) {
+	if (type == ElementType::TYPE_KEYWORD) {
 		int mod = (*it)->GetMod();		// enum CLASS ???
 
 		if (mod == KEYWORD_DEF) {
@@ -397,20 +504,20 @@ void TestGen::Correct() {
 			// DO NOTHING
 		}
 	}
-	else if (type == ElementType::SPACE) {
+	else if (type == ElementType::TYPE_SPACE) {
 		// declare it somewhere ???
 		int min_sp_num = 0;
 		int rand_sp_num;		
 		const int max_sp_num = 6;		// why 6 ???
 		
 		ElementType t = (*(it-1))->GetType();
-		if (t == ElementType::KEYWORD || t == ElementType::NEW_LINE) {
+		if (t == ElementType::TYPE_KEYWORD || t == ElementType::TYPE_NEW_LINE) {
 			min_sp_num = 1;		
 		}
-		else if (t == ElementType::FUNC_NAME || 
-				 t == ElementType::BRACKET || 
-				 t == ElementType::COLON || 
-				 t == ElementType::VALUE) {
+		else if (t == ElementType::TYPE_NAME || 
+				 t == ElementType::TYPE_BRACKET || 
+				 t == ElementType::TYPE_COLON || 
+				 t == ElementType::TYPE_VALUE) {
 			min_sp_num = 0;
 		}
 
@@ -424,14 +531,14 @@ void TestGen::Correct() {
 		SpaceTestGen(rand_sp_num);
 		SpaceTestGen(max_sp_num);
 	}
-	else if (type == ElementType::FUNC_NAME) {
+	else if (type == ElementType::TYPE_NAME) {
 		// Currently only "main" supports	??? TODO
 		FuncNameTestGen(RuleName::LOWER_CASE);
 		FuncNameTestGen(RuleName::UPPER_CASE);
 		FuncNameTestGen(RuleName::ADD_NUMBER);
 		FuncNameTestGen(RuleName::ADD_UNDERSCORE);
 	}
-	else if (type == ElementType::BRACKET) {
+	else if (type == ElementType::TYPE_BRACKET) {
 		int mod = (*it)->GetMod();		// enum CLASS ???
 
 		if (mod == BracketType::BRACKET_LPAREN) {
@@ -441,18 +548,18 @@ void TestGen::Correct() {
 			// DO NOTHING
 		}
 	}
-	else if (type == ElementType::COLON) {
+	else if (type == ElementType::TYPE_COLON) {
 		// DO NOTHING
 	}
-	else if (type == ElementType::NEW_LINE) {
+	else if (type == ElementType::TYPE_NEW_LINE) {
 		// DO NOTHING
 	}
-	else if (type == ElementType::VALUE) {
+	else if (type == ElementType::TYPE_VALUE) {
 		int mod = (*it)->GetMod();		// enum CLASS ???
 
 		if (mod == ValueType::VALUE_INT_DEC) {
 			
-			IntDecTestGen();
+			IntDecTestGen();	// rule
 			IntDecTestGen();
 
 		}
@@ -489,7 +596,7 @@ void TestGen::Incorrect() {
 
 	ElementType type = (*it)->GetType();
 
-	if (type == ElementType::KEYWORD) {
+	if (type == ElementType::TYPE_KEYWORD) {
 		int mod = (*it)->GetMod();		// enum CLASS ???
 
 		if (mod == KEYWORD_DEF) {
@@ -506,16 +613,16 @@ void TestGen::Incorrect() {
 			// ...
 		}
 	}
-	else if (type == ElementType::SPACE) {
+	else if (type == ElementType::TYPE_SPACE) {
 		// TODO: make cosmetic enhancements ???
 
 		ElementType t = (*(it - 1))->GetType();
 		int m = (*(it - 1))->GetMod();
-		if (t == ElementType::KEYWORD) {
+		if (t == ElementType::TYPE_KEYWORD) {
 			int min_sp_num = 0;
 			SpaceTestGen(min_sp_num);
 		}
-		else if (t == ElementType::BRACKET && m == BRACKET_LPAREN) {
+		else if (t == ElementType::TYPE_BRACKET && m == BRACKET_LPAREN) {
 			// def main ( [name here] ). Incorrect test
 
 			std::string val = "";
@@ -534,7 +641,7 @@ void TestGen::Incorrect() {
 		}
 		// else DO NOTHING		???
 	}
-	else if (type == ElementType::FUNC_NAME) {
+	else if (type == ElementType::TYPE_NAME) {
 		// Currently only "main" supports	??? TODO
 
 		FuncNameTestGen(RuleName::ABSENT);		
@@ -545,12 +652,52 @@ void TestGen::Incorrect() {
 		//FuncNameTestGen(RuleName::FIRST_NUMBER);	// double it maybe ???
 
 	}
-	else if (type == ElementType::BRACKET) {
+	else if (type == ElementType::TYPE_BRACKET) {
 		BracketTestGen(RuleName::ABSENT);
-x		
-
 	}
+	else if (type == ElementType::TYPE_COLON) {
+		ColonTestGen(RuleName::ABSENT);
+		ColonTestGen(RuleName::SUBSTITUTE);
+		//ColonTestGen(RuleName::...);
+	}
+	else if (type == ElementType::TYPE_NEW_LINE) {
+		std::string val = " ";
+		(*it)->SetValue(val);
+		PatternToText();
+	}
+	else if (type == ElementType::TYPE_VALUE) {
+		int mod = (*it)->GetMod();		
 
+		if (mod == ValueType::VALUE_INT_DEC) {
+
+			IntDecTestGen();	// rule
+			IntDecTestGen();
+
+		}
+		else if (mod == ValueType::VALUE_INT_BIN) {
+
+			IntBinTestGen();
+			IntBinTestGen();
+
+		}
+		else if (mod == ValueType::VALUE_INT_OCT) {
+			IntOctTestGen();
+			IntOctTestGen();
+		}
+		else if (mod == ValueType::VALUE_INT_HEX) {
+			IntHexTestGen();
+			IntHexTestGen();
+		}
+		else if (mod == ValueType::VALUE_FLOAT) {
+			FloatTestGen();
+			FloatTestGen();
+
+		}
+		else if (mod == ValueType::VALUE_STR) {
+			StringTestGen();
+			StringTestGen();
+		}
+	}
 	// TODO
 	// ...
 
@@ -587,41 +734,47 @@ void TestGen::Generate() {
 
 void TestGen::GenPattern() {
 	// TODO: pattern generation Program -> Data Base ???
-	if (lab_num == 1) {
-		pattern.push_back(new ElemKeyword(KeywordType::KEYWORD_DEF));
-		pattern.push_back(new ElemSpace());
-		pattern.push_back(new ElemFuncName("main"));
-		pattern.push_back(new ElemSpace());
-		pattern.push_back(new ElemLeftBracket(BracketType::BRACKET_LPAREN));
-		pattern.push_back(new ElemSpace());
-		pattern.push_back(new ElemRightBracket(BracketType::BRACKET_RPAREN));
-		pattern.push_back(new ElemSpace());
-		pattern.push_back(new ElemColon());
-		pattern.push_back(new ElemSpace());
-		pattern.push_back(new ElemNewLine());
-		pattern.push_back(new ElemSpace());		// ...
-		pattern.push_back(new ElemKeyword(KeywordType::KEYWORD_RETURN));
-		pattern.push_back(new ElemSpace());
-		pattern.push_back(new ElemValue(ValueType::VALUE_INT_DEC));		// value as an argument
-
+	switch (lab_num)
+	{
+	case 1: {
+		pattern = {
+			// instead of push_back
+			new ElemKeyword(KeywordType::KEYWORD_DEF),
+			new ElemSpace(),
+			new ElemFuncName("main"),
+			new ElemSpace(),
+			new ElemLeftBracket(BracketType::BRACKET_LPAREN),
+			new ElemSpace(),
+			new ElemRightBracket(BracketType::BRACKET_RPAREN),
+			new ElemSpace(),
+			new ElemColon(),
+			new ElemSpace(),
+			new ElemNewLine(),
+			new ElemSpace(),		// ...
+			new ElemKeyword(KeywordType::KEYWORD_RETURN),
+			new ElemSpace(),
+			new ElemValue(ValueType::VALUE_INT_DEC)		// value as an argument
+		};
+		break;
+	}
+	default:
+		std::cout << "ERROR: undefined lab number\n";
+		exit(1);
+		break;
+	}
+	
 		//pattern.push_back(new ElemValue(ValueType::VALUE_INT_DEC));		// value as an argument
 		//pattern.push_back(new ElemValue(ValueType::VALUE_INT_BIN));		// value as an argument
 		//pattern.push_back(new ElemValue(ValueType::VALUE_INT_OCT));		// value as an argument
 		//pattern.push_back(new ElemValue(ValueType::VALUE_INT_HEX));		// value as an argument
 		//pattern.push_back(new ElemValue(ValueType::VALUE_FLOAT));		// value as an argument
 		//pattern.push_back(new ElemValue(ValueType::VALUE_STR));		// value as an argument
-
-	}
-	else {
-		std::cout << "ERROR: undefined lab number\n";
-		exit(1);
-	}
 }
 
 TestGen::TestGen(uint8_t lab_num)
 	:
 	lab_num(lab_num),
-	test(""),
+	test(""),		// generated test
 	keywords({ 
 		{ KEYWORD_DEF, "def" },
 		{ KEYWORD_RETURN, "return" }
