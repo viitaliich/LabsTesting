@@ -44,7 +44,9 @@ enum class ElementType : uint8_t {
 	TYPE_BRACKET,
 	TYPE_COLON,
 	TYPE_NEW_LINE,
-	TYPE_VALUE
+	TYPE_VALUE,
+
+	TYPE_BASE_VALUE,
 };
 
 
@@ -158,4 +160,13 @@ public:
 	void SaveOrigElem();
 	
 	inline int GetMod() const { return mod; }
+};
+
+class BaseValue : public PatternElement {
+private:
+	std::vector<ElemValue*> possible_values;
+	void SaveOrigElem();
+public:
+	BaseValue(std::vector<ElemValue*> values);
+	~BaseValue();
 };

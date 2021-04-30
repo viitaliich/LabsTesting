@@ -846,7 +846,12 @@ void TestGen::GenPattern() {
 			new ElemSpace(),		// ...
 			new ElemKeyword(ModKeyword::KEYWORD_RETURN),
 			new ElemSpace(),
-			new ElemValue(ModValue::VALUE_INT_DEC)		// value as an argument
+			//new ElemValue(ModValue::VALUE_INT_DEC),		// value as an argument
+			// for diifferent possible variants
+			new BaseValue({
+				new ElemValue(ModValue::VALUE_INT_DEC),
+				new ElemValue(ModValue::VALUE_FLOAT),
+				}),
 		};
 		break;
 	}

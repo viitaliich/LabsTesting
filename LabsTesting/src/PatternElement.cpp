@@ -197,3 +197,17 @@ ElemValue::~ElemValue()
 void ElemValue::SaveOrigElem() {
 	orig_val = new ElemValue(mod);
 }
+
+BaseValue::BaseValue(std::vector<ElemValue*> values)
+	:
+	possible_values(values),
+	PatternElement(ElementType::TYPE_BASE_VALUE, "")
+{}
+
+BaseValue::~BaseValue() {
+
+}
+
+void BaseValue::SaveOrigElem() {
+	return;
+}
