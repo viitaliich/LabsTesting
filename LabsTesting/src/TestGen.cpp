@@ -270,10 +270,11 @@ void TestGen::ColonTestGen(Rules rule) {
 
 void TestGen::IntDecTestGen(Rules rule) {
 	// TODO: add rules correctly
-	std::string val = "";
+	std::string val;
 	switch (rule)
 	{
 	case Rules::INCORRECT_ABSENT:
+		val = "";
 		(*it)->SetValue(val);
 		CorrectToText();
 		break;
@@ -291,17 +292,18 @@ void TestGen::IntDecTestGen(Rules rule) {
 	boost::uniform_int<> distribution(0, INT_MAX);
 	int num = distribution(generator);
 
-	std::string val = std::to_string(num);
+	val = std::to_string(num);
 
 	(*it)->SetValue(val);
 	CorrectToText();
 }
 void TestGen::IntBinTestGen(Rules rule) {
 	// TODO: add rules correctly
-	std::string val = "";
+	std::string val;
 	switch (rule)
 	{
 	case Rules::INCORRECT_ABSENT:
+		val = "";
 		(*it)->SetValue(val);
 		CorrectToText();
 		break;
@@ -319,7 +321,7 @@ void TestGen::IntBinTestGen(Rules rule) {
 	boost::uniform_int<> distribution(1, 28);
 	int len = distribution(generator);
 
-	std::string val = "0b0";
+	val = "0b0";
 	for (int i = 0; i < len; i++) {
 		//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
 		boost::uniform_int<> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
@@ -335,7 +337,7 @@ void TestGen::IntOctTestGen(Rules rule) {
 	// TODO: IN THIS VERSION OF MY PYTHON-ASM COMILER OCTALS ARE [0o...], NOT [0...] (0o11 / 011)
 
 		// TODO: add rules correctly
-	std::string val = "";
+	std::string val;
 	switch (rule)
 	{
 	case Rules::INCORRECT_ABSENT:
@@ -356,11 +358,7 @@ void TestGen::IntOctTestGen(Rules rule) {
 	boost::uniform_int<> distribution(1, 10);
 	int len = distribution(generator);
 
-	boost::mt19937 generator;
-	boost::uniform_int<> distribution(1, 10);
-	int len = distribution(generator);
-
-	std::string val = "0o0";
+	val = "0o0";
 	for (int i = 0; i < len; i++) {
 		boost::uniform_int<> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
 		//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
@@ -375,7 +373,7 @@ void TestGen::IntOctTestGen(Rules rule) {
 void TestGen::IntHexTestGen(Rules rule) {
 
 	// TODO: add rules correctly
-	std::string val = "";
+	std::string val;
 	switch (rule)
 	{
 	case Rules::INCORRECT_ABSENT:
@@ -399,7 +397,7 @@ void TestGen::IntHexTestGen(Rules rule) {
 	int len_num = distr_num(generator);
 	int len_sym = distr_sym(generator);
 
-	std::string val = "0x0";
+	val = "0x0";
 	for (int i = 0; i < len_num; i++) {
 		boost::uniform_int<> dist(ASCII_0, ASCII_9);
 		//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_9);
@@ -421,7 +419,7 @@ void TestGen::FloatTestGen(Rules rule) {
 	// TODO: proper random float generation
 
 		// TODO: add rules correctly
-	std::string val = "";
+	std::string val;
 	switch (rule)
 	{
 	case Rules::INCORRECT_ABSENT:
@@ -441,12 +439,12 @@ void TestGen::FloatTestGen(Rules rule) {
 	//int num_two = dist_two(generator);
 
 	boost::mt19937 generator;
-	boost::uniform_int<> distribution(0, 10);
-	boost::uniform_int<> distribution(1, 100);
-	int num_one= distribution(generator);
-	int num_two = distribution(generator);
+	boost::uniform_int<> distribution_one(0, 10);
+	boost::uniform_int<> distribution_two(1, 100);
+	int num_one= distribution_one(generator);
+	int num_two = distribution_two(generator);
 
-	std::string val = std::to_string(num_one);
+	val = std::to_string(num_one);
 	val += '.';
 	val += std::to_string(num_two);
 
@@ -470,7 +468,7 @@ void TestGen::StringTestGen(Rules rule) {
 		break;
 	}
 
-	std::string val = "";
+	//std::string val = "";
 	const int len = 5;		// ???
 
 	//std::default_random_engine generator;
@@ -486,7 +484,7 @@ void TestGen::StringTestGen(Rules rule) {
 	CorrectToText();
 }
 
-void TestGen::KeywordTestGen(std::string value, Rules rule) {		// maybe do reference ???
+void TestGen::KeywordTestGen(std::string value, Rules rule) {		// maybe do reference ???		get value before call ???
 
 
 	//std::default_random_engine generator;
@@ -566,6 +564,7 @@ void TestGen::Correct() {
 			exit(1);
 			break;
 		}
+		break;
 	}
 	case ElementType::TYPE_SPACE: {
 		// declare it somewhere ???
@@ -597,6 +596,8 @@ void TestGen::Correct() {
 		SpaceTestGen(Rules::CORRECT_SPACES, min_sp_num);
 		SpaceTestGen(Rules::CORRECT_SPACES, rand_sp_num);
 		SpaceTestGen(Rules::CORRECT_SPACES, max_sp_num);
+		break;
+
 	}
 	case ElementType::TYPE_NAME: {
 		// Currently only "main" supports	??? TODO
@@ -604,6 +605,8 @@ void TestGen::Correct() {
 		FuncNameTestGen(Rules::CORRECT_UPPER_CASE);
 		FuncNameTestGen(Rules::CORRECT_ADD_NUMBER);
 		FuncNameTestGen(Rules::CORRECT_ADD_UNDERSCORE);
+		break;
+
 	}
 	case ElementType::TYPE_BRACKET: {
 		int mod = (*it)->GetMod();		
@@ -614,45 +617,53 @@ void TestGen::Correct() {
 		else if (mod == ModBracket::BRACKET_RPAREN) {
 			// DO NOTHING
 		}
+		break;
+
 	}
 	case ElementType::TYPE_COLON: {
 		// DO NOTHING
+		break;
+
 	}
 	case ElementType::TYPE_NEW_LINE: {
 		// DO NOTHING
+		break;
+
 	}
 	case ElementType::TYPE_VALUE: {
 		int mod = (*it)->GetMod();		// enum CLASS ???
 
 		if (mod == ModValue::VALUE_INT_DEC) {
 
-			IntDecTestGen();	// rule
-			IntDecTestGen(); 
+			IntDecTestGen(Rules::CORRECT_INT_DEC);	// rule
+			IntDecTestGen(Rules::CORRECT_INT_DEC);
 
 		}
 		else if (mod == ModValue::VALUE_INT_BIN) {
 
-			IntBinTestGen();
-			IntBinTestGen();
+			IntBinTestGen(Rules::CORRECT_INT_BIN);
+			IntBinTestGen(Rules::CORRECT_INT_BIN);
 
 		}
 		else if (mod == ModValue::VALUE_INT_OCT) {
-			IntOctTestGen();
-			IntOctTestGen();
+			IntOctTestGen(Rules::CORRECT_INT_OCT);
+			IntOctTestGen(Rules::CORRECT_INT_OCT);
 		}
 		else if (mod == ModValue::VALUE_INT_HEX) {
-			IntHexTestGen();
-			IntHexTestGen();
+			IntHexTestGen(Rules::CORRECT_INT_HEX);
+			IntHexTestGen(Rules::CORRECT_INT_HEX);
 		}
 		else if (mod == ModValue::VALUE_FLOAT) {
-			FloatTestGen();
-			FloatTestGen();
+			FloatTestGen(Rules::CORRECT_FLOAT);
+			FloatTestGen(Rules::CORRECT_FLOAT);
 
 		}
 		else if (mod == ModValue::VALUE_STR) {
-			StringTestGen();
-			StringTestGen();
+			StringTestGen(Rules::CORRECT_STR);
+			StringTestGen(Rules::CORRECT_STR);
 		}
+		break;
+
 	}
 	default:
 		std::cout << "ERROR: correct test error\n";
@@ -683,6 +694,7 @@ void TestGen::Incorrect() {
 		else if (mod == KEYWORD_RETURN) {
 			// ...
 		}
+		break;
 	}
 	case ElementType::TYPE_SPACE: {
 		// TODO: make cosmetic enhancements ???
@@ -700,9 +712,8 @@ void TestGen::Incorrect() {
 			boost::mt19937 generator;
 			const int min_len = 1;
 			const int max_len = 10;		// ???
-			boost::mt19937 generator;
-			boost::uniform_int<> distribution(min_len, max_len);
-			int len = distribution(generator);
+			boost::uniform_int<> distribution_len(min_len, max_len);
+			int len = distribution_len(generator);
 			boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
 			//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
 			for (int i = 0; i <= len; i++) {
@@ -713,6 +724,8 @@ void TestGen::Incorrect() {
 			CorrectToText();
 		}
 		// else DO NOTHING		???
+		break;
+
 	}
 	case ElementType::TYPE_NAME : {
 		// Currently only "main" supports	??? TODO
@@ -724,52 +737,62 @@ void TestGen::Incorrect() {
 		FuncNameTestGen(Rules::INCORRECT_FIRST_NUMBER);	// double it maybe ???
 		//FuncNameTestGen(RuleName::FIRST_NUMBER);	// double it maybe ???
 
+		break;
+
 	}
 	case ElementType::TYPE_BRACKET: {
 		BracketTestGen(Rules::INCORRECT_ABSENT);
+		break;
+
 	}
 	case ElementType::TYPE_COLON: {
 		ColonTestGen(Rules::INCORRECT_ABSENT);
 		ColonTestGen(Rules::INCORRECT_SUBSTITUTE);
 		//ColonTestGen(RuleName::...);
+		break;
+
 	}
 	case ElementType::TYPE_NEW_LINE: {
 		std::string val = " ";
 		(*it)->SetValue(val);
 		CorrectToText();
+		break;
+
 	}
 	case ElementType::TYPE_VALUE: {
 		int mod = (*it)->GetMod();
 
 		if (mod == ModValue::VALUE_INT_DEC) {
 
-			IntDecTestGen();	// rule
-			IntDecTestGen();
+			IntDecTestGen(Rules::INCORRECT_INT_DEC);	// rule
+			IntDecTestGen(Rules::INCORRECT_INT_DEC);
 
 		}
 		else if (mod == ModValue::VALUE_INT_BIN) {
 
-			IntBinTestGen();
-			IntBinTestGen();
+			IntBinTestGen(Rules::INCORRECT_INT_BIN);
+			IntBinTestGen(Rules::INCORRECT_INT_BIN);
 
 		}
 		else if (mod == ModValue::VALUE_INT_OCT) {
-			IntOctTestGen();
-			IntOctTestGen();
+			IntOctTestGen(Rules::INCORRECT_INT_OCT);
+			IntOctTestGen(Rules::INCORRECT_INT_OCT);
 		}
 		else if (mod == ModValue::VALUE_INT_HEX) {
-			IntHexTestGen();
-			IntHexTestGen();
+			IntHexTestGen(Rules::INCORRECT_INT_HEX);
+			IntHexTestGen(Rules::INCORRECT_INT_HEX);
 		}
 		else if (mod == ModValue::VALUE_FLOAT) {
-			FloatTestGen();
-			FloatTestGen();
+			FloatTestGen(Rules::INCORRECT_FLOAT);
+			FloatTestGen(Rules::INCORRECT_FLOAT);
 
 		}
 		else if (mod == ModValue::VALUE_STR) {
-			StringTestGen();
-			StringTestGen();
+			StringTestGen(Rules::INCORRECT_STR);
+			StringTestGen(Rules::INCORRECT_STR);
 		}
+		break;
+
 	}
 	default:
 		std::cout << "ERROR: incorrect gen type\n";
