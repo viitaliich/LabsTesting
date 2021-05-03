@@ -20,6 +20,10 @@ void PatternElement::SetValue(std::string value) {
 	this->value = value;
 }
 
+//void PatternElement::SetPVIter(std::vector<ElemValue*>::iterator pv_iter) {
+//
+//}
+
 // ElemFuncKeyword
 ElemKeyword::ElemKeyword(uint8_t mod)
 	:
@@ -154,8 +158,10 @@ void ElemNewLine::SaveOrigElem() {
 }
 
 // ElemValue
-ElemValue::ElemValue(uint8_t mod)
+ElemValue::ElemValue(uint8_t mod, std::vector<ElemValue*> values)
 	:
+	possible_values(values),
+	//pv_iter(possible_values.begin()),
 	mod(mod),
 	PatternElement(ElementType::TYPE_VALUE, "")
 {
@@ -184,23 +190,38 @@ ElemValue::ElemValue(uint8_t mod)
 		value = "hello";
 		break;
 	}
+	case VALUE_BASE: {
+		value = "2";		// ???
+		break;
+	}
 	default:
 		std::cout << "ERROR: ElemValue constructor\n";
 		exit(1);
 	}
 }
 
+//std::vector <ElemValue*>::iterator ElemValue::i = ElemValue::possible_values.begin();
+//possible_values.begin();
+
+//std::string ElemValue::GetValue() {
+//	//i = possible_values.begin(); // ???
+//
+//	//return (*i)->value;
+//}
+
+
 ElemValue::~ElemValue()
 {
 }
 
 void ElemValue::SaveOrigElem() {
-	orig_val = new ElemValue(mod);
+	orig_val = new ElemValue(mod, possible_values);
 }
 
 BaseValue::BaseValue(std::vector<ElemValue*> values)
 	:
 	possible_values(values),
+	pv_iter(possible_values.begin()),
 	PatternElement(ElementType::TYPE_BASE_VALUE, "")
 {}
 
@@ -209,5 +230,4 @@ BaseValue::~BaseValue() {
 }
 
 void BaseValue::SaveOrigElem() {
-	return;
 }

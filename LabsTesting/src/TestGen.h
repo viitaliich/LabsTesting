@@ -28,48 +28,29 @@ enum class LabNumber : uint8_t {
 
 enum class Rules : uint8_t{
 	// 0 for combination of rules maybe
-	CORRECT_UPPER_CASE = 1,
-	CORRECT_LOWER_CASE,
-	CORRECT_ADD_NUMBER,
+	CORRECT_SPACES = 1,
+	CORRECT_TO_NAME,
+	CORRECT_ADD_NUM,
 	CORRECT_ADD_UNDERSCORE,
-	CORRECT_SPACES,
-	CORRECT_ADD_CHAR,
-	CORRECT_ABSENT,
-	CORRECT_SUBSTITUTE,
-	CORRECT_ADD_SPECIAL_SYM,
-	CORRECT_TO_NUMBER,
-	CORRECT_TO_KEYWORD,
-	CORRECT_FIRST_NUMBER,
-	CORRECT_ADD_COUNT,
-	CORRECT_INT_DEC,
-	CORRECT_INT_BIN,
-	CORRECT_INT_OCT,
-	CORRECT_INT_HEX,
-	CORRECT_FLOAT,
-	CORRECT_STR,
+	CORRECT_TO_UPPER_CASE,
+	CORRECT_SUBSTITUTE_TYPE,
+	CORRECT_SUBSTITUTE_NUMERAL_SYS,
+	CORRECT_RANDOM_VAL,
 
-	INCORRECT_INT_DEC,
-	INCORRECT_INT_BIN,
-	INCORRECT_INT_OCT,
-	INCORRECT_INT_HEX,
-	INCORRECT_FLOAT,
-	INCORRECT_STR,
-
-	INCORRECT_UPPER_CASE,
-	INCORRECT_LOWER_CASE,
-	INCORRECT_ADD_NUMBER,
-	INCORRECT_ADD_UNDERSCORE,
-	INCORRECT_SPACES,
-
-	INCORRECT_ADD_CHAR,
 	INCORRECT_ABSENT,
-	INCORRECT_SUBSTITUTE,
-
+	INCORRECT_TO_UPPER_CASE,
+	INCORRECT_SPACES,
+	INCORRECT_FUNC_PARAMS,
+	INCORRECT_ADD_NUM,
 	INCORRECT_ADD_SPECIAL_SYM,
 	INCORRECT_TO_NUMBER,
+	INCORRECT_SUBSTITUTION,
+	INCORRECT_WRONG_NUM,
+	INCORRECT_SUBSTITUTE_TYPE,
+	INCORRECT_SUBSTITUTE_NUMERAL_SYS,
+	INCORRECT_TO_SPECIAL_SYM,
 	INCORRECT_TO_KEYWORD,
-	INCORRECT_FIRST_NUMBER,
-	INCORRECT_ADD_COUNT,
+	INCORRECT_TO_NAME,
 };
 
 enum class IncorrectRules : uint8_t {
@@ -120,15 +101,20 @@ private:
 
 	void GenPattern();
 	void CorrectToText();
+	void CorrectToTextPV();		// ???
 	void IncorrectToText();
 
 	std::string FindKeyword(int mod);
 
-	void KeywordTestGen(std::string value, Rules rule);
+	void KeywordTestGen(Rules rule);
 	void SpaceTestGen(Rules rule, const int space_num);
-	void FuncNameTestGen(Rules rule);
+	void NameTestGen(Rules rule);
 	void BracketTestGen(Rules rule);
 	void ColonTestGen(Rules rule);
+
+	void ValueTestGen(std::vector<ElemValue*>::iterator, Rules rule);
+
+	// ???
 	void IntDecTestGen(Rules rule);
 	void IntBinTestGen(Rules rule);
 	void IntOctTestGen(Rules rule);

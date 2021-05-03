@@ -3,6 +3,7 @@
 //#include <random>
 #include "boost/random.hpp"
 #include "boost/generator_iterator.hpp"
+#include "boost/algorithm/string.hpp"
 
 #include "TestGen.h"
 
@@ -66,26 +67,146 @@ void TestGen::IncorrectToText() {
 	test = "";
 }
 
-void TestGen::SpaceTestGen(Rules rule, const int space_num) {
-	// TODO: add rules CORRECT_SPACES, INCORRECT_SPACES
+void TestGen::KeywordTestGen(Rules rule) {
 
-	// space
-	std::string val_sp(space_num, ' ');	// space as char
+	(*it)->SaveOrigElem();
 
-	(*it)->SetValue(val_sp);
-	if(rule == Rules::CORRECT_SPACES) CorrectToText();
-	else IncorrectToText();
+	//std::default_random_engine generator;
+	boost::mt19937 generator;
 
-	// tab
-	std::string val_tab(space_num, '\t');	// space as char
+	std::string val = (*it)->GetValue();
 
-	(*it)->SetValue(val_tab);
-	if (rule == Rules::CORRECT_SPACES) CorrectToText();
-	else IncorrectToText();
+	switch (rule)
+	{
 
+	case Rules::INCORRECT_TO_UPPER_CASE: {
+		//std::transform(val.begin(), val.end(), val.begin(), ::toupper);		// TODO: use boost library here ???
+		boost::to_upper(val);
+
+		(*it)->SetValue(val);
+		IncorrectToText();
+		break;
+	}
+	
+	case Rules::INCORRECT_TO_NAME: {
+		boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+		//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+		val += (char)distribution(generator);
+
+		(*it)->SetValue(val);
+		IncorrectToText();
+		break;
+	}
+
+	case Rules::INCORRECT_ABSENT: {
+		val = "";
+
+		(*it)->SetValue(val);
+		IncorrectToText();
+		break;
+	}
+
+	case Rules::INCORRECT_SUBSTITUTION:
+		// TODO: substitute on another keyword
+
+		(*it)->SetValue(val);
+		IncorrectToText();
+		break;
+	default:
+		std::cout << "ERROR: [KeywordTestGen]\n";
+		exit(1);
+		break;
+	}
+	(*it)->RestoreOrigElem();
 }
 
-void TestGen::FuncNameTestGen(Rules rule) {
+void TestGen::SpaceTestGen(Rules rule, const int space_num) {
+	(*it)->SaveOrigElem();
+
+	std::string val = "";
+	switch (rule)
+	{
+	case Rules::CORRECT_SPACES: {
+		// space
+		std::string val_sp(space_num, ' ');	// space as char
+		(*it)->SetValue(val_sp);
+		CorrectToText();
+
+		// tab
+		std::string val_tab(space_num, '\t');	// space as char
+		(*it)->SetValue(val_tab);
+		CorrectToText();
+
+		break;
+	}
+	
+	case Rules::INCORRECT_SPACES: {
+		// space
+		std::string val_sp(space_num, ' ');	// space as char
+		(*it)->SetValue(val_sp);
+		IncorrectToText();
+
+		// tab
+		std::string val_tab(space_num, '\t');	// space as char
+		(*it)->SetValue(val_tab);
+		IncorrectToText();
+
+		break;
+	}
+	case Rules::INCORRECT_FUNC_PARAMS: {
+		// TODO: name instead space between ()
+		val = "";
+		boost::mt19937 generator;
+		const int min_len = 1;
+		const int max_len = 10;		// ???
+		boost::uniform_int<> distribution_len(min_len, max_len);
+		int len = distribution_len(generator);
+		boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+		//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+		for (int i = 0; i <= len; i++) {
+			val += distribution(generator);		// append symbol to string
+		}
+
+		(*it)->SetValue(val);
+		CorrectToText();
+
+		break;
+	}
+	
+	case Rules::INCORRECT_TO_NAME: {
+		// TODO: gen once, not for every rule
+		std::string val = "";
+
+		//std::default_random_engine generator;
+		boost::mt19937 generator;
+		const int min_len = 1;
+		const int max_len = 10;		// ???
+
+		//std::uniform_int_distribution<int> distribution(min_len, max_len);
+		//int len = distribution(generator);		// length of name
+		boost::uniform_int<> dist_len(min_len, max_len);
+		int len = dist_len(generator);
+
+		//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+		boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+
+		for (int i = 0; i <= len; i++) {
+			val += distribution(generator);		// append symbol to string
+		}
+		(*it)->SetValue(val);
+		IncorrectToText();
+
+		break;
+	}
+	default:
+		break;
+	}
+	(*it)->RestoreOrigElem();
+}
+
+void TestGen::NameTestGen(Rules rule) {
+	(*it)->SaveOrigElem();
+
 	std::string val = "";
 
 	//std::default_random_engine generator;
@@ -99,7 +220,7 @@ void TestGen::FuncNameTestGen(Rules rule) {
 	int len = distribution(generator);
 
 	switch (rule) {
-	case Rules::CORRECT_UPPER_CASE: {
+	case Rules::CORRECT_TO_UPPER_CASE: {
 		//std::uniform_int_distribution<int> distribution(ASCII_FIRST_UP_LETTER, ASCII_LAST_UP_LETTER);
 		boost::uniform_int<> distribution(ASCII_FIRST_UP_LETTER, ASCII_LAST_UP_LETTER);
 		for (int i = 0; i <= len; i++) {
@@ -112,7 +233,7 @@ void TestGen::FuncNameTestGen(Rules rule) {
 		break;
 	}
 
-	case Rules::CORRECT_LOWER_CASE: {
+	case Rules::CORRECT_TO_NAME: {
 		//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
 		boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
 
@@ -124,7 +245,7 @@ void TestGen::FuncNameTestGen(Rules rule) {
 
 		break;
 	}
-	case Rules::CORRECT_ADD_NUMBER: {
+	case Rules::CORRECT_ADD_NUM: {
 		boost::uniform_int<> distribution_one(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
 		for (int i = 0; i <= len; i++) {
 			val += distribution_one(generator);		// append symbol to string
@@ -156,11 +277,13 @@ void TestGen::FuncNameTestGen(Rules rule) {
 	}
 	case Rules::INCORRECT_ABSENT: {
 		(*it)->SetValue(val);
-		CorrectToText();
+		IncorrectToText();
 		break;
 	}
 	case Rules::INCORRECT_ADD_SPECIAL_SYM: {
-		// TODO: not all symbols are taken into account
+		// TODO: not all symbols are taken into account;
+		// make an array of all symbols
+
 		val = (*it)->GetValue();
 		
 		//std::uniform_int_distribution<int> distribution(ASCII_EXCLAMATION, ASCII_SLASH);
@@ -170,7 +293,7 @@ void TestGen::FuncNameTestGen(Rules rule) {
 		val += (*it)->GetValue();
 
 		(*it)->SetValue(val);
-		CorrectToText();
+		IncorrectToText();
 		break;
 	}
 	case Rules::INCORRECT_TO_NUMBER: {
@@ -180,32 +303,35 @@ void TestGen::FuncNameTestGen(Rules rule) {
 		std::string val = std::to_string(num);
 
 		(*it)->SetValue(val);
-		CorrectToText();
+		IncorrectToText();
 		break;
 	}
 	case Rules::INCORRECT_TO_KEYWORD: {
 		// TODO ...
 		break;
 	}
-	case Rules::INCORRECT_FIRST_NUMBER: {
+	case Rules::INCORRECT_ADD_NUM: {
 		boost::uniform_int<> distribution(ASCII_FIRST_NUMBER, ASCII_LAST_NUMBER);
 		//std::uniform_int_distribution<int> distribution(ASCII_FIRST_NUMBER, ASCII_LAST_NUMBER);
 		val += (char)distribution(generator);
 		val += (*it)->GetValue();
 
 		(*it)->SetValue(val);
-		CorrectToText();
+		IncorrectToText();
 		break;
 	}
 
 	default:
-		std::cout << "ERROR: something went wrong.\n";
+		std::cout << "ERROR: [NameTestGen]\n";
 		exit(1);
 		break;
 	}
+	(*it)->RestoreOrigElem();
 }
 
 void TestGen::BracketTestGen(Rules rule) {
+	(*it)->SaveOrigElem();
+
 	int mod = (*it)->GetMod();
 	std::string val = "";
 
@@ -213,9 +339,9 @@ void TestGen::BracketTestGen(Rules rule) {
 	{
 	case Rules::INCORRECT_ABSENT:		// TODO absent rule as separate function
 		(*it)->SetValue(val);
-		CorrectToText();
+		IncorrectToText();
 		break;
-	case Rules::INCORRECT_SUBSTITUTE:		// substitute on left or right respectively or opposite
+	case Rules::INCORRECT_SUBSTITUTION:		// substitute on left or right respectively or opposite
 		// TODO
 		if (mod == ModBracket::BRACKET_LPAREN) {
 			// TODO
@@ -226,22 +352,23 @@ void TestGen::BracketTestGen(Rules rule) {
 		// ...
 		// TODO
 		break;
-	case Rules::INCORRECT_TO_NUMBER:
+	
+	case Rules::INCORRECT_WRONG_NUM: {  // TODO: also add it to CORRECT tests 
 		// TODO
-		// TODO to_char
+		// do as in case of spaces...
 		break;
-	case Rules::INCORRECT_ADD_COUNT: {  // TODO: also add it to CORRECT tests 
-		// TODO
-		// as spaces...
 	}
 	default:
-		std::cout << "ERROR: something went wrong.\n";
+		std::cout << "ERROR: BracketTestGen\n";
 		exit(1);
 		break;
 	}
+	(*it)->RestoreOrigElem();
 }
 
 void TestGen::ColonTestGen(Rules rule) {
+	(*it)->SaveOrigElem();
+
 	std::string val = "";
 	
 	switch (rule)
@@ -250,294 +377,434 @@ void TestGen::ColonTestGen(Rules rule) {
 		(*it)->SetValue(val);
 		CorrectToText();
 		break;
-	case Rules::INCORRECT_SUBSTITUTE:
+	case Rules::INCORRECT_TO_SPECIAL_SYM:
+		// ???
 		// TODO: other symbols
 		val = ";";
 		(*it)->SetValue(val);
 		CorrectToText();
 		break;
-	//case RuleName::TO_CHAR:
-		// TODO
-		// TODO to_char
-		// ???
-		//break;
 	default:
-		std::cout << "ERROR: something went wrong.\n";
+		std::cout << "ERROR: ColonTestGen\n";
 		exit(1);
 		break;
 	}
+	(*it)->RestoreOrigElem();
 }
 
-void TestGen::IntDecTestGen(Rules rule) {
-	// TODO: add rules correctly
-	std::string val;
-	switch (rule)
-	{
-	case Rules::INCORRECT_ABSENT:
-		val = "";
-		(*it)->SetValue(val);
-		CorrectToText();
-		break;
-	default:
-		std::cout << "ERROR: something went wrong\n";
-		exit(1);
-		break;
-	}
+void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
+	(*it)->SaveOrigElem();
 
-	//std::default_random_engine generator;		// TODO: make it single instance as static outside all scopes in this file
-	//std::uniform_int_distribution<int> distribution(0, INT_MAX);
-	//int num = distribution(generator);
 
-	boost::mt19937 generator;
-	boost::uniform_int<> distribution(0, INT_MAX);
-	int num = distribution(generator);
+	std::string val = "";
+	uint8_t m = (*iter)->GetMod();
+	//ElemValue* original = new ElemValue(m, {});
+	//BaseValue* base = static_cast<BaseValue*>(*it);
+	//for ((*base).pv_iter; (*base).pv_iter != (*base).possible_values.end(); (*base).pv_iter++) {
+		//uint8_t m = (*(*base).pv_iter)->GetMod();		// ???
 
-	val = std::to_string(num);
-
-	(*it)->SetValue(val);
-	CorrectToText();
-}
-void TestGen::IntBinTestGen(Rules rule) {
-	// TODO: add rules correctly
-	std::string val;
-	switch (rule)
-	{
-	case Rules::INCORRECT_ABSENT:
-		val = "";
-		(*it)->SetValue(val);
-		CorrectToText();
-		break;
-	default:
-		std::cout << "ERROR: something went wrong\n";
-		exit(1);
-		break;
-	}
-
-	//std::default_random_engine generator;
-	//std::uniform_int_distribution<int> distribution(1, 28);
-	//int len = distribution(generator);
-
-	boost::mt19937 generator;
-	boost::uniform_int<> distribution(1, 28);
-	int len = distribution(generator);
-
-	val = "0b0";
-	for (int i = 0; i < len; i++) {
-		//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
-		boost::uniform_int<> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
-		char sym = (char)dist(generator);
-		val += sym;
-	}
-
-	(*it)->SetValue(val);
-	CorrectToText();
-}
-
-void TestGen::IntOctTestGen(Rules rule) {
 	// TODO: IN THIS VERSION OF MY PYTHON-ASM COMILER OCTALS ARE [0o...], NOT [0...] (0o11 / 011)
 
-		// TODO: add rules correctly
-	std::string val;
 	switch (rule)
 	{
-	case Rules::INCORRECT_ABSENT:
-		(*it)->SetValue(val);
-		CorrectToText();
-		break;
-	default:
-		std::cout << "ERROR: something went wrong\n";
-		exit(1);
-		break;
-	}
-
-	//std::default_random_engine generator;
-	//std::uniform_int_distribution<int> distribution(1, 10);
-	//int len = distribution(generator);
-
-	boost::mt19937 generator;
-	boost::uniform_int<> distribution(1, 10);
-	int len = distribution(generator);
-
-	val = "0o0";
-	for (int i = 0; i < len; i++) {
-		boost::uniform_int<> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
-		//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
-		char sym = (char)dist(generator);
-		val += sym;
-	}
-
-	(*it)->SetValue(val);
-	CorrectToText();
-}
-
-void TestGen::IntHexTestGen(Rules rule) {
-
-	// TODO: add rules correctly
-	std::string val;
-	switch (rule)
-	{
-	case Rules::INCORRECT_ABSENT:
-		(*it)->SetValue(val);
-		CorrectToText();
-		break;
-	default:
-		std::cout << "ERROR: something went wrong\n";
-		exit(1);
-		break;
-	}
-
-	//std::default_random_engine generator;
-
-	boost::mt19937 generator;
-	// len 3 + 4 = 7
-	boost::uniform_int<> distr_num(1, 3);
-	//std::uniform_int_distribution<int> distr_num(1, 3);
-	boost::uniform_int<> distr_sym(1, 4);
-	//std::uniform_int_distribution<int> distr_sym(1, 4);
-	int len_num = distr_num(generator);
-	int len_sym = distr_sym(generator);
-
-	val = "0x0";
-	for (int i = 0; i < len_num; i++) {
-		boost::uniform_int<> dist(ASCII_0, ASCII_9);
-		//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_9);
-		char sym = (char)dist(generator);
-		val += sym;
-	}
-	for (int i = 0; i < len_sym; i++) {
-		boost::uniform_int<> dist(ASCII_A, ASCII_F);
-		//std::uniform_int_distribution<int> dist(ASCII_A, ASCII_F);
-		char sym = (char)dist(generator);
-		val += sym;
-	}
-
-	(*it)->SetValue(val);
-	CorrectToText();
-}
-
-void TestGen::FloatTestGen(Rules rule) {
-	// TODO: proper random float generation
-
-		// TODO: add rules correctly
-	std::string val;
-	switch (rule)
-	{
-	case Rules::INCORRECT_ABSENT:
-		(*it)->SetValue(val);
-		CorrectToText();
-		break;
-	default:
-		std::cout << "ERROR: something went wrong\n";
-		exit(1);
-		break;
-	}
-
-	//std::default_random_engine generator;
-	//std::uniform_int_distribution<int> dist_one(0, 10);
-	//std::uniform_int_distribution<int> dist_two(1, 100);
-	//int num_one = dist_one(generator);
-	//int num_two = dist_two(generator);
-
-	boost::mt19937 generator;
-	boost::uniform_int<> distribution_one(0, 10);
-	boost::uniform_int<> distribution_two(1, 100);
-	int num_one= distribution_one(generator);
-	int num_two = distribution_two(generator);
-
-	val = std::to_string(num_one);
-	val += '.';
-	val += std::to_string(num_two);
-
-	(*it)->SetValue(val);
-	CorrectToText();
-}
-
-void TestGen::StringTestGen(Rules rule) {
-
-	// TODO: add rules correctly
-	std::string val = "";
-	switch (rule)
-	{
-	case Rules::INCORRECT_ABSENT:
-		(*it)->SetValue(val);
-		CorrectToText();
-		break;
-	default:
-		std::cout << "ERROR: something went wrong\n";
-		exit(1);
-		break;
-	}
-
-	//std::string val = "";
-	const int len = 5;		// ???
-
-	//std::default_random_engine generator;
-	//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-
-	boost::mt19937 generator;
-	boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-	for (int i = 0; i <= len; i++) {
-		val += distribution(generator);		// append symbol to string
-	}
-
-	(*it)->SetValue(val);
-	CorrectToText();
-}
-
-void TestGen::KeywordTestGen(std::string value, Rules rule) {		// maybe do reference ???		get value before call ???
-
-
-	//std::default_random_engine generator;
-	boost::mt19937 generator;
-
-	std::string val = value;
-
-	switch (rule)
-	{
-	case Rules::INCORRECT_UPPER_CASE: {
-		std::transform(val.begin(), val.end(), val.begin(), ::toupper);		// TODO: use boost library here ???
-
-		(*it)->SetValue(val);
-		CorrectToText();
-		break;
-	}
-	
-	case Rules::INCORRECT_ADD_NUMBER:
-		// TODO: maybe
-		break;
-	case Rules::INCORRECT_ADD_UNDERSCORE:
-		// TODO: maybe
-		break;
-	case Rules::INCORRECT_ADD_CHAR: {
-		boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-		//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-		val += (char)distribution(generator);
-		
-		(*it)->SetValue(val);
-		CorrectToText();
-		break;
-	}
-
-	case Rules::INCORRECT_ABSENT: {
-		val = "";
-		
-		(*it)->SetValue(val);
-		CorrectToText();
-		break;
-	}
-
-	case Rules::INCORRECT_SUBSTITUTE:
+	case Rules::CORRECT_SUBSTITUTE_TYPE:
 		// TODO
+		switch (m) {
+		case VALUE_INT_DEC: {
+
+			break;
+		}
+		case VALUE_INT_BIN: {
+			break;
+
+		}
+		case VALUE_INT_OCT: {
+			break;
+
+		}
+		case VALUE_INT_HEX: {
+			break;
+
+		}
+		case VALUE_FLOAT: {
+			break;
+
+		}
+		case VALUE_STR: {
+			break;
+
+		}
+		default:
+			std::cout << "ERROR: [ValueTestGen]\n";
+			exit(1);
+
+		}
+		break;
+	case Rules::CORRECT_SUBSTITUTE_NUMERAL_SYS:
+		// TODO
+		switch (m) {
+		case VALUE_INT_DEC: {
+
+			break;
+		}
+		case VALUE_INT_BIN: {
+			break;
+
+		}
+		case VALUE_INT_OCT: {
+			break;
+
+		}
+		case VALUE_INT_HEX: {
+			break;
+
+		}
+		case VALUE_FLOAT: {
+			break;
+
+		}
+		case VALUE_STR: {
+			break;
+
+		}
+		default:
+			std::cout << "ERROR: [ValueTestGen]\n";
+			exit(1);
+
+		}
+		break;
+	case Rules::CORRECT_RANDOM_VAL:
+		switch (m) {
+		case VALUE_INT_DEC: {
+			//std::default_random_engine generator;		// TODO: make it single instance as static outside all scopes in this file
+			//std::uniform_int_distribution<int> distribution(0, INT_MAX);
+			//int num = distribution(generator);
+
+			boost::mt19937 generator;
+			boost::uniform_int<> distribution(0, INT_MAX);
+			int num = distribution(generator);
+
+			val = std::to_string(num);
+
+			//(*iter)->SetValue(val);
+			(*it)->SetValue(val);
+			CorrectToText();
+			//CorrectToTextPV();
+			//(*it)->RestoreOrigElem();		// ???
+			break;
+		}
+		case VALUE_INT_BIN: {
+			//std::default_random_engine generator;
+			//std::uniform_int_distribution<int> distribution(1, 28);
+			//int len = distribution(generator);
+
+			boost::mt19937 generator;
+			boost::uniform_int<> distribution(1, 28);
+			int len = distribution(generator);
+
+			val = "0b0";
+			for (int i = 0; i < len; i++) {
+				//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
+				boost::uniform_int<> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
+				char sym = (char)dist(generator);
+				val += sym;
+			}
+
+			//(*iter)->SetValue(val);
+			(*it)->SetValue(val);
+			CorrectToText();
+			//(*it)->RestoreOrigElem();		// ???
+
+			break;
+
+		}
+		case VALUE_INT_OCT: {
+			//std::default_random_engine generator;
+			//std::uniform_int_distribution<int> distribution(1, 10);
+			//int len = distribution(generator);
+
+			boost::mt19937 generator;
+			boost::uniform_int<> distribution(1, 10);
+			int len = distribution(generator);
+
+			val = "0o0";
+			for (int i = 0; i < len; i++) {
+				boost::uniform_int<> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
+				//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
+				char sym = (char)dist(generator);
+				val += sym;
+			}
+
+			(*it)->SetValue(val);
+			//(*iter)->SetValue(val);
+			CorrectToText();
+			//(*it)->RestoreOrigElem();		// ???
+
+			break;
+
+		}
+		case VALUE_INT_HEX: {
+			//std::default_random_engine generator;
+
+			boost::mt19937 generator;
+			// len 3 + 4 = 7
+			boost::uniform_int<> distr_num(1, 3);
+			//std::uniform_int_distribution<int> distr_num(1, 3);
+			boost::uniform_int<> distr_sym(1, 4);
+			//std::uniform_int_distribution<int> distr_sym(1, 4);
+			int len_num = distr_num(generator);
+			int len_sym = distr_sym(generator);
+
+			val = "0x0";
+			for (int i = 0; i < len_num; i++) {
+				boost::uniform_int<> dist(ASCII_0, ASCII_9);
+				//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_9);
+				char sym = (char)dist(generator);
+				val += sym;
+			}
+			for (int i = 0; i < len_sym; i++) {
+				boost::uniform_int<> dist(ASCII_A, ASCII_F);
+				//std::uniform_int_distribution<int> dist(ASCII_A, ASCII_F);
+				char sym = (char)dist(generator);
+				val += sym;
+			}
+
+			(*it)->SetValue(val);
+			//(*iter)->SetValue(val);
+			CorrectToText();
+			//(*it)->RestoreOrigElem();		// ???
+
+			break;
+
+		}
+		case VALUE_FLOAT: {
+			//std::default_random_engine generator;
+			//std::uniform_int_distribution<int> dist_one(0, 10);
+			//std::uniform_int_distribution<int> dist_two(1, 100);
+			//int num_one = dist_one(generator);
+			//int num_two = dist_two(generator);
+
+			boost::mt19937 generator;
+			boost::uniform_int<> distribution_one(0, 10);
+			boost::uniform_int<> distribution_two(1, 100);
+			int num_one = distribution_one(generator);
+			int num_two = distribution_two(generator);
+
+			val = std::to_string(num_one);
+			val += '.';
+			val += std::to_string(num_two);
+
+			(*it)->SetValue(val);
+			//(*iter)->SetValue(val);
+			CorrectToText();
+			//(*it)->RestoreOrigElem();		// ???
+
+			break;
+
+		}
+		case VALUE_STR: {
+			//std::string val = "";
+			const int len = 5;		// ???
+
+			//std::default_random_engine generator;
+			//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+
+			boost::mt19937 generator;
+			boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+			for (int i = 0; i <= len; i++) {
+				val += distribution(generator);		// append symbol to string
+			}
+
+			(*it)->SetValue(val);
+			//(*iter)->SetValue(val);
+			CorrectToText();
+			//(*it)->RestoreOrigElem();		// ???
+
+			break;
+
+		}
+		default:
+			std::cout << "ERROR: [ValueTestGen]\n";
+			exit(1);
+
+		}
 
 		break;
+	case Rules::INCORRECT_ABSENT:
+		//(*iter)->SetValue(val);
+		(*it)->SetValue(val);
+		IncorrectToText();
+		break;
+	case Rules::INCORRECT_SUBSTITUTE_TYPE:
+		switch (m) {
+		case VALUE_INT_DEC: {
+
+			break;
+		}
+		case VALUE_INT_BIN: {
+			break;
+
+		}
+		case VALUE_INT_OCT: {
+			break;
+
+		}
+		case VALUE_INT_HEX: {
+			break;
+
+		}
+		case VALUE_FLOAT: {
+			break;
+
+		}
+		case VALUE_STR: {
+			break;
+
+		}
+		default:
+			std::cout << "ERROR: [ValueTestGen]\n";
+			exit(1);
+
+		}
+		break;
+	case Rules::INCORRECT_SUBSTITUTE_NUMERAL_SYS:
+		switch (m) {
+		case VALUE_INT_DEC: {
+
+			break;
+		}
+		case VALUE_INT_BIN: {
+			break;
+
+		}
+		case VALUE_INT_OCT: {
+			break;
+
+		}
+		case VALUE_INT_HEX: {
+			break;
+
+		}
+		case VALUE_FLOAT: {
+			break;
+
+		}
+		case VALUE_STR: {
+			break;
+
+		}
+		default:
+			std::cout << "ERROR: [ValueTestGen]\n";
+			exit(1);
+
+		}
+		break;
+	case Rules::INCORRECT_TO_SPECIAL_SYM:
+		switch (m) {
+		case VALUE_INT_DEC: {
+
+			break;
+		}
+		case VALUE_INT_BIN: {
+			break;
+
+		}
+		case VALUE_INT_OCT: {
+			break;
+
+		}
+		case VALUE_INT_HEX: {
+			break;
+
+		}
+		case VALUE_FLOAT: {
+			break;
+
+		}
+		case VALUE_STR: {
+			break;
+
+		}
+		default:
+			std::cout << "ERROR: [ValueTestGen]\n";
+			exit(1);
+
+		}
+		break;
+	case Rules::INCORRECT_TO_KEYWORD:
+		switch (m) {
+		case VALUE_INT_DEC: {
+
+			break;
+		}
+		case VALUE_INT_BIN: {
+			break;
+
+		}
+		case VALUE_INT_OCT: {
+			break;
+
+		}
+		case VALUE_INT_HEX: {
+			break;
+
+		}
+		case VALUE_FLOAT: {
+			break;
+
+		}
+		case VALUE_STR: {
+			break;
+
+		}
+		default:
+			std::cout << "ERROR: [ValueTestGen]\n";
+			exit(1);
+
+		}
+		break;
+	case Rules::INCORRECT_TO_NAME:
+		switch (m) {
+		case VALUE_INT_DEC: {
+
+			break;
+		}
+		case VALUE_INT_BIN: {
+			break;
+
+		}
+		case VALUE_INT_OCT: {
+			break;
+
+		}
+		case VALUE_INT_HEX: {
+			break;
+
+		}
+		case VALUE_FLOAT: {
+			break;
+
+		}
+		case VALUE_STR: {
+			break;
+
+		}
+		default:
+			std::cout << "ERROR: [ValueTestGen]\n";
+			exit(1);
+
+		}
+		break;
 	default:
-		std::cout << "ERROR: something went wrong\n";
+		std::cout << "ERROR: [ValueTestGen]\n";
 		exit(1);
 		break;
 	}
-	
-	(*it)->SetValue(val);
-	CorrectToText();
+	//memcpy(*iter, original, sizeof(*original));
+	//(*it)->RestoreOrigElem();		
+
+	//}
+	(*it)->RestoreOrigElem();
 }
 
 void TestGen::Correct() {
@@ -601,10 +868,10 @@ void TestGen::Correct() {
 	}
 	case ElementType::TYPE_NAME: {
 		// Currently only "main" supports	??? TODO
-		FuncNameTestGen(Rules::CORRECT_LOWER_CASE);
-		FuncNameTestGen(Rules::CORRECT_UPPER_CASE);
-		FuncNameTestGen(Rules::CORRECT_ADD_NUMBER);
-		FuncNameTestGen(Rules::CORRECT_ADD_UNDERSCORE);
+		NameTestGen(Rules::CORRECT_TO_NAME);
+		NameTestGen(Rules::CORRECT_ADD_NUM);
+		NameTestGen(Rules::CORRECT_ADD_UNDERSCORE);
+		NameTestGen(Rules::CORRECT_TO_UPPER_CASE);
 		break;
 
 	}
@@ -631,45 +898,20 @@ void TestGen::Correct() {
 
 	}
 	case ElementType::TYPE_VALUE: {
-		int mod = (*it)->GetMod();		// enum CLASS ???
-
-		if (mod == ModValue::VALUE_INT_DEC) {
-
-			IntDecTestGen(Rules::CORRECT_INT_DEC);	// rule
-			IntDecTestGen(Rules::CORRECT_INT_DEC);
-
-		}
-		else if (mod == ModValue::VALUE_INT_BIN) {
-
-			IntBinTestGen(Rules::CORRECT_INT_BIN);
-			IntBinTestGen(Rules::CORRECT_INT_BIN);
-
-		}
-		else if (mod == ModValue::VALUE_INT_OCT) {
-			IntOctTestGen(Rules::CORRECT_INT_OCT);
-			IntOctTestGen(Rules::CORRECT_INT_OCT);
-		}
-		else if (mod == ModValue::VALUE_INT_HEX) {
-			IntHexTestGen(Rules::CORRECT_INT_HEX);
-			IntHexTestGen(Rules::CORRECT_INT_HEX);
-		}
-		else if (mod == ModValue::VALUE_FLOAT) {
-			FloatTestGen(Rules::CORRECT_FLOAT);
-			FloatTestGen(Rules::CORRECT_FLOAT);
-
-		}
-		else if (mod == ModValue::VALUE_STR) {
-			StringTestGen(Rules::CORRECT_STR);
-			StringTestGen(Rules::CORRECT_STR);
+		ElemValue* base = static_cast<ElemValue*>(*it);
+		for (base->pv_iter = base->possible_values.begin(); base->pv_iter != base->possible_values.end(); base->pv_iter++) {
+			ValueTestGen(base->pv_iter, Rules::CORRECT_SUBSTITUTE_TYPE);
+			ValueTestGen(base->pv_iter, Rules::CORRECT_SUBSTITUTE_NUMERAL_SYS);
+			ValueTestGen(base->pv_iter, Rules::CORRECT_RANDOM_VAL);
 		}
 		break;
-
 	}
+
 	default:
 		std::cout << "ERROR: correct test error\n";
 		exit(1);
 	}
-	(*it)->RestoreOrigElem();
+	//(*it)->RestoreOrigElem();
 }
 
 void TestGen::Incorrect() {
@@ -679,21 +921,13 @@ void TestGen::Incorrect() {
 
 	switch (type) {
 	case ElementType::TYPE_KEYWORD: {
-		int mod = (*it)->GetMod();		// enum CLASS ???
+		//int mod = (*it)->GetMod();		// enum CLASS ???
+		 
+		KeywordTestGen(Rules::INCORRECT_TO_UPPER_CASE);
+		KeywordTestGen(Rules::INCORRECT_TO_NAME);
+		KeywordTestGen(Rules::INCORRECT_ABSENT);
+		KeywordTestGen(Rules::INCORRECT_SUBSTITUTION);
 
-		if (mod == KEYWORD_DEF) {
-
-			// TODO
-			KeywordTestGen((*it)->GetValue(), Rules::INCORRECT_UPPER_CASE);
-			KeywordTestGen((*it)->GetValue(), Rules::INCORRECT_ADD_CHAR);
-			KeywordTestGen((*it)->GetValue(), Rules::INCORRECT_ABSENT);
-			KeywordTestGen((*it)->GetValue(), Rules::INCORRECT_SUBSTITUTE);
-			// ...
-
-		}
-		else if (mod == KEYWORD_RETURN) {
-			// ...
-		}
 		break;
 	}
 	case ElementType::TYPE_SPACE: {
@@ -704,24 +938,11 @@ void TestGen::Incorrect() {
 		if (t == ElementType::TYPE_KEYWORD) {
 			int min_sp_num = 0;
 			SpaceTestGen(Rules::INCORRECT_SPACES, min_sp_num);
+			SpaceTestGen(Rules::INCORRECT_TO_NAME, 0);	// ???
 		}
 		else if (t == ElementType::TYPE_BRACKET && m == BRACKET_LPAREN) {
 			// def main ( [name here] ). Incorrect test
-
-			std::string val = "";
-			boost::mt19937 generator;
-			const int min_len = 1;
-			const int max_len = 10;		// ???
-			boost::uniform_int<> distribution_len(min_len, max_len);
-			int len = distribution_len(generator);
-			boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-			//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-			for (int i = 0; i <= len; i++) {
-				val += distribution(generator);		// append symbol to string
-			}
-
-			(*it)->SetValue(val);
-			CorrectToText();
+			SpaceTestGen(Rules::INCORRECT_FUNC_PARAMS, 0);
 		}
 		// else DO NOTHING		???
 		break;
@@ -730,11 +951,11 @@ void TestGen::Incorrect() {
 	case ElementType::TYPE_NAME : {
 		// Currently only "main" supports	??? TODO
 
-		FuncNameTestGen(Rules::INCORRECT_ABSENT);
-		FuncNameTestGen(Rules::INCORRECT_ADD_SPECIAL_SYM);
-		FuncNameTestGen(Rules::INCORRECT_TO_NUMBER);
-		FuncNameTestGen(Rules::INCORRECT_TO_KEYWORD);
-		FuncNameTestGen(Rules::INCORRECT_FIRST_NUMBER);	// double it maybe ???
+		NameTestGen(Rules::INCORRECT_ABSENT);
+		NameTestGen(Rules::INCORRECT_ADD_SPECIAL_SYM);
+		NameTestGen(Rules::INCORRECT_TO_NUMBER);
+		NameTestGen(Rules::INCORRECT_TO_KEYWORD);
+		NameTestGen(Rules::INCORRECT_ADD_NUM);	// double it maybe ???
 		//FuncNameTestGen(RuleName::FIRST_NUMBER);	// double it maybe ???
 
 		break;
@@ -742,57 +963,39 @@ void TestGen::Incorrect() {
 	}
 	case ElementType::TYPE_BRACKET: {
 		BracketTestGen(Rules::INCORRECT_ABSENT);
+		BracketTestGen(Rules::INCORRECT_SUBSTITUTION);
+		BracketTestGen(Rules::INCORRECT_WRONG_NUM);
 		break;
 
 	}
 	case ElementType::TYPE_COLON: {
 		ColonTestGen(Rules::INCORRECT_ABSENT);
-		ColonTestGen(Rules::INCORRECT_SUBSTITUTE);
+		ColonTestGen(Rules::INCORRECT_TO_SPECIAL_SYM);
 		//ColonTestGen(RuleName::...);
 		break;
 
 	}
 	case ElementType::TYPE_NEW_LINE: {
+
+		// TODO ???
+
 		std::string val = " ";
 		(*it)->SetValue(val);
-		CorrectToText();
+		IncorrectToText();
 		break;
 
 	}
 	case ElementType::TYPE_VALUE: {
-		int mod = (*it)->GetMod();
-
-		if (mod == ModValue::VALUE_INT_DEC) {
-
-			IntDecTestGen(Rules::INCORRECT_INT_DEC);	// rule
-			IntDecTestGen(Rules::INCORRECT_INT_DEC);
-
-		}
-		else if (mod == ModValue::VALUE_INT_BIN) {
-
-			IntBinTestGen(Rules::INCORRECT_INT_BIN);
-			IntBinTestGen(Rules::INCORRECT_INT_BIN);
-
-		}
-		else if (mod == ModValue::VALUE_INT_OCT) {
-			IntOctTestGen(Rules::INCORRECT_INT_OCT);
-			IntOctTestGen(Rules::INCORRECT_INT_OCT);
-		}
-		else if (mod == ModValue::VALUE_INT_HEX) {
-			IntHexTestGen(Rules::INCORRECT_INT_HEX);
-			IntHexTestGen(Rules::INCORRECT_INT_HEX);
-		}
-		else if (mod == ModValue::VALUE_FLOAT) {
-			FloatTestGen(Rules::INCORRECT_FLOAT);
-			FloatTestGen(Rules::INCORRECT_FLOAT);
-
-		}
-		else if (mod == ModValue::VALUE_STR) {
-			StringTestGen(Rules::INCORRECT_STR);
-			StringTestGen(Rules::INCORRECT_STR);
+		ElemValue* base = static_cast<ElemValue*>(*it);
+		for (base->pv_iter = base->possible_values.begin(); base->pv_iter != base->possible_values.end(); base->pv_iter++) {
+			ValueTestGen(base->pv_iter, Rules::INCORRECT_ABSENT);
+			ValueTestGen(base->pv_iter, Rules::INCORRECT_SUBSTITUTE_TYPE);
+			ValueTestGen(base->pv_iter, Rules::INCORRECT_SUBSTITUTE_NUMERAL_SYS);
+			ValueTestGen(base->pv_iter, Rules::INCORRECT_TO_SPECIAL_SYM);
+			ValueTestGen(base->pv_iter, Rules::INCORRECT_TO_KEYWORD);
+			ValueTestGen(base->pv_iter, Rules::INCORRECT_TO_NAME);
 		}
 		break;
-
 	}
 	default:
 		std::cout << "ERROR: incorrect gen type\n";
@@ -802,7 +1005,7 @@ void TestGen::Incorrect() {
 		// ...
 	}
 	
-	(*it)->RestoreOrigElem();
+	/*(*it)->RestoreOrigElem();*/
 }
 
 void TestGen::Generate() {
@@ -815,9 +1018,16 @@ void TestGen::Generate() {
 	// output correct_tests
 	// to file
 	std::ofstream file("./TESTFILE.txt");
+	file << "CORRECT\n\n";
 	for (int i = 0; i < correct_tests.size(); i++) {
 		file << "[" << i << "]\n";
 		file << correct_tests[i];
+		file << "\n";
+	}
+	file << "INCORRECT\n\n";
+	for (int i = 0; i < incorrect_tests.size(); i++) {
+		file << "[" << i << "]\n";
+		file << incorrect_tests[i];
 		file << "\n";
 	}
 	file.close();
@@ -846,11 +1056,13 @@ void TestGen::GenPattern() {
 			new ElemSpace(),		// ...
 			new ElemKeyword(ModKeyword::KEYWORD_RETURN),
 			new ElemSpace(),
+			// ...
 			//new ElemValue(ModValue::VALUE_INT_DEC),		// value as an argument
-			// for diifferent possible variants
-			new BaseValue({
-				new ElemValue(ModValue::VALUE_INT_DEC),
-				new ElemValue(ModValue::VALUE_FLOAT),
+			// for different possible variants
+			//new BaseValue({
+			new ElemValue(ModValue::VALUE_BASE, {
+				new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				new ElemValue(ModValue::VALUE_FLOAT, {}),
 				}),
 		};
 		break;

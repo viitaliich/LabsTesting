@@ -34,7 +34,8 @@ enum ModValue : uint8_t {
 	VALUE_INT_OCT,
 	VALUE_INT_HEX,
 	VALUE_FLOAT,
-	VALUE_STR
+	VALUE_STR,
+	VALUE_BASE,
 };
 
 enum class ElementType : uint8_t {
@@ -71,6 +72,7 @@ public:
 	inline ElementType GetType() const { return type; }
 	
 	virtual inline int GetMod() const { return 0; }
+	//virtual void SetPVIter(std::vector<ElemValue*>::iterator pv_iter);
 
 };
 
@@ -154,8 +156,13 @@ class ElemValue : public PatternElement
 private:
 	uint8_t mod;
 public:
-	ElemValue(uint8_t mod);
+	std::vector<ElemValue*> possible_values;
+	std::vector<ElemValue*>::iterator pv_iter;
+	//static std::vector <ElemValue*>::iterator i;
+public:
+	ElemValue(uint8_t mod, std::vector<ElemValue*> values);
 	~ElemValue();
+	std::string GetValue();
 
 	void SaveOrigElem();
 	
@@ -163,10 +170,15 @@ public:
 };
 
 class BaseValue : public PatternElement {
-private:
+//private:
+public:
 	std::vector<ElemValue*> possible_values;
+	std::vector<ElemValue*>::iterator pv_iter;
 	void SaveOrigElem();
 public:
 	BaseValue(std::vector<ElemValue*> values);
 	~BaseValue();
+
+
+
 };
