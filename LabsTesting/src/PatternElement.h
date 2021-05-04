@@ -6,7 +6,8 @@
 
 enum ModKeyword : uint8_t {
 	KEYWORD_DEF = 1,
-	KEYWORD_RETURN
+	KEYWORD_RETURN,
+	KEYWORD_NOT,
 };
 
 // do we need this ???
@@ -38,6 +39,19 @@ enum ModValue : uint8_t {
 	VALUE_BASE,
 };
 
+enum ModUnOp : uint8_t {
+	OP_UN_BITCOMP,
+	OP_UN_NOT,
+	OP_UN_NEG,
+};
+
+enum ModBinOp : uint8_t {
+	OP_BIN_NEG,
+	OP_BIN_ADD,
+	OP_BIN_MUL,
+	OP_BIN_DIV,
+};
+
 enum class ElementType : uint8_t {
 	TYPE_KEYWORD = 1,
 	TYPE_SPACE,
@@ -46,8 +60,9 @@ enum class ElementType : uint8_t {
 	TYPE_COLON,
 	TYPE_NEW_LINE,
 	TYPE_VALUE,
-
 	TYPE_BASE_VALUE,
+
+	TYPE_OP,
 };
 
 
@@ -178,7 +193,34 @@ public:
 public:
 	BaseValue(std::vector<ElemValue*> values);
 	~BaseValue();
+};
 
+class ElemUnOperation : public PatternElement
+{
+private:
+	uint8_t mod;
+public:
+public:
+	ElemUnOperation(uint8_t mod);
+	~ElemUnOperation();
+	std::string GetValue();
 
+	void SaveOrigElem();
 
+	inline int GetMod() const { return mod; }
+};
+
+class ElemBinOperation : public PatternElement
+{
+private:
+	uint8_t mod;
+public:
+public:
+	ElemBinOperation(uint8_t mod);
+	~ElemBinOperation();
+	std::string GetValue();
+
+	void SaveOrigElem();
+
+	inline int GetMod() const { return mod; }
 };

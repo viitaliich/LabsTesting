@@ -85,6 +85,8 @@ private:
 
 	std::vector <Element> keywords;		// Element -> Keyword if there are problems 
 	std::vector <Element> brackets;		// Element -> Bracket if there are problems 
+	std::vector <Element> unary_ops;		
+	std::vector <Element> binary_ops;		
 
 	std::string test;					// generated test
 	std::vector <std::string> correct_tests;

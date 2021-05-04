@@ -231,3 +231,73 @@ BaseValue::~BaseValue() {
 
 void BaseValue::SaveOrigElem() {
 }
+
+// ElemUnOperation
+ElemUnOperation::ElemUnOperation(uint8_t mod)
+	:
+	mod(mod),
+	PatternElement(ElementType::TYPE_OP, "")
+{
+	switch (mod) {
+	case OP_UN_BITCOMP: {
+		value = "~";
+		break;
+	}
+	case OP_UN_NOT: {
+		value = "not";
+		break;
+	}
+	case OP_UN_NEG: {
+		value = "-";
+		break;
+	}
+	default:
+		std::cout << "ERROR: ElemOperation constructor\n";
+		exit(1);
+	}
+}
+
+ElemUnOperation::~ElemUnOperation()
+{
+}
+
+void ElemUnOperation::SaveOrigElem() {
+	orig_val = new ElemUnOperation(mod);
+}
+
+// ElemBinOperation
+ElemBinOperation::ElemBinOperation(uint8_t mod)
+	:
+	mod(mod),
+	PatternElement(ElementType::TYPE_OP, "")
+{
+	switch (mod) {
+	case OP_BIN_NEG: {
+		value = "-";
+		break;
+	}
+	case OP_BIN_ADD: {
+		value = "+";
+		break;
+	}
+	case OP_BIN_MUL: {
+		value = "*";
+		break;
+	}
+	case OP_BIN_DIV: {
+		value = "/";
+		break;
+	}
+	default:
+		std::cout << "ERROR: ElemOperation constructor\n";
+		exit(1);
+	}
+}
+
+ElemBinOperation::~ElemBinOperation()
+{
+}
+
+void ElemBinOperation::SaveOrigElem() {
+	orig_val = new ElemBinOperation(mod);
+}

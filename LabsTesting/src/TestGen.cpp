@@ -36,7 +36,7 @@ std::string TestGen::ReadFile(const std::string& path) {
 std::string TestGen::FindKeyword(int mod) {
 	//std::vector<Keyword>::iterator it;
 	std::vector<Element>::iterator it;
-	
+
 	for (it = keywords.begin(); it != keywords.end(); it++) {
 		if (it->mod == mod) {
 			return it->val;
@@ -50,7 +50,7 @@ std::string TestGen::FindKeyword(int mod) {
 
 
 void TestGen::CorrectToText() {
-	std::vector <PatternElement*>::iterator iter;		
+	std::vector <PatternElement*>::iterator iter;
 	for (iter = pattern.begin(); iter != pattern.end(); iter++) {
 		test += (*iter)->GetValue();
 	}
@@ -87,7 +87,7 @@ void TestGen::KeywordTestGen(Rules rule) {
 		IncorrectToText();
 		break;
 	}
-	
+
 	case Rules::INCORRECT_TO_NAME: {
 		boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
 		//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
@@ -139,7 +139,7 @@ void TestGen::SpaceTestGen(Rules rule, const int space_num) {
 
 		break;
 	}
-	
+
 	case Rules::INCORRECT_SPACES: {
 		// space
 		std::string val_sp(space_num, ' ');	// space as char
@@ -172,7 +172,7 @@ void TestGen::SpaceTestGen(Rules rule, const int space_num) {
 
 		break;
 	}
-	
+
 	case Rules::INCORRECT_TO_NAME: {
 		// TODO: gen once, not for every rule
 		std::string val = "";
@@ -285,10 +285,10 @@ void TestGen::NameTestGen(Rules rule) {
 		// make an array of all symbols
 
 		val = (*it)->GetValue();
-		
+
 		//std::uniform_int_distribution<int> distribution(ASCII_EXCLAMATION, ASCII_SLASH);
 		boost::uniform_int<> distribution(ASCII_EXCLAMATION, ASCII_SLASH);
-		val += (char)distribution(generator);		
+		val += (char)distribution(generator);
 
 		val += (*it)->GetValue();
 
@@ -352,7 +352,7 @@ void TestGen::BracketTestGen(Rules rule) {
 		// ...
 		// TODO
 		break;
-	
+
 	case Rules::INCORRECT_WRONG_NUM: {  // TODO: also add it to CORRECT tests 
 		// TODO
 		// do as in case of spaces...
@@ -370,7 +370,7 @@ void TestGen::ColonTestGen(Rules rule) {
 	(*it)->SaveOrigElem();
 
 	std::string val = "";
-	
+
 	switch (rule)
 	{
 	case Rules::INCORRECT_ABSENT:
@@ -876,7 +876,7 @@ void TestGen::Correct() {
 
 	}
 	case ElementType::TYPE_BRACKET: {
-		int mod = (*it)->GetMod();		
+		uint8_t mod = (*it)->GetMod();
 
 		if (mod == ModBracket::BRACKET_LPAREN) {
 			// DO NOTHING
@@ -906,6 +906,46 @@ void TestGen::Correct() {
 		}
 		break;
 	}
+	case ElementType::TYPE_OP: {
+		OperationTestGen(Rules::)
+
+		uint8_t mod = (*it)->GetMod();
+	
+		switch (mod)
+		{
+		case ModUnOp::OP_UN_BITCOMP: {
+
+			break;
+		}
+		case ModUnOp::OP_UN_NOT: {
+
+			break;
+		}
+		case ModUnOp::OP_UN_NEG: {
+
+			break;
+		}
+		case ModBinOp::OP_BIN_NEG: {
+
+			break;
+		}
+		case ModBinOp::OP_BIN_ADD: {
+
+			break;
+		}
+		case ModBinOp::OP_BIN_MUL: {
+
+			break;
+		}
+		case ModBinOp::OP_BIN_DIV: {
+
+			break;
+		}
+
+		default:
+			break;
+		}
+	}
 
 	default:
 		std::cout << "ERROR: correct test error\n";
@@ -922,7 +962,7 @@ void TestGen::Incorrect() {
 	switch (type) {
 	case ElementType::TYPE_KEYWORD: {
 		//int mod = (*it)->GetMod();		// enum CLASS ???
-		 
+
 		KeywordTestGen(Rules::INCORRECT_TO_UPPER_CASE);
 		KeywordTestGen(Rules::INCORRECT_TO_NAME);
 		KeywordTestGen(Rules::INCORRECT_ABSENT);
@@ -948,7 +988,7 @@ void TestGen::Incorrect() {
 		break;
 
 	}
-	case ElementType::TYPE_NAME : {
+	case ElementType::TYPE_NAME: {
 		// Currently only "main" supports	??? TODO
 
 		NameTestGen(Rules::INCORRECT_ABSENT);
@@ -1004,7 +1044,7 @@ void TestGen::Incorrect() {
 		// TODO
 		// ...
 	}
-	
+
 	/*(*it)->RestoreOrigElem();*/
 }
 
@@ -1056,14 +1096,46 @@ void TestGen::GenPattern() {
 			new ElemSpace(),		// ...
 			new ElemKeyword(ModKeyword::KEYWORD_RETURN),
 			new ElemSpace(),
-			// ...
-			//new ElemValue(ModValue::VALUE_INT_DEC),		// value as an argument
-			// for different possible variants
-			//new BaseValue({
+			// -1+(not 2)*(~3)/4
+			new ElemUnOperation(ModUnOp::OP_UN_NEG),
+			new ElemSpace(),
 			new ElemValue(ModValue::VALUE_BASE, {
 				new ElemValue(ModValue::VALUE_INT_DEC, {}),
 				new ElemValue(ModValue::VALUE_FLOAT, {}),
 				}),
+			new ElemSpace(),
+			new ElemBinOperation(ModBinOp::OP_BIN_ADD),
+			new ElemSpace(),
+			new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
+			new ElemSpace(),
+			new ElemUnOperation(ModUnOp::OP_UN_NOT),
+			new ElemSpace(),
+			new ElemValue(ModValue::VALUE_BASE, {
+				new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				new ElemValue(ModValue::VALUE_FLOAT, {}),
+				}),
+			new ElemSpace(),
+			new ElemRightBracket(ModBracket::BRACKET_RPAREN),
+			new ElemSpace(),
+			new ElemBinOperation(ModBinOp::OP_BIN_MUL),
+			new ElemSpace(),
+			new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
+			new ElemSpace(),
+			new ElemUnOperation(ModUnOp::OP_UN_BITCOMP),
+			new ElemSpace(),
+			new ElemValue(ModValue::VALUE_BASE, {
+				new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				new ElemValue(ModValue::VALUE_FLOAT, {}),
+				}),
+			new ElemSpace(),
+			new ElemRightBracket(ModBracket::BRACKET_RPAREN),
+			new ElemSpace(),
+			new ElemBinOperation(ModBinOp::OP_BIN_DIV),
+			new ElemValue(ModValue::VALUE_BASE, {
+				new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				new ElemValue(ModValue::VALUE_FLOAT, {}),
+				}),
+			new ElemSpace()
 		};
 		break;
 	}
@@ -1072,22 +1144,23 @@ void TestGen::GenPattern() {
 		exit(1);
 		break;
 	}
-	
-		//pattern.push_back(new ElemValue(ModValue::VALUE_INT_DEC));		// value as an argument
-		//pattern.push_back(new ElemValue(ModValue::VALUE_INT_BIN));		// value as an argument
-		//pattern.push_back(new ElemValue(ModValue::VALUE_INT_OCT));		// value as an argument
-		//pattern.push_back(new ElemValue(ModValue::VALUE_INT_HEX));		// value as an argument
-		//pattern.push_back(new ElemValue(ModValue::VALUE_FLOAT));		// value as an argument
-		//pattern.push_back(new ElemValue(ModValue::VALUE_STR));		// value as an argument
+
+	//pattern.push_back(new ElemValue(ModValue::VALUE_INT_DEC));		// value as an argument
+	//pattern.push_back(new ElemValue(ModValue::VALUE_INT_BIN));		// value as an argument
+	//pattern.push_back(new ElemValue(ModValue::VALUE_INT_OCT));		// value as an argument
+	//pattern.push_back(new ElemValue(ModValue::VALUE_INT_HEX));		// value as an argument
+	//pattern.push_back(new ElemValue(ModValue::VALUE_FLOAT));		// value as an argument
+	//pattern.push_back(new ElemValue(ModValue::VALUE_STR));		// value as an argument
 }
 
 TestGen::TestGen(uint8_t lab_num)
 	:
 	lab_num(lab_num),
 	test(""),		// generated test
-	keywords({ 
+	keywords({
 		{ KEYWORD_DEF, "def" },
-		{ KEYWORD_RETURN, "return" }
+		{ KEYWORD_RETURN, "return" },
+		{ KEYWORD_NOT, "not" },
 		}),		// ??? could be problems
 	brackets({
 		{ BRACKET_LPAREN, "(" },
@@ -1100,11 +1173,21 @@ TestGen::TestGen(uint8_t lab_num)
 		{ BRACKET_SINGLE_QUOTE, "\'" },
 		{ BRACKET_LANGLE, "<" },
 		{ BRACKET_RANGLE, ">" },
+		}),
+	unary_ops({
+		{OP_UN_NEG, "-"},
+		{OP_UN_BITCOMP, "~"},
+		{OP_UN_NOT, "not"},
+		}),
+	binary_ops({
+		{OP_BIN_NEG, "-"},
+		{OP_BIN_ADD, "+"},
+		{OP_BIN_MUL, "*"},
+		{OP_BIN_DIV, "/"}
 		})
-
 {
 	GenPattern();
 }
 
-TestGen::~TestGen(){
+TestGen::~TestGen() {
 }
