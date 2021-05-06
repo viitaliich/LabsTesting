@@ -26,9 +26,10 @@ enum class LabNumber : uint8_t {
 	LAB1 = 1
 };
 
-enum class Rules : uint8_t{
+enum class Rules : uint8_t {
 	// 0 for combination of rules maybe
 	CORRECT_SPACES = 1,
+	CORRECT_MULT_NEWLINES,
 	CORRECT_TO_NAME,
 	CORRECT_ADD_NUM,
 	CORRECT_ADD_UNDERSCORE,
@@ -36,6 +37,7 @@ enum class Rules : uint8_t{
 	CORRECT_SUBSTITUTE_TYPE,
 	CORRECT_SUBSTITUTE_NUMERAL_SYS,
 	CORRECT_RANDOM_VAL,
+	CORRECT_SUBSTITUTION,
 
 	INCORRECT_ABSENT,
 	INCORRECT_TO_UPPER_CASE,
@@ -51,6 +53,7 @@ enum class Rules : uint8_t{
 	INCORRECT_TO_SPECIAL_SYM,
 	INCORRECT_TO_KEYWORD,
 	INCORRECT_TO_NAME,
+	INCORRECT_NO_EXP,
 };
 
 enum class IncorrectRules : uint8_t {
@@ -87,12 +90,15 @@ private:
 	std::vector <Element> brackets;		// Element -> Bracket if there are problems 
 	std::vector <Element> unary_ops;		
 	std::vector <Element> binary_ops;		
+	//std::vector <Element> operations;			// ???
+	std::vector <Element> special_syms;
 
 	std::string test;					// generated test
 	std::vector <std::string> correct_tests;
 	std::vector <std::string> incorrect_tests;
 
 public:
+
 	// TODO: output buffer for single test		???
 	// TODO: output buffer for all tests		???
 
@@ -115,6 +121,8 @@ private:
 	void ColonTestGen(Rules rule);
 
 	void ValueTestGen(std::vector<ElemValue*>::iterator, Rules rule);
+
+	void OperationTestGen(Rules rule);
 
 	// ???
 	void IntDecTestGen(Rules rule);

@@ -236,6 +236,7 @@ void BaseValue::SaveOrigElem() {
 ElemUnOperation::ElemUnOperation(uint8_t mod)
 	:
 	mod(mod),
+	
 	PatternElement(ElementType::TYPE_OP, "")
 {
 	switch (mod) {

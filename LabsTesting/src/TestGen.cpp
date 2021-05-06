@@ -1,3 +1,5 @@
+// TODO: ABSENT as separate function
+
 #include <fstream>
 #include <iostream>
 //#include <random>
@@ -19,10 +21,22 @@
 #define ASCII_9 57
 #define ASCII_A 65
 #define ASCII_F 70
-#define ASCII_EXCLAMATION 33
-#define ASCII_SLASH 47
+//#define ASCII_EXCLAMATION 33
+//#define ASCII_SLASH 47
 
-
+std::string get_same_type_val(std::vector <Element>& vec, uint8_t mod) {
+	std::string val = "";
+	Element* elem = &(vec.front());		// do we need <&> here	???
+	if (elem->mod == mod || mod == 0) {
+		vec.push_back(vec.front());
+		vec.erase(vec.begin());
+		val = vec.front().val;
+	}
+	else {
+		val = elem->val;
+	}
+	return val;
+}
 
 // TODO: not sure about realization ???
 std::string TestGen::ReadFile(const std::string& path) {
@@ -67,6 +81,7 @@ void TestGen::IncorrectToText() {
 	test = "";
 }
 
+
 void TestGen::KeywordTestGen(Rules rule) {
 
 	(*it)->SaveOrigElem();
@@ -75,12 +90,12 @@ void TestGen::KeywordTestGen(Rules rule) {
 	boost::mt19937 generator;
 
 	std::string val = (*it)->GetValue();
+	uint8_t m;
 
 	switch (rule)
 	{
 
 	case Rules::INCORRECT_TO_UPPER_CASE: {
-		//std::transform(val.begin(), val.end(), val.begin(), ::toupper);		// TODO: use boost library here ???
 		boost::to_upper(val);
 
 		(*it)->SetValue(val);
@@ -107,11 +122,50 @@ void TestGen::KeywordTestGen(Rules rule) {
 	}
 
 	case Rules::INCORRECT_SUBSTITUTION:
-		// TODO: substitute on another keyword
-
+		m = (*it)->GetMod();
+		val = get_same_type_val(keywords, m);
+		// ...
+		/*Element* elem = &(keywords.front());
+		if (elem->mod == m) {
+			keywords.push_back(keywords.front());
+			keywords.erase(keywords.begin());
+			val = keywords.front().val;
+		}
+		else {
+			val = elem->val;
+		}*/
 		(*it)->SetValue(val);
 		IncorrectToText();
 		break;
+
+	case Rules::INCORRECT_NO_EXP: {
+		// could be errors ???
+		// doesn't work properly ???
+		m = (*it)->GetMod();
+		if (m == KEYWORD_RETURN) {
+			std::vector <PatternElement*>::iterator temp_it = ++it;		// ???
+			while ((*it)->GetType() != ElementType::TYPE_NEW_LINE)
+			{
+				(*it)->SaveOrigElem();
+				(*it)->SetValue("");
+				it++;
+			}
+			IncorrectToText();
+			
+			it = temp_it;
+			while ((*it)->GetType() != ElementType::TYPE_NEW_LINE)
+			{
+				(*it)->RestoreOrigElem();
+				it++;
+			}
+			it = temp_it - 1;
+		}
+
+		//(*it)->SetValue(val);
+		//IncorrectToText();
+		break;
+	}
+
 	default:
 		std::cout << "ERROR: [KeywordTestGen]\n";
 		exit(1);
@@ -120,20 +174,27 @@ void TestGen::KeywordTestGen(Rules rule) {
 	(*it)->RestoreOrigElem();
 }
 
-void TestGen::SpaceTestGen(Rules rule, const int space_num) {
+void TestGen::SpaceTestGen(Rules rule, const int num) {
 	(*it)->SaveOrigElem();
 
 	std::string val = "";
 	switch (rule)
 	{
+	case Rules::CORRECT_MULT_NEWLINES: {
+		std::string val(num, '\n');			// ???
+		(*it)->SetValue(val);
+		CorrectToText();
+		break;
+	}
+
 	case Rules::CORRECT_SPACES: {
 		// space
-		std::string val_sp(space_num, ' ');	// space as char
+		std::string val_sp(num, ' ');	// space as char
 		(*it)->SetValue(val_sp);
 		CorrectToText();
 
 		// tab
-		std::string val_tab(space_num, '\t');	// space as char
+		std::string val_tab(num, '\t');	// space as char
 		(*it)->SetValue(val_tab);
 		CorrectToText();
 
@@ -142,40 +203,22 @@ void TestGen::SpaceTestGen(Rules rule, const int space_num) {
 
 	case Rules::INCORRECT_SPACES: {
 		// space
-		std::string val_sp(space_num, ' ');	// space as char
+		std::string val_sp(num, ' ');	// space as char
 		(*it)->SetValue(val_sp);
 		IncorrectToText();
 
 		// tab
-		std::string val_tab(space_num, '\t');	// space as char
+		std::string val_tab(num, '\t');	// space as char
 		(*it)->SetValue(val_tab);
 		IncorrectToText();
 
 		break;
 	}
-	case Rules::INCORRECT_FUNC_PARAMS: {
-		// TODO: name instead space between ()
-		val = "";
-		boost::mt19937 generator;
-		const int min_len = 1;
-		const int max_len = 10;		// ???
-		boost::uniform_int<> distribution_len(min_len, max_len);
-		int len = distribution_len(generator);
-		boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-		//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-		for (int i = 0; i <= len; i++) {
-			val += distribution(generator);		// append symbol to string
-		}
 
-		(*it)->SetValue(val);
-		CorrectToText();
-
-		break;
-	}
-
+	case Rules::INCORRECT_FUNC_PARAMS:
 	case Rules::INCORRECT_TO_NAME: {
 		// TODO: gen once, not for every rule
-		std::string val = "";
+		val = "";
 
 		//std::default_random_engine generator;
 		boost::mt19937 generator;
@@ -281,16 +324,15 @@ void TestGen::NameTestGen(Rules rule) {
 		break;
 	}
 	case Rules::INCORRECT_ADD_SPECIAL_SYM: {
-		// TODO: not all symbols are taken into account;
-		// make an array of all symbols
-
 		val = (*it)->GetValue();
+		val += get_same_type_val(special_syms, 0);
+		val += val;
 
 		//std::uniform_int_distribution<int> distribution(ASCII_EXCLAMATION, ASCII_SLASH);
-		boost::uniform_int<> distribution(ASCII_EXCLAMATION, ASCII_SLASH);
-		val += (char)distribution(generator);
+		//boost::uniform_int<> distribution(ASCII_EXCLAMATION, ASCII_SLASH);
+		//val += (char)distribution(generator);
 
-		val += (*it)->GetValue();
+		//val += (*it)->GetValue();
 
 		(*it)->SetValue(val);
 		IncorrectToText();
@@ -307,7 +349,10 @@ void TestGen::NameTestGen(Rules rule) {
 		break;
 	}
 	case Rules::INCORRECT_TO_KEYWORD: {
-		// TODO ...
+		// Maybe could be problems ???
+		val = get_same_type_val(keywords, 0);
+		(*it)->SetValue(val);
+		IncorrectToText();
 		break;
 	}
 	case Rules::INCORRECT_ADD_NUM: {
@@ -332,32 +377,34 @@ void TestGen::NameTestGen(Rules rule) {
 void TestGen::BracketTestGen(Rules rule) {
 	(*it)->SaveOrigElem();
 
-	int mod = (*it)->GetMod();
+	uint8_t mod = (*it)->GetMod();
 	std::string val = "";
 
 	switch (rule)
 	{
-	case Rules::INCORRECT_ABSENT:		// TODO absent rule as separate function
+	case Rules::INCORRECT_ABSENT:		
 		(*it)->SetValue(val);
 		IncorrectToText();
 		break;
-	case Rules::INCORRECT_SUBSTITUTION:		// substitute on left or right respectively or opposite
-		// TODO
-		if (mod == ModBracket::BRACKET_LPAREN) {
-			// TODO
-		}
-		else if (mod == ModBracket::BRACKET_RPAREN) {
-			// TODO
-		}
-		// ...
-		// TODO
+	case Rules::INCORRECT_SUBSTITUTION:		
+		val = get_same_type_val(brackets, mod);
+		(*it)->SetValue(val);
+		IncorrectToText();
 		break;
 
-	case Rules::INCORRECT_WRONG_NUM: {  // TODO: also add it to CORRECT tests 
-		// TODO
-		// do as in case of spaces...
+	case Rules::INCORRECT_WRONG_NUM: 
+		// TODO: this cause problems with SWITCH statement	???
+		//boost::mt19937 generator;
+		//boost::uniform_int<> distribution(2, 5);
+		//uint8_t num = distribution(generator);
+
+		//char v = (char)((*it)->GetValue()).c_str();		
+		//std::string val(num, v);	
+		//(*it)->SetValue(val);
+		//IncorrectToText();
+
 		break;
-	}
+	
 	default:
 		std::cout << "ERROR: BracketTestGen\n";
 		exit(1);
@@ -375,14 +422,13 @@ void TestGen::ColonTestGen(Rules rule) {
 	{
 	case Rules::INCORRECT_ABSENT:
 		(*it)->SetValue(val);
-		CorrectToText();
+		IncorrectToText();
 		break;
 	case Rules::INCORRECT_TO_SPECIAL_SYM:
-		// ???
-		// TODO: other symbols
-		val = ";";
+		val += get_same_type_val(special_syms, 0);
+
 		(*it)->SetValue(val);
-		CorrectToText();
+		IncorrectToText();
 		break;
 	default:
 		std::cout << "ERROR: ColonTestGen\n";
@@ -392,9 +438,9 @@ void TestGen::ColonTestGen(Rules rule) {
 	(*it)->RestoreOrigElem();
 }
 
+// TODO ??? ...
 void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 	(*it)->SaveOrigElem();
-
 
 	std::string val = "";
 	uint8_t m = (*iter)->GetMod();
@@ -411,6 +457,8 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 		// TODO
 		switch (m) {
 		case VALUE_INT_DEC: {
+			//ValueTestGen(iter, Rules::CORRECT_ADD_NUM);
+
 
 			break;
 		}
@@ -476,11 +524,11 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 	case Rules::CORRECT_RANDOM_VAL:
 		switch (m) {
 		case VALUE_INT_DEC: {
-			//std::default_random_engine generator;		// TODO: make it single instance as static outside all scopes in this file
+			//std::default_random_engine generator;		
 			//std::uniform_int_distribution<int> distribution(0, INT_MAX);
 			//int num = distribution(generator);
 
-			boost::mt19937 generator;
+			boost::mt19937 generator;		// TODO: make it single instance as static outside all scopes in this file
 			boost::uniform_int<> distribution(0, INT_MAX);
 			int num = distribution(generator);
 
@@ -807,6 +855,78 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 	(*it)->RestoreOrigElem();
 }
 
+void TestGen::OperationTestGen(Rules rule) {
+	(*it)->SaveOrigElem();
+
+	std::string val = ""; 
+	uint8_t mod = (*it)->GetMod();
+
+	switch (rule)
+	{
+	case Rules::INCORRECT_ABSENT:
+		(*it)->SetValue(val);
+		IncorrectToText();
+		break;
+	case Rules::CORRECT_SUBSTITUTION: {
+		switch (mod)
+		{
+		case ModOp::OP_UN_BITCOMP:
+		case ModOp::OP_UN_NEG:
+		case ModOp::OP_UN_NOT: {
+			val = get_same_type_val(unary_ops, 0);
+			(*it)->SetValue(val);
+			CorrectToText();
+			break;
+		}
+		case ModOp::OP_BIN_ADD:
+		case ModOp::OP_BIN_DIV:
+		case ModOp::OP_BIN_NEG:
+		case ModOp::OP_BIN_MUL: {
+			val = get_same_type_val(binary_ops, 0);
+			(*it)->SetValue(val);
+			CorrectToText();
+			break;
+		}
+		default:
+			std::cout << "ERROR: [OperationTestGen]\n";
+			exit(1);
+			break;
+		}
+		
+		break;
+	}
+	case Rules::INCORRECT_SUBSTITUTION:		// to op which is not supported
+		// TODO
+		break;
+	case Rules::INCORRECT_WRONG_NUM:
+		// TODO like spaces
+		break;
+	case Rules::INCORRECT_SUBSTITUTE_TYPE:	// binary to unary and vice versa
+		if (mod == OP_UN_BITCOMP || mod == OP_UN_NEG || mod == OP_UN_NOT) {
+			val = get_same_type_val(binary_ops, 0);
+			(*it)->SetValue(val);
+			IncorrectToText();
+		}
+		else if (mod == OP_BIN_ADD || mod == OP_BIN_NEG || mod == OP_BIN_MUL || mod == OP_BIN_DIV) {
+			val = get_same_type_val(unary_ops, 0);
+			(*it)->SetValue(val);
+			IncorrectToText();
+		}
+		else {
+			std::cout << "ERROR: [OperationTestGen]\n";
+			exit(1);
+		}
+		break;
+
+	default:
+		std::cout << "ERROR: [OperationTestGen]\n";
+		exit(1);
+		break;
+	}
+	(*it)->RestoreOrigElem();
+
+}
+
 void TestGen::Correct() {
 	(*it)->SaveOrigElem();
 
@@ -816,21 +936,21 @@ void TestGen::Correct() {
 	{
 	case ElementType::TYPE_KEYWORD: {
 
-		uint8_t mod = (*it)->GetMod();
+		//uint8_t mod = (*it)->GetMod();
 
-		switch (mod)
-		{
-		case KEYWORD_DEF:
-			// DO NOTHING
-			break;
-		case KEYWORD_RETURN:
-			// DO NOTHING
-			break;
-		default:
-			std::cout << "ERROR: keyword mod error\n";
-			exit(1);
-			break;
-		}
+		//switch (mod)
+		//{
+		//case KEYWORD_DEF:
+		//	// DO NOTHING
+		//	break;
+		//case KEYWORD_RETURN:
+		//	// DO NOTHING
+		//	break;
+		//default:
+		//	std::cout << "ERROR: keyword mod error\n";
+		//	exit(1);
+		//	break;
+		//}
 		break;
 	}
 	case ElementType::TYPE_SPACE: {
@@ -875,15 +995,16 @@ void TestGen::Correct() {
 		break;
 
 	}
-	case ElementType::TYPE_BRACKET: {
-		uint8_t mod = (*it)->GetMod();
 
-		if (mod == ModBracket::BRACKET_LPAREN) {
-			// DO NOTHING
-		}
-		else if (mod == ModBracket::BRACKET_RPAREN) {
-			// DO NOTHING
-		}
+	case ElementType::TYPE_BRACKET: {
+		//uint8_t mod = (*it)->GetMod();
+
+		//if (mod == ModBracket::BRACKET_LPAREN) {
+		//	// DO NOTHING
+		//}
+		//else if (mod == ModBracket::BRACKET_RPAREN) {
+		//	// DO NOTHING
+		//}
 		break;
 
 	}
@@ -893,7 +1014,8 @@ void TestGen::Correct() {
 
 	}
 	case ElementType::TYPE_NEW_LINE: {
-		// DO NOTHING
+		// Multiple new lines
+		SpaceTestGen(Rules::CORRECT_MULT_NEWLINES, 3);
 		break;
 
 	}
@@ -907,44 +1029,8 @@ void TestGen::Correct() {
 		break;
 	}
 	case ElementType::TYPE_OP: {
-		OperationTestGen(Rules::)
-
-		uint8_t mod = (*it)->GetMod();
-	
-		switch (mod)
-		{
-		case ModUnOp::OP_UN_BITCOMP: {
-
-			break;
-		}
-		case ModUnOp::OP_UN_NOT: {
-
-			break;
-		}
-		case ModUnOp::OP_UN_NEG: {
-
-			break;
-		}
-		case ModBinOp::OP_BIN_NEG: {
-
-			break;
-		}
-		case ModBinOp::OP_BIN_ADD: {
-
-			break;
-		}
-		case ModBinOp::OP_BIN_MUL: {
-
-			break;
-		}
-		case ModBinOp::OP_BIN_DIV: {
-
-			break;
-		}
-
-		default:
-			break;
-		}
+		OperationTestGen(Rules::CORRECT_SUBSTITUTION);
+		break;
 	}
 
 	default:
@@ -967,6 +1053,7 @@ void TestGen::Incorrect() {
 		KeywordTestGen(Rules::INCORRECT_TO_NAME);
 		KeywordTestGen(Rules::INCORRECT_ABSENT);
 		KeywordTestGen(Rules::INCORRECT_SUBSTITUTION);
+		KeywordTestGen(Rules::INCORRECT_NO_EXP);
 
 		break;
 	}
@@ -1016,9 +1103,6 @@ void TestGen::Incorrect() {
 
 	}
 	case ElementType::TYPE_NEW_LINE: {
-
-		// TODO ???
-
 		std::string val = " ";
 		(*it)->SetValue(val);
 		IncorrectToText();
@@ -1037,12 +1121,16 @@ void TestGen::Incorrect() {
 		}
 		break;
 	}
+	case ElementType::TYPE_OP: {
+		OperationTestGen(Rules::INCORRECT_ABSENT);
+		OperationTestGen(Rules::INCORRECT_SUBSTITUTION);
+		OperationTestGen(Rules::INCORRECT_WRONG_NUM);
+		break;
+	}
 	default:
 		std::cout << "ERROR: incorrect gen type\n";
 		exit(1);
 		break;
-		// TODO
-		// ...
 	}
 
 	/*(*it)->RestoreOrigElem();*/
@@ -1082,60 +1170,61 @@ void TestGen::GenPattern() {
 	case 1: {
 		pattern = {
 			// instead of push_back
-			new ElemKeyword(ModKeyword::KEYWORD_DEF),
-			new ElemSpace(),
-			new ElemName("main"),
-			new ElemSpace(),
-			new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
-			new ElemSpace(),
-			new ElemRightBracket(ModBracket::BRACKET_RPAREN),
-			new ElemSpace(),
-			new ElemColon(),
-			new ElemSpace(),
-			new ElemNewLine(),
-			new ElemSpace(),		// ...
+			//new ElemKeyword(ModKeyword::KEYWORD_DEF),
+			//new ElemSpace(),
+			//new ElemName("main"),
+			//new ElemSpace(),
+			//new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
+			//new ElemSpace(),
+			//new ElemRightBracket(ModBracket::BRACKET_RPAREN),
+			//new ElemSpace(),
+			//new ElemColon(),
+			//new ElemSpace(),
+			//new ElemNewLine(),
+			//new ElemSpace(),		// ...
 			new ElemKeyword(ModKeyword::KEYWORD_RETURN),
-			new ElemSpace(),
-			// -1+(not 2)*(~3)/4
-			new ElemUnOperation(ModUnOp::OP_UN_NEG),
-			new ElemSpace(),
+			//new ElemSpace(),
+			//// -1+(not 2)*(~3)/4
+			//new ElemUnOperation(ModOp::OP_UN_NEG),
+			//new ElemSpace(),
 			new ElemValue(ModValue::VALUE_BASE, {
 				new ElemValue(ModValue::VALUE_INT_DEC, {}),
 				new ElemValue(ModValue::VALUE_FLOAT, {}),
 				}),
-			new ElemSpace(),
-			new ElemBinOperation(ModBinOp::OP_BIN_ADD),
-			new ElemSpace(),
-			new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
-			new ElemSpace(),
-			new ElemUnOperation(ModUnOp::OP_UN_NOT),
-			new ElemSpace(),
-			new ElemValue(ModValue::VALUE_BASE, {
-				new ElemValue(ModValue::VALUE_INT_DEC, {}),
-				new ElemValue(ModValue::VALUE_FLOAT, {}),
-				}),
-			new ElemSpace(),
-			new ElemRightBracket(ModBracket::BRACKET_RPAREN),
-			new ElemSpace(),
-			new ElemBinOperation(ModBinOp::OP_BIN_MUL),
-			new ElemSpace(),
-			new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
-			new ElemSpace(),
-			new ElemUnOperation(ModUnOp::OP_UN_BITCOMP),
-			new ElemSpace(),
-			new ElemValue(ModValue::VALUE_BASE, {
-				new ElemValue(ModValue::VALUE_INT_DEC, {}),
-				new ElemValue(ModValue::VALUE_FLOAT, {}),
-				}),
-			new ElemSpace(),
-			new ElemRightBracket(ModBracket::BRACKET_RPAREN),
-			new ElemSpace(),
-			new ElemBinOperation(ModBinOp::OP_BIN_DIV),
-			new ElemValue(ModValue::VALUE_BASE, {
-				new ElemValue(ModValue::VALUE_INT_DEC, {}),
-				new ElemValue(ModValue::VALUE_FLOAT, {}),
-				}),
-			new ElemSpace()
+			//new ElemSpace(),
+			//new ElemBinOperation(ModOp::OP_BIN_ADD),
+			//new ElemSpace(),
+			//new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
+			//new ElemSpace(),
+			//new ElemUnOperation(ModOp::OP_UN_NOT),
+			//new ElemSpace(),
+			//new ElemValue(ModValue::VALUE_BASE, {
+				//new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				//new ElemValue(ModValue::VALUE_FLOAT, {}),
+				//}),
+			//new ElemSpace(),
+			//new ElemRightBracket(ModBracket::BRACKET_RPAREN),
+			//new ElemSpace(),
+			//new ElemBinOperation(ModOp::OP_BIN_MUL),
+			//new ElemSpace(),
+			//new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
+			//new ElemSpace(),
+			//new ElemUnOperation(ModOp::OP_UN_BITCOMP),
+			//new ElemSpace(),
+			//new ElemValue(ModValue::VALUE_BASE, {
+				//new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				//new ElemValue(ModValue::VALUE_FLOAT, {}),
+				//}),
+			//new ElemSpace(),
+			//new ElemRightBracket(ModBracket::BRACKET_RPAREN),
+			//new ElemSpace(),
+			//new ElemBinOperation(ModOp::OP_BIN_DIV),
+			//new ElemValue(ModValue::VALUE_BASE, {
+				//new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				//new ElemValue(ModValue::VALUE_FLOAT, {}),
+				//}),
+			//new ElemSpace()
+			new ElemNewLine()
 		};
 		break;
 	}
@@ -1161,7 +1250,7 @@ TestGen::TestGen(uint8_t lab_num)
 		{ KEYWORD_DEF, "def" },
 		{ KEYWORD_RETURN, "return" },
 		{ KEYWORD_NOT, "not" },
-		}),		// ??? could be problems
+	}),		// ??? could be problems
 	brackets({
 		{ BRACKET_LPAREN, "(" },
 		{ BRACKET_RPAREN, ")" },
@@ -1173,18 +1262,39 @@ TestGen::TestGen(uint8_t lab_num)
 		{ BRACKET_SINGLE_QUOTE, "\'" },
 		{ BRACKET_LANGLE, "<" },
 		{ BRACKET_RANGLE, ">" },
-		}),
+	}),
 	unary_ops({
 		{OP_UN_NEG, "-"},
 		{OP_UN_BITCOMP, "~"},
 		{OP_UN_NOT, "not"},
-		}),
+	}),
 	binary_ops({
 		{OP_BIN_NEG, "-"},
 		{OP_BIN_ADD, "+"},
 		{OP_BIN_MUL, "*"},
 		{OP_BIN_DIV, "/"}
-		})
+	}),
+	//operations({
+	//	{OP_UNARY, "-"},
+	//	{OP_UNARY, "~"},
+	//	{OP_UNARY, "not"},
+	//	{OP_BINARY, "-"},
+	//	{OP_BINARY, "+"},
+	//	{OP_BINARY, "*"},
+	//	{OP_BINARY, "/"}
+	//}),
+
+	special_syms({
+		{SP_SYM_AND, "&"},
+		{SP_SYM_DOL, "$"},
+		{SP_SYM_PERC, "%"},
+		{SP_SYM_COLON, ":"},
+		{SP_SYM_SEMI, ";"},
+		{SP_SYM_QUEST, "?"},
+		{SP_SYM_DOG, "@"},
+		{SP_SYM_LINE, "|"}
+		
+	})
 {
 	GenPattern();
 }

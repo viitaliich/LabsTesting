@@ -39,17 +39,45 @@ enum ModValue : uint8_t {
 	VALUE_BASE,
 };
 
-enum ModUnOp : uint8_t {
-	OP_UN_BITCOMP,
+//// ???
+//enum ModUnOp : uint8_t {
+//	OP_UN_BITCOMP = 1,
+//	OP_UN_NOT,
+//	OP_UN_NEG,
+//};
+//
+//// ???
+//enum ModBinOp : uint8_t {
+//	OP_BIN_NEG = 1,
+//	OP_BIN_ADD,
+//	OP_BIN_MUL,
+//	OP_BIN_DIV,
+//};
+
+enum ModOp : uint8_t {
+	OP_UN_BITCOMP = 1,
 	OP_UN_NOT,
 	OP_UN_NEG,
-};
-
-enum ModBinOp : uint8_t {
 	OP_BIN_NEG,
 	OP_BIN_ADD,
 	OP_BIN_MUL,
 	OP_BIN_DIV,
+};
+
+//enum ModOp : uint8_t {
+//	OP_UNARY = 1,
+//	OP_BINARY,
+//};
+
+enum ModSpSym : uint8_t {
+	SP_SYM_AND = 1,
+	SP_SYM_DOL,
+	SP_SYM_PERC,
+	SP_SYM_COLON,
+	SP_SYM_SEMI,
+	SP_SYM_QUEST,
+	SP_SYM_DOG,
+	SP_SYM_LINE,
 };
 
 enum class ElementType : uint8_t {
