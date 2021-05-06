@@ -6,6 +6,7 @@
 #include "boost/random.hpp"
 #include "boost/generator_iterator.hpp"
 #include "boost/algorithm/string.hpp"
+#include "boost/lexical_cast.hpp"
 
 #include "TestGen.h"
 
@@ -394,6 +395,8 @@ void TestGen::BracketTestGen(Rules rule) {
 
 	case Rules::INCORRECT_WRONG_NUM: 
 		// TODO: this cause problems with SWITCH statement	???
+		// this rule as IF statement
+
 		//boost::mt19937 generator;
 		//boost::uniform_int<> distribution(2, 5);
 		//uint8_t num = distribution(generator);
@@ -451,76 +454,11 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 
 	// TODO: IN THIS VERSION OF MY PYTHON-ASM COMILER OCTALS ARE [0o...], NOT [0...] (0o11 / 011)
 
+	boost::mt19937 generator;
+
+
 	switch (rule)
 	{
-	case Rules::CORRECT_SUBSTITUTE_TYPE:
-		// TODO
-		switch (m) {
-		case VALUE_INT_DEC: {
-			//ValueTestGen(iter, Rules::CORRECT_ADD_NUM);
-
-
-			break;
-		}
-		case VALUE_INT_BIN: {
-			break;
-
-		}
-		case VALUE_INT_OCT: {
-			break;
-
-		}
-		case VALUE_INT_HEX: {
-			break;
-
-		}
-		case VALUE_FLOAT: {
-			break;
-
-		}
-		case VALUE_STR: {
-			break;
-
-		}
-		default:
-			std::cout << "ERROR: [ValueTestGen]\n";
-			exit(1);
-
-		}
-		break;
-	case Rules::CORRECT_SUBSTITUTE_NUMERAL_SYS:
-		// TODO
-		switch (m) {
-		case VALUE_INT_DEC: {
-
-			break;
-		}
-		case VALUE_INT_BIN: {
-			break;
-
-		}
-		case VALUE_INT_OCT: {
-			break;
-
-		}
-		case VALUE_INT_HEX: {
-			break;
-
-		}
-		case VALUE_FLOAT: {
-			break;
-
-		}
-		case VALUE_STR: {
-			break;
-
-		}
-		default:
-			std::cout << "ERROR: [ValueTestGen]\n";
-			exit(1);
-
-		}
-		break;
 	case Rules::CORRECT_RANDOM_VAL:
 		switch (m) {
 		case VALUE_INT_DEC: {
@@ -534,11 +472,8 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 
 			val = std::to_string(num);
 
-			//(*iter)->SetValue(val);
 			(*it)->SetValue(val);
 			CorrectToText();
-			//CorrectToTextPV();
-			//(*it)->RestoreOrigElem();		// ???
 			break;
 		}
 		case VALUE_INT_BIN: {
@@ -558,11 +493,8 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 				val += sym;
 			}
 
-			//(*iter)->SetValue(val);
 			(*it)->SetValue(val);
 			CorrectToText();
-			//(*it)->RestoreOrigElem();		// ???
-
 			break;
 
 		}
@@ -582,14 +514,9 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 				char sym = (char)dist(generator);
 				val += sym;
 			}
-
 			(*it)->SetValue(val);
-			//(*iter)->SetValue(val);
 			CorrectToText();
-			//(*it)->RestoreOrigElem();		// ???
-
 			break;
-
 		}
 		case VALUE_INT_HEX: {
 			//std::default_random_engine generator;
@@ -618,10 +545,7 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 			}
 
 			(*it)->SetValue(val);
-			//(*iter)->SetValue(val);
 			CorrectToText();
-			//(*it)->RestoreOrigElem();		// ???
-
 			break;
 
 		}
@@ -633,14 +557,23 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 			//int num_two = dist_two(generator);
 
 			boost::mt19937 generator;
-			boost::uniform_int<> distribution_one(0, 10);
-			boost::uniform_int<> distribution_two(1, 100);
-			int num_one = distribution_one(generator);
-			int num_two = distribution_two(generator);
+			boost::uniform_real<float> distribution(0.0, FLT_MAX);		// ???
+			boost::variate_generator<boost::mt19937&, boost::uniform_real<float> > gen(generator, distribution);
+			float num = gen();
+			val = boost::lexical_cast<std::string>(num);
 
-			val = std::to_string(num_one);
-			val += '.';
-			val += std::to_string(num_two);
+
+			// ***
+
+			//boost::mt19937 generator;
+			//boost::uniform_int<> distribution_one(0, 10);
+			//boost::uniform_int<> distribution_two(1, 100);
+			//int num_one = distribution_one(generator);
+			//int num_two = distribution_two(generator);
+
+			//val = std::to_string(num_one);
+			//val += '.';
+			//val += std::to_string(num_two);
 
 			(*it)->SetValue(val);
 			//(*iter)->SetValue(val);
@@ -664,26 +597,20 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 			}
 
 			(*it)->SetValue(val);
-			//(*iter)->SetValue(val);
 			CorrectToText();
-			//(*it)->RestoreOrigElem();		// ???
-
 			break;
-
 		}
 		default:
 			std::cout << "ERROR: [ValueTestGen]\n";
 			exit(1);
-
 		}
-
 		break;
 	case Rules::INCORRECT_ABSENT:
-		//(*iter)->SetValue(val);
 		(*it)->SetValue(val);
 		IncorrectToText();
 		break;
 	case Rules::INCORRECT_SUBSTITUTE_TYPE:
+		// TODO
 		switch (m) {
 		case VALUE_INT_DEC: {
 
@@ -716,6 +643,7 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 		}
 		break;
 	case Rules::INCORRECT_SUBSTITUTE_NUMERAL_SYS:
+		// TODO
 		switch (m) {
 		case VALUE_INT_DEC: {
 
@@ -747,102 +675,28 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 
 		}
 		break;
-	case Rules::INCORRECT_TO_SPECIAL_SYM:
-		switch (m) {
-		case VALUE_INT_DEC: {
+	case Rules::INCORRECT_TO_SPECIAL_SYM: {
+		val = get_same_type_val(special_syms, 0);
 
-			break;
-		}
-		case VALUE_INT_BIN: {
-			break;
-
-		}
-		case VALUE_INT_OCT: {
-			break;
-
-		}
-		case VALUE_INT_HEX: {
-			break;
-
-		}
-		case VALUE_FLOAT: {
-			break;
-
-		}
-		case VALUE_STR: {
-			break;
-
-		}
-		default:
-			std::cout << "ERROR: [ValueTestGen]\n";
-			exit(1);
-
-		}
+		(*it)->SetValue(val);
+		IncorrectToText();
 		break;
+	}
+
 	case Rules::INCORRECT_TO_KEYWORD:
-		switch (m) {
-		case VALUE_INT_DEC: {
+		val = get_same_type_val(keywords, 0);
 
-			break;
-		}
-		case VALUE_INT_BIN: {
-			break;
-
-		}
-		case VALUE_INT_OCT: {
-			break;
-
-		}
-		case VALUE_INT_HEX: {
-			break;
-
-		}
-		case VALUE_FLOAT: {
-			break;
-
-		}
-		case VALUE_STR: {
-			break;
-
-		}
-		default:
-			std::cout << "ERROR: [ValueTestGen]\n";
-			exit(1);
-
-		}
+		(*it)->SetValue(val);
+		IncorrectToText();
 		break;
 	case Rules::INCORRECT_TO_NAME:
-		switch (m) {
-		case VALUE_INT_DEC: {
+		
+		// TODO ...
+		// take names from the list of already initialized ones. 
+		// random needs some initialization and it doesn't work here because of SWITCH
 
-			break;
-		}
-		case VALUE_INT_BIN: {
-			break;
-
-		}
-		case VALUE_INT_OCT: {
-			break;
-
-		}
-		case VALUE_INT_HEX: {
-			break;
-
-		}
-		case VALUE_FLOAT: {
-			break;
-
-		}
-		case VALUE_STR: {
-			break;
-
-		}
-		default:
-			std::cout << "ERROR: [ValueTestGen]\n";
-			exit(1);
-
-		}
 		break;
+
 	default:
 		std::cout << "ERROR: [ValueTestGen]\n";
 		exit(1);
