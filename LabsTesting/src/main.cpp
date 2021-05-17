@@ -11,6 +11,7 @@
 //#include "imgui/imgui_impl_glfw_gl3.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+//#include "imgui/imgui_demo.cpp"
 
 #include "common.h"
 #include "TestGen.h"
@@ -74,10 +75,10 @@ void modify_input_code(std::string& data, const std::string& path) {
 	file.close();
 }
 
+std::string var;
 
 int main(int argc, char** argv) {
-
-
+	
 	// Probably make GLFW thing as a separate function
 	// GLFW below
 
@@ -190,6 +191,7 @@ int main(int argc, char** argv) {
 	TestGen* tg = new TestGen(1);
 	tg->Generate();
 	std::cout << "DONE";
+	std::cout << var;
 	// *******************************
 
 	//getchar();

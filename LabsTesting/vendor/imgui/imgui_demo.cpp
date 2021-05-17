@@ -68,6 +68,7 @@ Index of this file:
 #include "imgui/ImGuiFileBrowser.h"
 
 #include "imgui/imgui.h"
+
 #ifndef IMGUI_DISABLE
 
 #include <ctype.h>          // toupper
@@ -211,12 +212,14 @@ static bool show_select_dialog = false;
 
 // Demonstrate most Dear ImGui features (this is big function!)
 // You may execute this function to experiment with the UI and understand what it does. You may then search for keywords in the code when you are interested by a specific feature.
+#include <iostream>
 void ImGui::ShowDemoWindow(bool* p_open)
 {
     IM_ASSERT(ImGui::GetCurrentContext() != NULL && "Missing dear imgui context. Refer to examples app!"); // Exceptionally add an extra assert here for people confused with initial dear imgui setup
 
     //For Demonstrating File Dialog Addon accessible from MainMenu bar (from Examples Menu) or simple Menu bar
     static imgui_addons::ImGuiFileBrowser file_dialog;
+	//std::cout << file_dialog.selected_path;
 
     // Examples Apps (accessible from the "Examples" menu)
     static bool show_app_documents = false;
@@ -345,8 +348,11 @@ void ImGui::ShowDemoWindow(bool* p_open)
         //Show an open/save/select file dialog. Last argument provides a list of supported files. Selecting other files will show error. If "*.*" is provided, all files can be opened.
         if(file_dialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(600, 300), "*.*"))
         {
-            printf("%s\n", file_dialog.selected_fn.c_str());
+			// ???
+			printf("%s\n", file_dialog.selected_fn.c_str());
             printf("%s\n", file_dialog.selected_path.c_str());
+			//var = file_dialog.selected_path;
+			
         }
 
         if(file_dialog.showFileDialog("Select Directory##popup", imgui_addons::ImGuiFileBrowser::DialogMode::SELECT, ImVec2(600, 300)))
