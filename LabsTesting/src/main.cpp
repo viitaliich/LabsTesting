@@ -8,7 +8,9 @@
 #include <GLFW/glfw3.h>		// must be included after <GL/glew.h>
 
 #include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw_gl3.h"
+//#include "imgui/imgui_impl_glfw_gl3.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 #include "common.h"
 #include "TestGen.h"
@@ -103,21 +105,28 @@ int main(int argc, char** argv) {
 		std::cout << "ERROR: not GLEW_OK\n";
 
 	ImGui::CreateContext();
-	ImGui_ImplGlfwGL3_Init(window, true);
+	//ImGui_ImplGlfwGL3_Init(window, true);
+	//ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
 
 	// Setup style
 	ImGui::StyleColorsDark();
 	//ImGui::StyleColorsClassic();
 
 	// Variables for ImGui num.1 example
-	bool show_demo_window = true;
-	bool show_another_window = false;
+	bool show_demo_window = true;		// default Checkbox value
+	bool show_another_window = false;	// default Checkbox value
+	//ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
-		ImGui_ImplGlfwGL3_NewFrame();	
+		//ImGui_ImplGlfwGL3_NewFrame();	
+		ImGui_ImplOpenGL3_NewFrame();	
+		ImGui_ImplGlfw_NewFrame();	
+		ImGui::NewFrame();
 
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);		// maybe rid of this
@@ -126,7 +135,7 @@ int main(int argc, char** argv) {
 		{
 			static float f = 0.0f;
 			static int counter = 0;
-			ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
+			//ImGui::Text("Hello, world!");                           // Display some text (you can use a format string too)
 			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f    
 			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
@@ -140,9 +149,26 @@ int main(int argc, char** argv) {
 
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		}
+		//// 2. Show another simple window. In most cases you will use an explicit Begin/End pair to name your windows.
+		//if (show_another_window)
+		//{
+		//	ImGui::Begin("Another Window", &show_another_window);		// ???
+		//	ImGui::Text("Hello from another window!");
+		//	if (ImGui::Button("Close Me"))
+		//		show_another_window = false;
+		//	ImGui::End();
+		//}
+
+		// 3. Show the ImGui demo window. Most of the sample code is in ImGui::ShowDemoWindow(). Read its code to learn more about Dear ImGui!
+		if (show_demo_window)
+		{
+			ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver); // Normally user code doesn't need/want to call this because positions are saved in .ini file anyway. Here we just want to make the demo initial state a bit more friendly!
+			ImGui::ShowDemoWindow(&show_demo_window);
+		}
 
 		ImGui::Render();
-		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+		//ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -152,7 +178,9 @@ int main(int argc, char** argv) {
 	}
 
 	// Cleanup
-	ImGui_ImplGlfwGL3_Shutdown();
+	//ImGui_ImplGlfwGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui_ImplOpenGL3_Shutdown();
 	ImGui::DestroyContext();
 
 	glfwTerminate();
