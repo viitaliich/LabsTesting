@@ -281,8 +281,10 @@ void ImGui::ShowDemoWindow(bool* p_open)
     if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
     if (no_close)           p_open = NULL; // Don't pass our bool* to Begin
 
-    // We specify a default position/size in case there's no data in the .ini file. Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
-    ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
+    // We specify a default position/size in case there's no data in the .ini file. 
+	// Typically this isn't required! We only do it to make the Demo applications a little more welcoming.
+    // First-use window position		???
+	ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(550, 680), ImGuiCond_FirstUseEver);
 
     // Main body of the Demo window starts here.
@@ -307,7 +309,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
         }
         if (ImGui::BeginMenu("Examples"))
         {
-            ImGui::MenuItem("Main menu bar", NULL, &show_app_main_menu_bar);
+            //ImGui::MenuItem("Main menu bar", NULL, &show_app_main_menu_bar);
             ImGui::MenuItem("Console", NULL, &show_app_console);
             ImGui::MenuItem("Log", NULL, &show_app_log);
             ImGui::MenuItem("Simple layout", NULL, &show_app_layout);
@@ -331,8 +333,8 @@ void ImGui::ShowDemoWindow(bool* p_open)
 
         if(show_open_dialog)
         {
-            ImGui::OpenPopup("Open File");
-            show_open_dialog = false;
+			ImGui::OpenPopup("Open File");
+			show_open_dialog = false;
         }
         else if (show_save_dialog)
         {
@@ -345,7 +347,9 @@ void ImGui::ShowDemoWindow(bool* p_open)
             show_select_dialog = false;
         }
 
-        //Show an open/save/select file dialog. Last argument provides a list of supported files. Selecting other files will show error. If "*.*" is provided, all files can be opened.
+        //Show an open/save/select file dialog. 
+		//Last argument provides a list of supported files. 
+		//Selecting other files will show error. If "*.*" is provided, all files can be opened.
         if(file_dialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(600, 300), "*.*"))
         {
 			// ???
@@ -482,7 +486,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
     }
 
     // All demo contents
-    ShowDemoWindowWidgets();
+	ShowDemoWindowWidgets();
     ShowDemoWindowLayout();
     ShowDemoWindowPopups();
     ShowDemoWindowColumns();
@@ -930,7 +934,7 @@ static void ShowDemoWindowWidgets()
 
         // Simplified one-liner Combo() using an array of const char*
         static int item_current_3 = -1; // If the selection isn't within 0..count, Combo won't display a preview
-        ImGui::Combo("combo 3 (array)", &item_current_3, items, IM_ARRAYSIZE(items));
+        ImGui::Combo("combo 3 (array)", &item_current_3, items, IM_ARRAYSIZE(items)); 
 
         // Simplified one-liner Combo() using an accessor function
         struct FuncHolder { static bool ItemGetter(void* data, int idx, const char** out_str) { *out_str = ((const char**)data)[idx]; return true; } };
@@ -1098,6 +1102,7 @@ static void ShowDemoWindowWidgets()
             ImGui::InputTextWithHint("password (w/ hint)", "<password>", bufpass, 64, ImGuiInputTextFlags_Password | ImGuiInputTextFlags_CharsNoBlank);
             ImGui::InputText("password (clear)", bufpass, 64, ImGuiInputTextFlags_CharsNoBlank);
             ImGui::TreePop();
+			
         }
 
         if (ImGui::TreeNode("Resize Callback"))
@@ -3763,18 +3768,18 @@ struct ExampleAppConsole
         ImGui::Separator();
 
         // Options menu
-        if (ImGui::BeginPopup("Options"))
-        {
-            ImGui::Checkbox("Auto-scroll", &AutoScroll);
-            ImGui::EndPopup();
-        }
+		if (ImGui::BeginPopup("Options"))
+		{
+			ImGui::Checkbox("Auto-scroll", &AutoScroll);
+			ImGui::EndPopup();
+		}
 
         // Options, Filter
-        if (ImGui::Button("Options"))
-            ImGui::OpenPopup("Options");
-        ImGui::SameLine();
-        Filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
-        ImGui::Separator();
+		if (ImGui::Button("Options"))
+			ImGui::OpenPopup("Options");
+		ImGui::SameLine();
+		Filter.Draw("Filter (\"incl,-excl\") (\"error\")", 180);
+		ImGui::Separator();
 
         const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing(); // 1 separator, 1 input text
         ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar); // Leave room for 1 separator + 1 InputText
