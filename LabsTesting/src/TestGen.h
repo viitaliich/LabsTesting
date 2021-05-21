@@ -78,7 +78,6 @@ enum class IncorrectRules : uint8_t {
 class TestGen
 {
 private:
-	uint8_t lab_num;
 	std::vector <PatternElement*> pattern;
 	std::vector <PatternElement*>::iterator it;
 
@@ -98,6 +97,11 @@ private:
 	std::vector <std::string> incorrect_tests;
 
 public:
+	char name[64] = "";
+	char group[64] = "";
+	int lab_num;
+	int item_current_lab = 0;		// ??? for UI Combo box purposes
+	int item_current_var = 0;		// ??? for UI Combo box purposes
 
 	// TODO: output buffer for single test		???
 	// TODO: output buffer for all tests		???

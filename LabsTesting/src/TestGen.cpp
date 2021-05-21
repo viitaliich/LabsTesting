@@ -1098,6 +1098,8 @@ void TestGen::GenPattern() {
 
 TestGen::TestGen(uint8_t lab_num)
 	:
+	name(""),
+	group(""),
 	lab_num(lab_num),
 	test(""),		// generated test
 	keywords({
