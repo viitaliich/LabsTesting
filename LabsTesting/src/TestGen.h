@@ -96,10 +96,13 @@ private:
 	std::vector <std::string> correct_tests;
 	std::vector <std::string> incorrect_tests;
 
+
 public:
+	char* status = (char*)"---";
 	char name[64] = "";
 	char group[64] = "";
 	int lab_num;
+	int lab_var;
 	int item_current_lab = 0;		// ??? for UI Combo box purposes
 	int item_current_var = 0;		// ??? for UI Combo box purposes
 
@@ -137,6 +140,8 @@ private:
 	void StringTestGen(Rules rule);
 
 public:
+	//inline char* GetStatus() { return status; }
+	//void SetStatus();
 	TestGen(uint8_t lab_num /* variant*/);		// ???
 	~TestGen();
 	

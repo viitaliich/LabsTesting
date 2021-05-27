@@ -1,11 +1,11 @@
 #define _CRT_SECURE_NO_WARNINGS		// ???
 
-
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <memory>
 #include <fstream>
+#include <thread>
 
 #include <GL/glew.h>		// maybe we don't need this include here, because we don't draw anything ???
 #include <GLFW/glfw3.h>		// must be included after <GL/glew.h>
@@ -78,19 +78,46 @@ void modify_input_code(std::string& data, const std::string& path) {
 	file.close();
 }
 
-void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens) {
+void t_generate(std::vector<TestGen*>& test_gens, int& labs_num, int i) {
+	//test_gens[i]->Generate();
+	std::cout << "NAME    [" << i << "]: " << test_gens[i]->name << std::endl;
+	std::cout << "GROUP   [" << i << "]: " << test_gens[i]->group << std::endl;
+	std::cout << "LAB NUM [" << i << "]: " << test_gens[i]->lab_num << std::endl;
+	std::cout << "LAB VAR [" << i << "]: " << test_gens[i]->lab_var << std::endl;
+	std::cout << "******************************" << std::endl;
+	int j = 1000;
+	while (j > 0) {
+		std::cout << i << std::endl;
+		j--;
+	}
+	test_gens[i]->status = (char*)"DONE";
+	// ???
+	//test_gens.erase(test_gens.begin() + i);
+	//labs_num--;
+}
+
+void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std::thread>& threads) {
 	//static char buf1[64] = ""; ImGui::InputText("default", buf1, 64);
-	static char buf[64] = "";	// TODO: optimize 64 ???
+	static char buf[64] = "";
 	ImGui::InputText("Enter how many labs you want to test", buf, 64, ImGuiInputTextFlags_CharsDecimal);
 	ImGui::SameLine();
 
+	static int labs_num;
 	static bool button_enter = false;
-	if (ImGui::Button("ENTER")) button_enter = true;
-
+	if (ImGui::Button("ENTER")) {
+		if (!test_gens.empty()) {
+			test_gens.clear();
+		}
+		labs_num = atoi(buf);
+		for (int i = 0; i < labs_num; i++) {
+			test_gens.push_back(new TestGen(1));
+		}
+		button_enter = true;
+	}
 	if (button_enter){
 		ImGui::Text("Enter parameters for every student");
 		// Group NameSurname LabNum Var Button
-		ImGui::Columns(6, "columns");
+		ImGui::Columns(7, "columns");
 		ImGui::Separator();
 		ImGui::Text("#"); ImGui::NextColumn();
 		ImGui::Text("Group"); ImGui::NextColumn();
@@ -98,6 +125,7 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens) {
 		ImGui::Text("Lab number"); ImGui::NextColumn();
 		ImGui::Text("Task number"); ImGui::NextColumn();
 		ImGui::Text("Button"); ImGui::NextColumn();
+		ImGui::Text("Status"); ImGui::NextColumn();
 		ImGui::Separator();
 		
 		/*const char* names[3] = { "One", "Two", "Three" };
@@ -120,14 +148,14 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens) {
 		const char* paths[3] = { "/path/one", "/path/two", "/path/three" };
 		static int selected = -1;*/
 
-		static int labs_num = atoi(buf);
-
+		/*static int labs_num = atoi(buf);
 		for (int i = 0; i < labs_num; i++) {
 			test_gens.push_back(new TestGen(1));
-		}
+		}*/
 
-#define NAME_ENTER(index) name_enter##index
-#define GROUP_ENTER(index) group_enter##index
+
+//#define NAME_ENTER(index) name_enter##index
+//#define GROUP_ENTER(index) group_enter##index
 
 		for (int i = 0; i < labs_num; i++)
 		{
@@ -160,8 +188,8 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens) {
 			//static int item_current = 0;		// index of current item
 			const char* items_lab_num[] = { "1", "2", "3", "4", "5", "6" };
 			ImGui::Combo(label, &test_gens[i]->item_current_lab, items_lab_num, IM_ARRAYSIZE(items_lab_num));
-			ImGui::NextColumn();
 			test_gens[i]->lab_num = atoi(items_lab_num[test_gens[i]->item_current_lab]);
+			ImGui::NextColumn();
 			//std::cout << atoi(items_lab_num[test_gens[i]->item_current_lab]);
 			//std::cout << test_gens[i]->lab_num;
 			
@@ -169,29 +197,49 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens) {
 			sprintf(label, "task num %d", i + 1);
 			//static int item_current1 = 0;
 			ImGui::Combo(label, &test_gens[i]->item_current_var, items_lab_var, IM_ARRAYSIZE(items_lab_var));
+			test_gens[i]->lab_var = atoi(items_lab_var[test_gens[i]->item_current_var]);
 			ImGui::NextColumn();
-			//test_gens[i]->lab_var = atoi(items_lab_var[test_gens[i]->item_current_var]);
 
-			if (ImGui::Button("GENERATE")){
-				//test_gens[i]->Generate();
-				std::cout << test_gens[i]->name << std::endl;
-				std::cout << test_gens[i]->group << std::endl;
-				std::cout << test_gens[i]->lab_num << std::endl;
-				std::cout << "******************************" << std::endl;
+			static bool status_column = false;
+			sprintf(label, "GENERATE %d", i + 1);
+			if (ImGui::Button(label)){
+				////test_gens[i]->Generate();
+				//std::cout << "NAME    [" << i << "]: " << test_gens[i]->name << std::endl;
+				//std::cout << "GROUP   [" << i << "]: " << test_gens[i]->group << std::endl;
+				//std::cout << "LAB NUM [" << i << "]: " << test_gens[i]->lab_num << std::endl;
+				//std::cout << "LAB VAR [" << i << "]: " << test_gens[i]->lab_var << std::endl;
+				//std::cout << "******************************" << std::endl;
+				//// ???
+				//test_gens.erase(test_gens.begin() + i);
+				//labs_num--;
+
+#define THREAD(index) t ## index		// ???
+				/*std::thread THREAD(i)(t_generate, std::ref(test_gens), std::ref(labs_num), i);
+				threads.push_back(THREAD(i));*/
+				//std::thread THREAD(i)(t_generate, std::ref(test_gens), std::ref(labs_num), i);
+				threads.push_back(std::thread (t_generate, std::ref(test_gens), std::ref(labs_num), i));
+
+
 			}
+			// TODO: maybe do this as a table, not columns
+			ImGui::NextColumn();
+			ImGui::Text(test_gens[i]->status);
 
 			ImGui::NextColumn();
+
 		}
 		ImGui::Columns(1);
 		ImGui::Separator();
+
 
 		if (ImGui::Button("GENERATE ALL")) {
 			//std::cout << test_gens.size();
 			for (int i = 0; i < labs_num; i++) {
 				//test_gens[i]->Generate();
-				std::cout << test_gens[i]->name << std::endl;
-				std::cout << test_gens[i]->group << std::endl;
-				std::cout << test_gens[i]->lab_num << std::endl;
+				std::cout << "NAME    [" << i << "]: " << test_gens[i]->name << std::endl;
+				std::cout << "GROUP   [" << i << "]: " << test_gens[i]->group << std::endl;
+				std::cout << "LAB NUM [" << i << "]: " << test_gens[i]->lab_num << std::endl;
+				std::cout << "LAB VAR [" << i << "]: " << test_gens[i]->lab_var << std::endl;
 				std::cout << "******************************" << std::endl;
 			}
 		}
@@ -204,9 +252,7 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens) {
 int main(int argc, char** argv) {
 
 	std::vector<TestGen*> test_gens;
-
-	
-	//TestGen* tg = new TestGen(1);
+	std::vector<std::thread> threads;
 
 	// Probably make GLFW thing as a separate function
 	// GLFW below
@@ -299,7 +345,7 @@ int main(int argc, char** argv) {
 		}
 
 		if (show_window) {
-			ShowWindow(&show_window, test_gens);
+			ShowWindow(&show_window, test_gens, threads);
 		}
 
 		ImGui::Render();
@@ -321,6 +367,12 @@ int main(int argc, char** argv) {
 
 	glfwTerminate();
 
+	for (auto& th : threads) th.join();
+	/*for (int i = 0; i < threads.size(); i++) {
+		threads[i].join();
+	}*/
+
+	//THREAD(t_index).join();	// ???
 
 	// *******************************
 	//tg->Generate();

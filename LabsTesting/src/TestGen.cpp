@@ -990,6 +990,10 @@ void TestGen::Incorrect() {
 	/*(*it)->RestoreOrigElem();*/
 }
 
+//void TestGen::SetStatus() {
+//	status = "DONE";
+//}
+
 void TestGen::Generate() {
 	for (it = pattern.begin(); it != pattern.end(); it++) {
 		Correct();
