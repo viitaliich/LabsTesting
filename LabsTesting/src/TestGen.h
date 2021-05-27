@@ -99,6 +99,8 @@ private:
 
 public:
 	char* status = (char*)"---";
+	char path_compiler[512] = "---";
+	char path_source[512] = "---";
 	char name[64] = "";
 	char group[64] = "";
 	int lab_num;

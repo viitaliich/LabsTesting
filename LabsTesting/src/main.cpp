@@ -15,6 +15,8 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 //#include "imgui/imgui_demo.cpp"
+#include "imgui/ImGuiFileBrowser.h"
+
 
 #include "common.h"
 #include "TestGen.h"
@@ -80,14 +82,16 @@ void modify_input_code(std::string& data, const std::string& path) {
 
 void t_generate(std::vector<TestGen*>& test_gens, int& labs_num, int i) {
 	//test_gens[i]->Generate();
+	test_gens[i]->status = (char*)"IN PROGRESS ...";
 	std::cout << "NAME    [" << i << "]: " << test_gens[i]->name << std::endl;
 	std::cout << "GROUP   [" << i << "]: " << test_gens[i]->group << std::endl;
 	std::cout << "LAB NUM [" << i << "]: " << test_gens[i]->lab_num << std::endl;
 	std::cout << "LAB VAR [" << i << "]: " << test_gens[i]->lab_var << std::endl;
+	std::cout << "source [" << i << "]: " << test_gens[i]->path_source << std::endl;
 	std::cout << "******************************" << std::endl;
 	int j = 1000;
 	while (j > 0) {
-		std::cout << i << std::endl;
+		//std::cout << i << std::endl;
 		j--;
 	}
 	test_gens[i]->status = (char*)"DONE";
@@ -97,6 +101,10 @@ void t_generate(std::vector<TestGen*>& test_gens, int& labs_num, int i) {
 }
 
 void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std::thread>& threads) {
+
+	static imgui_addons::ImGuiFileBrowser file_dialog;
+
+
 	//static char buf1[64] = ""; ImGui::InputText("default", buf1, 64);
 	static char buf[64] = "";
 	ImGui::InputText("Enter how many labs you want to test", buf, 64, ImGuiInputTextFlags_CharsDecimal);
@@ -117,14 +125,18 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 	if (button_enter){
 		ImGui::Text("Enter parameters for every student");
 		// Group NameSurname LabNum Var Button
-		ImGui::Columns(7, "columns");
+		ImGui::Columns(11, "columns");
 		ImGui::Separator();
 		ImGui::Text("#"); ImGui::NextColumn();
 		ImGui::Text("Group"); ImGui::NextColumn();
-		ImGui::Text("Name, surname"); ImGui::NextColumn();
+		ImGui::Text("Name\nSurname"); ImGui::NextColumn();
 		ImGui::Text("Lab number"); ImGui::NextColumn();
 		ImGui::Text("Task number"); ImGui::NextColumn();
-		ImGui::Text("Button"); ImGui::NextColumn();
+		ImGui::Text("Compiler\nexecutable file"); ImGui::NextColumn();
+		ImGui::Text("Path"); ImGui::NextColumn();
+		ImGui::Text("Input\nsource code"); ImGui::NextColumn();
+		ImGui::Text("Path"); ImGui::NextColumn();
+		ImGui::Text("Generate"); ImGui::NextColumn();
 		ImGui::Text("Status"); ImGui::NextColumn();
 		ImGui::Separator();
 		
@@ -200,7 +212,41 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 			test_gens[i]->lab_var = atoi(items_lab_var[test_gens[i]->item_current_var]);
 			ImGui::NextColumn();
 
-			static bool status_column = false;
+			// COMPILER...
+			
+			static char lbl_compiler[64];		// label
+			static int index_compiler;			// index for differences
+			sprintf(label, "COMPILER\nEXECUTABLE FILE %d", i + 1);
+			if (ImGui::Button(label)) {
+				index_compiler = i;
+				sprintf(lbl_compiler, "Choose compiler executable file %d", index_compiler + 1);
+				ImGui::OpenPopup(lbl_compiler);
+			}
+			if (file_dialog.showFileDialog(lbl_compiler, imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(600, 300), "*.*")) {
+				sprintf(test_gens[index_compiler]->path_compiler, (char*)file_dialog.selected_path.c_str());
+			}
+
+			ImGui::NextColumn();
+
+			ImGui::Text(test_gens[i]->path_compiler);
+			ImGui::NextColumn();
+
+			static char lbl[64];		// label
+			static int index;			// index for differences
+			sprintf(label, "INPUT\nSOURCE CODE %d", i + 1);
+			if (ImGui::Button(label)) {
+				index = i;
+				sprintf(lbl, "Choose input source file %d", index + 1);
+				ImGui::OpenPopup(lbl);
+			}
+			if(file_dialog.showFileDialog(lbl, imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(600, 300), "*.*")){
+				sprintf(test_gens[index]->path_source, (char*)file_dialog.selected_path.c_str());
+			}
+			ImGui::NextColumn();
+
+			ImGui::Text(test_gens[i]->path_source);
+			ImGui::NextColumn();
+
 			sprintf(label, "GENERATE %d", i + 1);
 			if (ImGui::Button(label)){
 				////test_gens[i]->Generate();
@@ -212,12 +258,12 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 				//// ???
 				//test_gens.erase(test_gens.begin() + i);
 				//labs_num--;
-
+				
 #define THREAD(index) t ## index		// ???
 				/*std::thread THREAD(i)(t_generate, std::ref(test_gens), std::ref(labs_num), i);
 				threads.push_back(THREAD(i));*/
 				//std::thread THREAD(i)(t_generate, std::ref(test_gens), std::ref(labs_num), i);
-				threads.push_back(std::thread (t_generate, std::ref(test_gens), std::ref(labs_num), i));
+				threads.push_back(std::thread (t_generate, std::ref(test_gens), std::ref(labs_num), i)); 
 
 
 			}
@@ -235,12 +281,13 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 		if (ImGui::Button("GENERATE ALL")) {
 			//std::cout << test_gens.size();
 			for (int i = 0; i < labs_num; i++) {
+				threads.push_back(std::thread(t_generate, std::ref(test_gens), std::ref(labs_num), i));
 				//test_gens[i]->Generate();
-				std::cout << "NAME    [" << i << "]: " << test_gens[i]->name << std::endl;
-				std::cout << "GROUP   [" << i << "]: " << test_gens[i]->group << std::endl;
-				std::cout << "LAB NUM [" << i << "]: " << test_gens[i]->lab_num << std::endl;
-				std::cout << "LAB VAR [" << i << "]: " << test_gens[i]->lab_var << std::endl;
-				std::cout << "******************************" << std::endl;
+				//std::cout << "NAME    [" << i << "]: " << test_gens[i]->name << std::endl;
+				//std::cout << "GROUP   [" << i << "]: " << test_gens[i]->group << std::endl;
+				//std::cout << "LAB NUM [" << i << "]: " << test_gens[i]->lab_num << std::endl;
+				//std::cout << "LAB VAR [" << i << "]: " << test_gens[i]->lab_var << std::endl;
+				//std::cout << "******************************" << std::endl;
 			}
 		}
 		ImGui::SameLine();
