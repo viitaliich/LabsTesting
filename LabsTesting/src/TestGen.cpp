@@ -136,7 +136,8 @@ void TestGen::KeywordTestGen(Rules rule) {
 		m = (*it)->GetMod();
 		if (m == KEYWORD_RETURN) {
 			std::vector <PatternElement*>::iterator temp_it = ++it;		// ???
-			while ((*it)->GetType() != ElementType::TYPE_NEW_LINE)
+			while (it != pattern.end())
+			//while ((*it)->GetType() != ElementType::TYPE_EOF)
 			{
 				(*it)->SaveOrigElem();
 				(*it)->SetValue("");
@@ -145,7 +146,8 @@ void TestGen::KeywordTestGen(Rules rule) {
 			IncorrectToText();
 			
 			it = temp_it;
-			while ((*it)->GetType() != ElementType::TYPE_NEW_LINE)
+			while (it != pattern.end())
+			//while ((*it)->GetType() != ElementType::TYPE_NEW_LINE)
 			{
 				(*it)->RestoreOrigElem();
 				it++;
@@ -950,6 +952,8 @@ void TestGen::Correct() {
 		OperationTestGen(Rules::CORRECT_SUBSTITUTION);		// binary to binary
 		break;
 	}
+	case ElementType::TYPE_EOF:
+		break;
 
 	default:
 		std::cout << "ERROR: correct test error\n";
@@ -1041,6 +1045,8 @@ void TestGen::Incorrect() {
 		OperationTestGen(Rules::INCORRECT_WRONG_NUM);
 		break;
 	}
+	case ElementType::TYPE_EOF:
+		break;
 	default:
 		std::cout << "ERROR: incorrect gen type\n";
 		exit(1);
@@ -1083,13 +1089,77 @@ void TestGen::Generate() {
 		break;
 	}
 
-	
-
 	GenPattern();
+
 	for (it = pattern.begin(); it != pattern.end(); it++) {
 		Correct();
 		Incorrect();
 	}
+
+	// Correct
+	// generated test to the file
+
+	
+	std::vector <std::string>::iterator iter;
+	for (iter = correct_tests.begin(); iter != correct_tests.end(); iter++) {
+		tests_num++;
+
+		modify_input_code(*iter, path_source);
+		//std::cout << run_program(path_compiler) << std::endl;		// return result
+		std::string out_res_path = run_program(path_compiler);		// return path to file with result
+		//std::cout << *iter << std::endl;
+		//std::cout << run_program("D:\\KPI\\LabsTesting\\LabsTesting\\source.exe") << std::endl;		// return result
+		//std::cout << "\n-------------------\n" << std::endl;		// return result
+
+		std::ifstream stream(out_res_path);
+		std::string line;
+		while (getline(stream, line)) {
+			if (line.find("RESULT BEGIN...") != std::string::npos) {
+				getline(stream, line);
+				while (!isdigit(line[0]) && (!line.find("... RESULT END") != std::string::npos))
+					getline(stream, line);
+				if (line.find("... RESULT END") != std::string::npos) {
+					// failed tests
+					// DO NOTHING
+				}
+				else {
+					// passed tests
+					correct_tests_num++;
+				}
+			}
+		}
+	}
+
+	for (iter = incorrect_tests.begin(); iter != incorrect_tests.end(); iter++) {
+		tests_num++;
+
+		modify_input_code(*iter, path_source);
+		//std::cout << run_program(path_compiler) << std::endl;		// return result
+		std::string out_res_path = run_program(path_compiler);		// return path to file with result
+		//std::cout << *iter << std::endl;
+		//std::cout << run_program("D:\\KPI\\LabsTesting\\LabsTesting\\source.exe") << std::endl;		// return result
+		//std::cout << "\n-------------------\n" << std::endl;		// return result
+
+		std::ifstream stream(out_res_path);
+		std::string line;
+		while (getline(stream, line)) {
+			if (line.find("ERROR") != std::string::npos) {
+				// passed tests
+				correct_tests_num++;
+				break;
+			}
+			
+		}
+	}
+
+	std::cout << correct_tests_num << std::endl;
+	std::cout << tests_num << std::endl;
+
+	// Mark
+	percent = correct_tests_num * 100 / tests_num;
+	mark = percent * max_mark / 100;
+	//std::cout << mark << std::endl;
+
 
 	// TEMPORARY FOR TESTING PURPOSES
 	// output tests to file
@@ -1129,50 +1199,51 @@ void TestGen::GenPattern() {
 			new ElemColon(),
 			new ElemSpace(),
 			new ElemNewLine(),
-			new ElemSpace(),		// ...
+			new ElemSpace(),		
 			new ElemKeyword(ModKeyword::KEYWORD_RETURN),
 			new ElemSpace(),
 			// -1+(not 2)*(~3)/4
-			new ElemUnOperation(ModOp::OP_UN_NEG),
-			new ElemSpace(),
+			//new ElemUnOperation(ModOp::OP_UN_NEG),
+			//new ElemSpace(),
 			new ElemValue(ModValue::VALUE_BASE, {
 				new ElemValue(ModValue::VALUE_INT_DEC, {}),
 				new ElemValue(ModValue::VALUE_FLOAT, {}),
 				}),
-			new ElemSpace(),
-			new ElemBinOperation(ModOp::OP_BIN_ADD),
-			new ElemSpace(),
-			new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
-			new ElemSpace(),
-			new ElemUnOperation(ModOp::OP_UN_NOT),
-			new ElemSpace(),
-			new ElemValue(ModValue::VALUE_BASE, {
-				new ElemValue(ModValue::VALUE_INT_DEC, {}),
-				new ElemValue(ModValue::VALUE_FLOAT, {}),
-				}),
-			new ElemSpace(),
-			new ElemRightBracket(ModBracket::BRACKET_RPAREN),
-			new ElemSpace(),
-			new ElemBinOperation(ModOp::OP_BIN_MUL),
-			new ElemSpace(),
-			new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
-			new ElemSpace(),
-			new ElemUnOperation(ModOp::OP_UN_BITCOMP),
-			new ElemSpace(),
-			new ElemValue(ModValue::VALUE_BASE, {
-				new ElemValue(ModValue::VALUE_INT_DEC, {}),
-				new ElemValue(ModValue::VALUE_FLOAT, {}),
-				}),
-			new ElemSpace(),
-			new ElemRightBracket(ModBracket::BRACKET_RPAREN),
-			new ElemSpace(),
-			new ElemBinOperation(ModOp::OP_BIN_DIV),
-			new ElemValue(ModValue::VALUE_BASE, {
-				new ElemValue(ModValue::VALUE_INT_DEC, {}),
-				new ElemValue(ModValue::VALUE_FLOAT, {}),
-				}),
-			new ElemSpace(),
-			new ElemNewLine()		// ALWAYS MUST BE AT THE END
+			//new ElemSpace(),
+			//new ElemBinOperation(ModOp::OP_BIN_ADD),
+			//new ElemSpace(),
+			//new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
+			//new ElemSpace(),
+			//new ElemUnOperation(ModOp::OP_UN_NOT),
+			//new ElemSpace(),
+			//new ElemValue(ModValue::VALUE_BASE, {
+			//	new ElemValue(ModValue::VALUE_INT_DEC, {}),
+			//	new ElemValue(ModValue::VALUE_FLOAT, {}),
+			//	}),
+			//new ElemSpace(),
+			//new ElemRightBracket(ModBracket::BRACKET_RPAREN),
+			//new ElemSpace(),
+			//new ElemBinOperation(ModOp::OP_BIN_MUL),
+			//new ElemSpace(),
+			//new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
+			//new ElemSpace(),
+			//new ElemUnOperation(ModOp::OP_UN_BITCOMP),
+			//new ElemSpace(),
+			//new ElemValue(ModValue::VALUE_BASE, {
+			//	new ElemValue(ModValue::VALUE_INT_DEC, {}),
+			//	new ElemValue(ModValue::VALUE_FLOAT, {}),
+			//	}),
+			//new ElemSpace(),
+			//new ElemRightBracket(ModBracket::BRACKET_RPAREN),
+			//new ElemSpace(),
+			//new ElemBinOperation(ModOp::OP_BIN_DIV),
+			//new ElemValue(ModValue::VALUE_BASE, {
+			//	new ElemValue(ModValue::VALUE_INT_DEC, {}),
+			//	new ElemValue(ModValue::VALUE_FLOAT, {}),
+			//	}),
+			//new ElemSpace(),
+			//new ElemNewLine(),		// NOT USE
+			//new ElemEOF()			// NOT USE
 		};
 		break;
 	}

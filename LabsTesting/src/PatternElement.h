@@ -91,6 +91,8 @@ enum class ElementType : uint8_t {
 	TYPE_BASE_VALUE,
 
 	TYPE_OP,
+
+	TYPE_EOF,
 };
 
 
@@ -251,4 +253,13 @@ public:
 	void SaveOrigElem();
 
 	inline int GetMod() const { return mod; }
+};
+
+class ElemEOF : public PatternElement
+{
+public:
+	ElemEOF();
+	~ElemEOF();
+	
+	void SaveOrigElem();
 };

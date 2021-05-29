@@ -302,3 +302,19 @@ ElemBinOperation::~ElemBinOperation()
 void ElemBinOperation::SaveOrigElem() {
 	orig_val = new ElemBinOperation(mod);
 }
+
+// ElemEOF
+
+ElemEOF::ElemEOF()
+	:
+	PatternElement(ElementType::TYPE_EOF, "")
+{
+}
+
+ElemEOF::~ElemEOF()
+{
+}
+
+void ElemEOF::SaveOrigElem() {
+
+}

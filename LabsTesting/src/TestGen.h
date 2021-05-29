@@ -4,6 +4,7 @@
 #include <vector>
 #include <sstream>
 
+#include "common.h"
 #include "PatternElement.h"
 
 struct Element {
@@ -116,14 +117,22 @@ private:
 
 public:
 	char* status = (char*)"---";
-	char path_compiler[512] = "---";
-	char path_source[512] = "---";
+	char path_compiler[1024] = "---";
+	char path_source[1024] = "---";
 	char name[64] = "";
 	char group[64] = "";
 	int lab_num;
 	int lab_var;
 	int item_current_lab = 0;		// ??? for UI Combo box purposes
 	int item_current_var = 0;		// ??? for UI Combo box purposes
+
+	// for marking algorithm
+	int tests_num = 0;				// whole number of tests
+	int correct_tests_num = 0;		// tests that passed
+
+	int max_mark = 10;
+	double percent;
+	double mark;
 
 	// TODO: output buffer for single test		???
 	// TODO: output buffer for all tests		???
