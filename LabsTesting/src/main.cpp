@@ -45,6 +45,7 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 	static imgui_addons::ImGuiFileBrowser file_dialog;
 
 
+
 	//static char buf1[64] = ""; ImGui::InputText("default", buf1, 64);
 	static char buf[64] = "";
 	ImGui::InputText("Enter how many labs you want to test", buf, 64, ImGuiInputTextFlags_CharsDecimal);
@@ -52,7 +53,7 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 
 	static int labs_num;
 	static bool button_enter = false;
-	if (ImGui::Button("ENTER")) {
+	if (ImGui::Button("ENTER lab num")) {
 		if (!test_gens.empty()) {
 			test_gens.clear();
 		}
@@ -62,10 +63,20 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 		}
 		button_enter = true;
 	}
+
 	if (button_enter){
+		static char buffer[64] = "";
+		ImGui::InputText("Enter MAX points per lab", buffer, 64, ImGuiInputTextFlags_CharsDecimal);
+		ImGui::SameLine();
+		if (ImGui::Button("ENTER mark")) {
+			for (int i = 0; i < labs_num; i++) {
+				test_gens[i]->max_mark = atoi(buffer);
+			}
+		}
+
 		ImGui::Text("Enter parameters for every student");
 		// Group NameSurname LabNum Var Button
-		ImGui::Columns(11, "columns");
+		ImGui::Columns(12, "columns");
 		ImGui::Separator();
 		ImGui::Text("#"); ImGui::NextColumn();
 		ImGui::Text("Group"); ImGui::NextColumn();
@@ -78,6 +89,7 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 		ImGui::Text("Path"); ImGui::NextColumn();
 		ImGui::Text("Generate"); ImGui::NextColumn();
 		ImGui::Text("Status"); ImGui::NextColumn();
+		ImGui::Text("Mark"); ImGui::NextColumn();
 		ImGui::Separator();
 		
 		/*const char* names[3] = { "One", "Two", "Three" };
@@ -210,6 +222,11 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 			// TODO: maybe do this as a table, not columns
 			ImGui::NextColumn();
 			ImGui::Text(test_gens[i]->status);
+
+			char buf[64];
+			sprintf(buf, "%f", test_gens[i]->mark);
+			ImGui::NextColumn();
+			ImGui::Text(buf);
 
 			ImGui::NextColumn();
 

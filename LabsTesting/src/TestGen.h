@@ -130,9 +130,9 @@ public:
 	int tests_num = 0;				// whole number of tests
 	int correct_tests_num = 0;		// tests that passed
 
-	int max_mark = 10;
+	int max_mark;
 	double percent;
-	double mark;
+	double mark = 0.0;
 
 	// TODO: output buffer for single test		???
 	// TODO: output buffer for all tests		???
