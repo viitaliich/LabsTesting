@@ -485,179 +485,243 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 		break;
 
 	case Rules::CORRECT_SUBSTITUTE_NUMERAL_SYS:
-		// TODO. this is a stub
-		val = (*it)->GetValue();
-		(*it)->SetValue(val);
-		CorrectToText();
-		break;
-
-	case Rules::CORRECT_RANDOM_VAL:
-		switch (m) {
-		
-		case VALUE_INT_BIN: {
-			//std::default_random_engine generator;
-			//std::uniform_int_distribution<int> distribution(1, 28);
-			//int len = distribution(generator);
-
-			boost::mt19937 generator;
-			boost::uniform_int<> distribution(1, 28);
-			int len = distribution(generator);
-
-			val = "0b0";
-			for (int i = 0; i < len; i++) {
-				//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
-				boost::uniform_int<> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
-				char sym = (char)dist(generator);
-				val += sym;
+		for (sb_iter = supported_bases.begin(); sb_iter != supported_bases.end(); sb_iter++) {
+			switch (*sb_iter)
+			{
+			case ModValue::VALUE_INT_DEC: {
+				// IT'S ALREADY DONE
+				// DO NOTHING
+				break;
 			}
 
-			(*it)->SetValue(val);
-			CorrectToText();
-			break;
+			case ModValue::VALUE_INT_BIN: {
+				boost::mt19937 generator;
+				boost::uniform_int<> distribution(1, 28);
+				int len = distribution(generator);
 
-		}
-		case VALUE_INT_OCT: {
-			//std::default_random_engine generator;
-			//std::uniform_int_distribution<int> distribution(1, 10);
-			//int len = distribution(generator);
+				val = "0b0";
+				for (int i = 0; i < len; i++) {
+					//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
+					boost::uniform_int<> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
+					char sym = (char)dist(generator);
+					val += sym;
+				}
 
-			boost::mt19937 generator;
-			boost::uniform_int<> distribution(1, 10);
-			int len = distribution(generator);
+				(*it)->SetValue(val);
+				CorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
 
-			val = "0o0";
-			for (int i = 0; i < len; i++) {
-				boost::uniform_int<> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
-				//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
-				char sym = (char)dist(generator);
-				val += sym;
+				break;
 			}
-			(*it)->SetValue(val);
-			CorrectToText();
-			break;
-		}
-		case VALUE_INT_HEX: {
-			//std::default_random_engine generator;
+			case ModValue::VALUE_INT_OCT: {
+				boost::mt19937 generator;
+				boost::uniform_int<> distribution(1, 10);
+				int len = distribution(generator);
 
-			boost::mt19937 generator;
-			// len 3 + 4 = 7
-			boost::uniform_int<> distr_num(1, 3);
-			//std::uniform_int_distribution<int> distr_num(1, 3);
-			boost::uniform_int<> distr_sym(1, 4);
-			//std::uniform_int_distribution<int> distr_sym(1, 4);
-			int len_num = distr_num(generator);
-			int len_sym = distr_sym(generator);
+				val = "0o0";
+				for (int i = 0; i < len; i++) {
+					boost::uniform_int<> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
+					//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
+					char sym = (char)dist(generator);
+					val += sym;
+				}
 
-			val = "0x0";
-			for (int i = 0; i < len_num; i++) {
-				boost::uniform_int<> dist(ASCII_0, ASCII_9);
-				//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_9);
-				char sym = (char)dist(generator);
-				val += sym;
+				(*it)->SetValue(val);
+				CorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+
+				break;
 			}
-			for (int i = 0; i < len_sym; i++) {
-				boost::uniform_int<> dist(ASCII_A, ASCII_F);
-				//std::uniform_int_distribution<int> dist(ASCII_A, ASCII_F);
-				char sym = (char)dist(generator);
-				val += sym;
+			case ModValue::VALUE_INT_HEX: {
+				//std::default_random_engine generator;
+
+				boost::mt19937 generator;
+				// len 3 + 4 = 7
+				boost::uniform_int<> distr_num(1, 3);
+				//std::uniform_int_distribution<int> distr_num(1, 3);
+				boost::uniform_int<> distr_sym(1, 4);
+				//std::uniform_int_distribution<int> distr_sym(1, 4);
+				int len_num = distr_num(generator);
+				int len_sym = distr_sym(generator);
+
+				val = "0x0";
+				for (int i = 0; i < len_num; i++) {
+					boost::uniform_int<> dist(ASCII_0, ASCII_9);
+					//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_9);
+					char sym = (char)dist(generator);
+					val += sym;
+				}
+				for (int i = 0; i < len_sym; i++) {
+					boost::uniform_int<> dist(ASCII_A, ASCII_F);
+					//std::uniform_int_distribution<int> dist(ASCII_A, ASCII_F);
+					char sym = (char)dist(generator);
+					val += sym;
+				}
+
+				(*it)->SetValue(val);
+				CorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+
+				break;
 			}
-
-			(*it)->SetValue(val);
-			CorrectToText();
-			break;
-
-		}
-		
-		case VALUE_STR: {
-			//std::string val = "";
-			const int len = 5;		// ???
-
-			//std::default_random_engine generator;
-			//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-
-			boost::mt19937 generator;
-			boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-			for (int i = 0; i <= len; i++) {
-				val += distribution(generator);		// append symbol to string
+			default:
+				std::cout << "ERROR: CORRECT_SUBSTITUTE_BASE\n";
+				exit(1);
 			}
-
-			(*it)->SetValue(val);
-			CorrectToText();
-			break;
-		}
-		default:
-			std::cout << "ERROR: [ValueTestGen]\n";
-			exit(1);
 		}
 		break;
+
 	case Rules::INCORRECT_ABSENT:
 		(*it)->SetValue(val);
 		IncorrectToText();
 		break;
 	case Rules::INCORRECT_SUBSTITUTE_TYPE:
-		// TODO
-		switch (m) {
-		case VALUE_INT_DEC: {
+		for (ust_iter = unsupported_types.begin(); ust_iter != unsupported_types.end(); ust_iter++) {
+			switch (*ust_iter)
+			{
+			case ModValue::VALUE_INT_DEC: {
+				boost::mt19937 generator;		// TODO: make it single instance as static outside all scopes in this file
+				boost::uniform_int<> distribution(0, INT_MAX);
+				int num = distribution(generator);
 
-			break;
-		}
-		case VALUE_INT_BIN: {
-			break;
+				val = std::to_string(num);
 
-		}
-		case VALUE_INT_OCT: {
-			break;
+				(*it)->SetValue(val);
+				IncorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+				//(*iter)->RestoreOrigElem();
+				break;
+			}
 
-		}
-		case VALUE_INT_HEX: {
-			break;
+			case ModValue::VALUE_FLOAT: {
+				boost::mt19937 generator;
+				boost::uniform_real<float> distribution(0.0, FLT_MAX);		// ???
+				boost::variate_generator<boost::mt19937&, boost::uniform_real<float> > gen(generator, distribution);
+				float num = gen();
+				val = boost::lexical_cast<std::string>(num);
 
-		}
-		case VALUE_FLOAT: {
-			break;
+				(*it)->SetValue(val);
+				IncorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
 
-		}
-		case VALUE_STR: {
-			break;
+				break;
+			}
+			case ModValue::VALUE_STR: {
+				const int len = 5;		// ???
 
-		}
-		default:
-			std::cout << "ERROR: [ValueTestGen]\n";
-			exit(1);
+				boost::mt19937 generator;
+				boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+				for (int i = 0; i <= len; i++) {
+					val += distribution(generator);		// append symbol to string
+				}
 
+				(*it)->SetValue(val);
+				IncorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+
+				break;
+			}
+			default:
+				std::cout << "ERROR: INCORRECT_SUBSTITUTE_TYPE\n";
+				exit(1);
+			}
 		}
 		break;
+
+
 	case Rules::INCORRECT_SUBSTITUTE_NUMERAL_SYS:
-		// TODO
-		switch (m) {
-		case VALUE_INT_DEC: {
+		for (usb_iter = unsupported_bases.begin(); usb_iter != unsupported_bases.end(); usb_iter++) {
+			switch (*usb_iter)
+			{
+			case ModValue::VALUE_INT_DEC: {
+				// IT'S ALREADY DONE
+				// DO NOTHING
+				break;
+			}
 
-			break;
-		}
-		case VALUE_INT_BIN: {
-			break;
+			case ModValue::VALUE_INT_BIN: {
+				boost::mt19937 generator;
+				boost::uniform_int<> distribution(1, 28);
+				int len = distribution(generator);
 
-		}
-		case VALUE_INT_OCT: {
-			break;
+				val = "0b0";
+				for (int i = 0; i < len; i++) {
+					//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
+					boost::uniform_int<> dist(ASCII_0, ASCII_1);		// is zero or/and one included in this range ???
+					char sym = (char)dist(generator);
+					val += sym;
+				}
 
-		}
-		case VALUE_INT_HEX: {
-			break;
+				(*it)->SetValue(val);
+				IncorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
 
-		}
-		case VALUE_FLOAT: {
-			break;
+				break;
+			}
+			case ModValue::VALUE_INT_OCT: {
+				boost::mt19937 generator;
+				boost::uniform_int<> distribution(1, 10);
+				int len = distribution(generator);
 
-		}
-		case VALUE_STR: {
-			break;
+				val = "0o0";
+				for (int i = 0; i < len; i++) {
+					boost::uniform_int<> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
+					//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_7);		// is zero or/and one included in this range ???
+					char sym = (char)dist(generator);
+					val += sym;
+				}
 
-		}
-		default:
-			std::cout << "ERROR: [ValueTestGen]\n";
-			exit(1);
+				(*it)->SetValue(val);
+				IncorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
 
+				break;
+			}
+			case ModValue::VALUE_INT_HEX: {
+				//std::default_random_engine generator;
+
+				boost::mt19937 generator;
+				// len 3 + 4 = 7
+				boost::uniform_int<> distr_num(1, 3);
+				//std::uniform_int_distribution<int> distr_num(1, 3);
+				boost::uniform_int<> distr_sym(1, 4);
+				//std::uniform_int_distribution<int> distr_sym(1, 4);
+				int len_num = distr_num(generator);
+				int len_sym = distr_sym(generator);
+
+				val = "0x0";
+				for (int i = 0; i < len_num; i++) {
+					boost::uniform_int<> dist(ASCII_0, ASCII_9);
+					//std::uniform_int_distribution<int> dist(ASCII_0, ASCII_9);
+					char sym = (char)dist(generator);
+					val += sym;
+				}
+				for (int i = 0; i < len_sym; i++) {
+					boost::uniform_int<> dist(ASCII_A, ASCII_F);
+					//std::uniform_int_distribution<int> dist(ASCII_A, ASCII_F);
+					char sym = (char)dist(generator);
+					val += sym;
+				}
+
+				(*it)->SetValue(val);
+				IncorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+
+				break;
+			}
+			default:
+				std::cout << "ERROR: INCORRECT_SUBSTITUTE_BASE\n";
+				exit(1);
+			}
 		}
 		break;
 	case Rules::INCORRECT_TO_SPECIAL_SYM: {
@@ -675,11 +739,11 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 		IncorrectToText();
 		break;
 	case Rules::INCORRECT_TO_NAME:
-		
 		// TODO ...
 		// take names from the list of already initialized ones. 
-		// random needs some initialization and it doesn't work here because of SWITCH
 
+		(*it)->SetValue(random_name);
+		IncorrectToText();
 		break;
 
 	default:
@@ -697,57 +761,97 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 void TestGen::OperationTestGen(Rules rule) {
 	(*it)->SaveOrigElem();
 
-	std::string val = ""; 
-	uint8_t mod = (*it)->GetMod();
+	std::string wrong_num_val(3, (*it)->GetValue()[0]);
 
-	switch (rule)
-	{
+	std::string val = ""; 
+	uint8_t m = (*it)->GetMod();
+
+	switch (rule) {
+	case Rules::CORRECT_SUBSTITUTION: {
+
+		switch (m) {
+		case ModOp::OP_UN_BITCOMP:
+		case ModOp::OP_UN_NEG:
+		case ModOp::OP_UN_NOT: {
+			for (suo_iter = supported_un_ops.begin(); suo_iter != supported_un_ops.end(); suo_iter++) {
+
+				(*it)->SetValue(suo_iter->val);
+				CorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+
+			}
+			break;
+		}
+		case ModOp::OP_BIN_ADD:
+		case ModOp::OP_BIN_NEG:
+		case ModOp::OP_BIN_MUL:
+		case ModOp::OP_BIN_DIV: {
+			for (sbo_iter = supported_bin_ops.begin(); sbo_iter != supported_bin_ops.end(); sbo_iter++) {
+
+				(*it)->SetValue(sbo_iter->val);
+				CorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+
+			}
+			break;
+		}
+		}
+		break;
+	}
+
 	case Rules::INCORRECT_ABSENT:
 		(*it)->SetValue(val);
 		IncorrectToText();
 		break;
-	case Rules::CORRECT_SUBSTITUTION: {
-		switch (mod)
-		{
+
+	case Rules::INCORRECT_SUBSTITUTION:		// to op which is not supported
+		// TODO
+		switch (m) {
 		case ModOp::OP_UN_BITCOMP:
 		case ModOp::OP_UN_NEG:
 		case ModOp::OP_UN_NOT: {
-			val = get_same_type_val(unary_ops, 0);
-			(*it)->SetValue(val);
-			CorrectToText();
+			for (usuo_iter = unsupported_un_ops.begin(); usuo_iter != unsupported_un_ops.end(); usuo_iter++) {
+
+				(*it)->SetValue(usuo_iter->val);
+				IncorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+
+			}
 			break;
 		}
 		case ModOp::OP_BIN_ADD:
-		case ModOp::OP_BIN_DIV:
 		case ModOp::OP_BIN_NEG:
-		case ModOp::OP_BIN_MUL: {
-			val = get_same_type_val(binary_ops, 0);
-			(*it)->SetValue(val);
-			CorrectToText();
+		case ModOp::OP_BIN_MUL:
+		case ModOp::OP_BIN_DIV: {
+			for (usbo_iter = unsupported_bin_ops.begin(); usbo_iter != unsupported_bin_ops.end(); usbo_iter++) {
+
+				(*it)->SetValue(usbo_iter->val);
+				IncorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+
+			}
 			break;
 		}
-		default:
-			std::cout << "ERROR: [OperationTestGen]\n";
-			exit(1);
-			break;
 		}
-		
 		break;
-	}
-	case Rules::INCORRECT_SUBSTITUTION:		// to op which is not supported
-		// TODO
-		break;
+
 	case Rules::INCORRECT_WRONG_NUM:
-		// TODO like spaces
+		(*it)->SetValue(wrong_num_val);
+		IncorrectToText();
 		break;
+
 	case Rules::INCORRECT_SUBSTITUTE_TYPE:	// binary to unary and vice versa
-		if (mod == OP_UN_BITCOMP || mod == OP_UN_NEG || mod == OP_UN_NOT) {
-			val = get_same_type_val(binary_ops, 0);
+		if (m == OP_UN_BITCOMP || m == OP_UN_NEG || m == OP_UN_NOT) {
+			val = get_same_type_val(supported_bin_ops, 0);
 			(*it)->SetValue(val);
 			IncorrectToText();
 		}
-		else if (mod == OP_BIN_ADD || mod == OP_BIN_NEG || mod == OP_BIN_MUL || mod == OP_BIN_DIV) {
-			val = get_same_type_val(unary_ops, 0);
+		else if (m == OP_BIN_ADD || m == OP_BIN_NEG || m == OP_BIN_MUL || m == OP_BIN_DIV) {
+			val = get_same_type_val(supported_un_ops, 0);
 			(*it)->SetValue(val);
 			IncorrectToText();
 		}
@@ -837,15 +941,13 @@ void TestGen::Correct() {
 	case ElementType::TYPE_VALUE: {
 		ElemValue* base = static_cast<ElemValue*>(*it);
 		for (base->pv_iter = base->possible_values.begin(); base->pv_iter != base->possible_values.end(); base->pv_iter++) {
-			//ValueTestGen(base->pv_iter, Rules::CORRECT_RANDOM_VAL);
 			ValueTestGen(base->pv_iter, Rules::CORRECT_SUBSTITUTE_TYPE);
-			//ValueTestGen(base->pv_iter, Rules::CORRECT_SUBSTITUTE_NUMERAL_SYS);
+			ValueTestGen(base->pv_iter, Rules::CORRECT_SUBSTITUTE_NUMERAL_SYS);
 		}
 		break;
 	}
 	case ElementType::TYPE_OP: {
 		OperationTestGen(Rules::CORRECT_SUBSTITUTION);		// binary to binary
-		OperationTestGen(Rules::CORRECT_SUBSTITUTE_TYPE);	// binary to unary
 		break;
 	}
 
@@ -957,6 +1059,24 @@ void TestGen::Generate() {
 		unsupported_types = { ModValue::VALUE_STR };
 		supported_bases = { ModValue::VALUE_INT_DEC, ModValue::VALUE_INT_BIN };
 		unsupported_bases = { ModValue::VALUE_INT_HEX, ModValue::VALUE_INT_OCT };
+		
+		supported_bin_ops = {
+			{OP_BIN_NEG, "-"},
+			{OP_BIN_ADD, "+"}
+			
+		};
+		unsupported_bin_ops = {
+			{OP_BIN_MUL, "*"},
+			{OP_BIN_DIV, "/"}
+		};
+		supported_un_ops = {
+			{OP_UN_NEG, "-"},
+			{OP_UN_BITCOMP, "~"},
+		};
+		unsupported_un_ops = {
+			{OP_UN_NOT, "not"} 
+		};
+
 		break;
 	
 	default:
@@ -1016,12 +1136,12 @@ void TestGen::GenPattern() {
 			//// -1+(not 2)*(~3)/4
 			//new ElemUnOperation(ModOp::OP_UN_NEG),
 			//new ElemSpace(),
-			new ElemValue(ModValue::VALUE_BASE, {
-				new ElemValue(ModValue::VALUE_INT_DEC, {}),
-				new ElemValue(ModValue::VALUE_FLOAT, {}),
-				}),
+			//new ElemValue(ModValue::VALUE_BASE, {
+				//new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				//new ElemValue(ModValue::VALUE_FLOAT, {}),
+				//}),
 			//new ElemSpace(),
-			//new ElemBinOperation(ModOp::OP_BIN_ADD),
+			new ElemBinOperation(ModOp::OP_BIN_ADD),
 			//new ElemSpace(),
 			//new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
 			//new ElemSpace(),
@@ -1094,17 +1214,17 @@ TestGen::TestGen()
 		{ BRACKET_LANGLE, "<" },
 		{ BRACKET_RANGLE, ">" },
 	}),
-	unary_ops({
-		{OP_UN_NEG, "-"},
-		{OP_UN_BITCOMP, "~"},
-		{OP_UN_NOT, "not"},
-	}),
-	binary_ops({
-		{OP_BIN_NEG, "-"},
-		{OP_BIN_ADD, "+"},
-		{OP_BIN_MUL, "*"},
-		{OP_BIN_DIV, "/"}
-	}),
+	//unary_ops({
+	//	{OP_UN_NEG, "-"},
+	//	{OP_UN_BITCOMP, "~"},
+	//	{OP_UN_NOT, "not"},
+	//}),
+	//binary_ops({
+	//	{OP_BIN_NEG, "-"},
+	//	{OP_BIN_ADD, "+"},
+	//	{OP_BIN_MUL, "*"},
+	//	{OP_BIN_DIV, "/"}
+	//}),
 	//operations({
 	//	{OP_UNARY, "-"},
 	//	{OP_UNARY, "~"},
@@ -1129,4 +1249,19 @@ TestGen::TestGen()
 {}
 
 TestGen::~TestGen() {
+	boost::mt19937 generator;
+	const int min_len = 1;
+	const int max_len = 10;		// ???
+
+	//std::uniform_int_distribution<int> distribution(min_len, max_len);
+	//int len = distribution(generator);		// length of name
+	boost::uniform_int<> distr(min_len, max_len);
+	int len = distr(generator);
+
+	boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+
+	for (int i = 0; i <= len; i++) {
+		random_name += distribution(generator);		// append symbol to string
+	}
+	std::cout << random_name << std::endl;
 }

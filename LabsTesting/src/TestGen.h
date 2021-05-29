@@ -87,9 +87,6 @@ private:
 
 	std::vector <Element> keywords;		// Element -> Keyword if there are problems 
 	std::vector <Element> brackets;		// Element -> Bracket if there are problems 
-	std::vector <Element> unary_ops;		
-	std::vector <Element> binary_ops;		
-	//std::vector <Element> operations;			// ???
 	std::vector <Element> special_syms;
 	std::vector <uint8_t> supported_types;
 	std::vector<uint8_t>::iterator st_iter /*= supported_types.begin()*/;		// supported_types iter
@@ -99,10 +96,23 @@ private:
 	std::vector<uint8_t>::iterator sb_iter /*= supported_bases.begin()*/;		// supported_types iter
 	std::vector <uint8_t> unsupported_bases;		// bin, oct, hex, dec
 	std::vector<uint8_t>::iterator usb_iter /*= unsupported_bases.begin()*/;		// supported_types iter
+	
+	std::vector <Element> supported_un_ops;		
+	std::vector <Element>::iterator suo_iter;		
+	std::vector <Element> unsupported_un_ops;		
+	std::vector <Element>::iterator usuo_iter;
+	std::vector <Element> supported_bin_ops;
+	std::vector <Element>::iterator sbo_iter;
+	std::vector <Element> unsupported_bin_ops;
+	std::vector <Element>::iterator usbo_iter;
+
+	//std::vector <Element> operations;			// ???
 
 	std::string test = "";					// generated test
 	std::vector <std::string> correct_tests;
 	std::vector <std::string> incorrect_tests;
+
+	std::string random_name = "";
 
 public:
 	char* status = (char*)"---";
