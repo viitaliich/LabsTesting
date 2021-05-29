@@ -91,7 +91,7 @@ void TestGen::KeywordTestGen(Rules rule) {
 	boost::mt19937 generator;
 
 	std::string val = (*it)->GetValue();
-	uint8_t m;
+	uint8_t m;		// for GetMod()
 
 	switch (rule)
 	{
@@ -124,17 +124,8 @@ void TestGen::KeywordTestGen(Rules rule) {
 
 	case Rules::INCORRECT_SUBSTITUTION:
 		m = (*it)->GetMod();
-		val = get_same_type_val(keywords, m);
-		// ...
-		/*Element* elem = &(keywords.front());
-		if (elem->mod == m) {
-			keywords.push_back(keywords.front());
-			keywords.erase(keywords.begin());
-			val = keywords.front().val;
-		}
-		else {
-			val = elem->val;
-		}*/
+		val = get_same_type_val(keywords, m); 
+
 		(*it)->SetValue(val);
 		IncorrectToText();
 		break;
@@ -161,9 +152,6 @@ void TestGen::KeywordTestGen(Rules rule) {
 			}
 			it = temp_it - 1;
 		}
-
-		//(*it)->SetValue(val);
-		//IncorrectToText();
 		break;
 	}
 
@@ -265,11 +253,8 @@ void TestGen::NameTestGen(Rules rule) {
 
 	switch (rule) {
 	case Rules::CORRECT_TO_UPPER_CASE: {
-		//std::uniform_int_distribution<int> distribution(ASCII_FIRST_UP_LETTER, ASCII_LAST_UP_LETTER);
-		boost::uniform_int<> distribution(ASCII_FIRST_UP_LETTER, ASCII_LAST_UP_LETTER);
-		for (int i = 0; i <= len; i++) {
-			val += distribution(generator);		// append symbol to string
-		}
+		val = (*it)->GetValue();
+		boost::to_upper(val);
 
 		(*it)->SetValue(val);
 		CorrectToText();
@@ -290,10 +275,7 @@ void TestGen::NameTestGen(Rules rule) {
 		break;
 	}
 	case Rules::CORRECT_ADD_NUM: {
-		boost::uniform_int<> distribution_one(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-		for (int i = 0; i <= len; i++) {
-			val += distribution_one(generator);		// append symbol to string
-		}
+		val = (*it)->GetValue();
 		boost::uniform_int<> distribution_two(ASCII_FIRST_NUMBER, ASCII_LAST_NUMBER);
 		//std::uniform_int_distribution<int> distribution_two(ASCII_FIRST_NUMBER, ASCII_LAST_NUMBER);
 		val += distribution_two(generator);		// append number to string
@@ -305,12 +287,7 @@ void TestGen::NameTestGen(Rules rule) {
 		break;
 	}
 	case Rules::CORRECT_ADD_UNDERSCORE: {
-		boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-		//std::uniform_int_distribution<int> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
-		for (int i = 0; i <= len; i++) {
-			val += distribution(generator);		// append symbol to string
-		}
-
+		val = (*it)->GetValue();
 		val += "_";		// append underscore to string
 		val += val;
 
@@ -326,14 +303,8 @@ void TestGen::NameTestGen(Rules rule) {
 	}
 	case Rules::INCORRECT_ADD_SPECIAL_SYM: {
 		val = (*it)->GetValue();
-		val += get_same_type_val(special_syms, 0);
+		val += get_same_type_val(special_syms, 0); 
 		val += val;
-
-		//std::uniform_int_distribution<int> distribution(ASCII_EXCLAMATION, ASCII_SLASH);
-		//boost::uniform_int<> distribution(ASCII_EXCLAMATION, ASCII_SLASH);
-		//val += (char)distribution(generator);
-
-		//val += (*it)->GetValue();
 
 		(*it)->SetValue(val);
 		IncorrectToText();
@@ -378,8 +349,10 @@ void TestGen::NameTestGen(Rules rule) {
 void TestGen::BracketTestGen(Rules rule) {
 	(*it)->SaveOrigElem();
 
-	uint8_t mod = (*it)->GetMod();
+	uint8_t m = (*it)->GetMod();
 	std::string val = "";
+	//std::string wrong_num_val(3, (char)(((*it)->GetValue()).c_str()));
+	std::string wrong_num_val(3, (*it)->GetValue()[0]);
 
 	switch (rule)
 	{
@@ -387,24 +360,19 @@ void TestGen::BracketTestGen(Rules rule) {
 		(*it)->SetValue(val);
 		IncorrectToText();
 		break;
-	case Rules::INCORRECT_SUBSTITUTION:		
-		val = get_same_type_val(brackets, mod);
+	case Rules::INCORRECT_SUBSTITUTION:
+		
+		val = get_same_type_val(brackets, m);
 		(*it)->SetValue(val);
 		IncorrectToText();
 		break;
 
 	case Rules::INCORRECT_WRONG_NUM: 
 		// TODO: this cause problems with SWITCH statement	???
-		// this rule as IF statement
+		// TODO: this rule as IF statement
 
-		//boost::mt19937 generator;
-		//boost::uniform_int<> distribution(2, 5);
-		//uint8_t num = distribution(generator);
-
-		//char v = (char)((*it)->GetValue()).c_str();		
-		//std::string val(num, v);	
-		//(*it)->SetValue(val);
-		//IncorrectToText();
+		(*it)->SetValue(wrong_num_val);
+		IncorrectToText();
 
 		break;
 	
@@ -444,7 +412,7 @@ void TestGen::ColonTestGen(Rules rule) {
 // TODO ??? ...
 void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 	(*it)->SaveOrigElem();
-
+	
 	std::string val = "";
 	uint8_t m = (*iter)->GetMod();
 	//ElemValue* original = new ElemValue(m, {});
@@ -459,23 +427,73 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 
 	switch (rule)
 	{
+	case Rules::CORRECT_SUBSTITUTE_TYPE:
+		
+		for (st_iter = supported_types.begin(); st_iter != supported_types.end(); st_iter++) {
+			switch (*st_iter)
+			{
+			case ModValue::VALUE_INT_DEC: {
+				boost::mt19937 generator;		// TODO: make it single instance as static outside all scopes in this file
+				boost::uniform_int<> distribution(0, INT_MAX);
+				int num = distribution(generator);
+
+				val = std::to_string(num);
+
+				(*it)->SetValue(val);
+				CorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+				//(*iter)->RestoreOrigElem();
+				break;
+			}
+
+			case ModValue::VALUE_FLOAT: {
+				boost::mt19937 generator;
+				boost::uniform_real<float> distribution(0.0, FLT_MAX);		// ???
+				boost::variate_generator<boost::mt19937&, boost::uniform_real<float> > gen(generator, distribution);
+				float num = gen();
+				val = boost::lexical_cast<std::string>(num);
+
+				(*it)->SetValue(val);
+				CorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+
+				break;
+			}
+			case ModValue::VALUE_STR: {
+				const int len = 5;		// ???
+
+				boost::mt19937 generator;
+				boost::uniform_int<> distribution(ASCII_FIRST_LOW_LETTER, ASCII_LAST_LOW_LETTER);
+				for (int i = 0; i <= len; i++) {
+					val += distribution(generator);		// append symbol to string
+				}
+
+				(*it)->SetValue(val);
+				CorrectToText();
+				(*it)->RestoreOrigElem();
+				(*it)->SaveOrigElem();
+
+				break;
+			}
+			default:
+				std::cout << "ERROR: CORRECT_SUBSTITUTE_TYPE\n";
+				exit(1);
+			}
+		}
+		break;
+
+	case Rules::CORRECT_SUBSTITUTE_NUMERAL_SYS:
+		// TODO. this is a stub
+		val = (*it)->GetValue();
+		(*it)->SetValue(val);
+		CorrectToText();
+		break;
+
 	case Rules::CORRECT_RANDOM_VAL:
 		switch (m) {
-		case VALUE_INT_DEC: {
-			//std::default_random_engine generator;		
-			//std::uniform_int_distribution<int> distribution(0, INT_MAX);
-			//int num = distribution(generator);
-
-			boost::mt19937 generator;		// TODO: make it single instance as static outside all scopes in this file
-			boost::uniform_int<> distribution(0, INT_MAX);
-			int num = distribution(generator);
-
-			val = std::to_string(num);
-
-			(*it)->SetValue(val);
-			CorrectToText();
-			break;
-		}
+		
 		case VALUE_INT_BIN: {
 			//std::default_random_engine generator;
 			//std::uniform_int_distribution<int> distribution(1, 28);
@@ -549,40 +567,7 @@ void TestGen::ValueTestGen(std::vector<ElemValue*>::iterator iter, Rules rule) {
 			break;
 
 		}
-		case VALUE_FLOAT: {
-			//std::default_random_engine generator;
-			//std::uniform_int_distribution<int> dist_one(0, 10);
-			//std::uniform_int_distribution<int> dist_two(1, 100);
-			//int num_one = dist_one(generator);
-			//int num_two = dist_two(generator);
-
-			boost::mt19937 generator;
-			boost::uniform_real<float> distribution(0.0, FLT_MAX);		// ???
-			boost::variate_generator<boost::mt19937&, boost::uniform_real<float> > gen(generator, distribution);
-			float num = gen();
-			val = boost::lexical_cast<std::string>(num);
-
-
-			// ***
-
-			//boost::mt19937 generator;
-			//boost::uniform_int<> distribution_one(0, 10);
-			//boost::uniform_int<> distribution_two(1, 100);
-			//int num_one = distribution_one(generator);
-			//int num_two = distribution_two(generator);
-
-			//val = std::to_string(num_one);
-			//val += '.';
-			//val += std::to_string(num_two);
-
-			(*it)->SetValue(val);
-			//(*iter)->SetValue(val);
-			CorrectToText();
-			//(*it)->RestoreOrigElem();		// ???
-
-			break;
-
-		}
+		
 		case VALUE_STR: {
 			//std::string val = "";
 			const int len = 5;		// ???
@@ -789,44 +774,32 @@ void TestGen::Correct() {
 	switch (type)
 	{
 	case ElementType::TYPE_KEYWORD: {
-
-		//uint8_t mod = (*it)->GetMod();
-
-		//switch (mod)
-		//{
-		//case KEYWORD_DEF:
-		//	// DO NOTHING
-		//	break;
-		//case KEYWORD_RETURN:
-		//	// DO NOTHING
-		//	break;
-		//default:
-		//	std::cout << "ERROR: keyword mod error\n";
-		//	exit(1);
-		//	break;
-		//}
+		// DO NOTHING
 		break;
 	}
 	case ElementType::TYPE_SPACE: {
-		// declare it somewhere ???
+		// TODO declare it in PatternElement.h
 		int min_sp_num = 0;
 		int rand_sp_num;
-		const int max_sp_num = 6;		// why 6 ???
+		const int max_sp_num = 4;
 
 		ElementType t = (*(it - 1))->GetType();
 		if (t == ElementType::TYPE_KEYWORD || t == ElementType::TYPE_NEW_LINE) {
 			min_sp_num = 1;
 		}
-		else if (t == ElementType::TYPE_NAME ||
-			t == ElementType::TYPE_BRACKET ||
-			t == ElementType::TYPE_COLON ||
-			t == ElementType::TYPE_VALUE) {
-			min_sp_num = 0;
-		}
+		//else if (t == ElementType::TYPE_NAME ||
+		//	t == ElementType::TYPE_BRACKET ||
+		//	t == ElementType::TYPE_COLON ||
+		//	t == ElementType::TYPE_VALUE) {
+		//	min_sp_num = 0;
+		//}
 
 		// random
 		boost::mt19937 generator;
-		boost::uniform_int<> distribution(min_sp_num, max_sp_num);
+		boost::uniform_int<> distribution(
+			((min_sp_num + 1 <= max_sp_num - 1) ? min_sp_num + 1 : min_sp_num),
+			((max_sp_num - 1 > min_sp_num + 1) ? max_sp_num - 1 : max_sp_num));
+		//boost::uniform_int<> distribution(min_sp_num, max_sp_num);
 		rand_sp_num = distribution(generator);
 
 		//std::default_random_engine generator;
@@ -838,7 +811,6 @@ void TestGen::Correct() {
 		SpaceTestGen(Rules::CORRECT_SPACES, rand_sp_num);
 		SpaceTestGen(Rules::CORRECT_SPACES, max_sp_num);
 		break;
-
 	}
 	case ElementType::TYPE_NAME: {
 		// Currently only "main" supports	??? TODO
@@ -847,43 +819,33 @@ void TestGen::Correct() {
 		NameTestGen(Rules::CORRECT_ADD_UNDERSCORE);
 		NameTestGen(Rules::CORRECT_TO_UPPER_CASE);
 		break;
-
 	}
 
 	case ElementType::TYPE_BRACKET: {
-		//uint8_t mod = (*it)->GetMod();
-
-		//if (mod == ModBracket::BRACKET_LPAREN) {
-		//	// DO NOTHING
-		//}
-		//else if (mod == ModBracket::BRACKET_RPAREN) {
-		//	// DO NOTHING
-		//}
+		// DO NOTHING
 		break;
-
 	}
 	case ElementType::TYPE_COLON: {
 		// DO NOTHING
 		break;
-
 	}
 	case ElementType::TYPE_NEW_LINE: {
 		// Multiple new lines
-		SpaceTestGen(Rules::CORRECT_MULT_NEWLINES, 3);
+		SpaceTestGen(Rules::CORRECT_MULT_NEWLINES, 3);		// why 3 ???
 		break;
-
 	}
 	case ElementType::TYPE_VALUE: {
 		ElemValue* base = static_cast<ElemValue*>(*it);
 		for (base->pv_iter = base->possible_values.begin(); base->pv_iter != base->possible_values.end(); base->pv_iter++) {
+			//ValueTestGen(base->pv_iter, Rules::CORRECT_RANDOM_VAL);
 			ValueTestGen(base->pv_iter, Rules::CORRECT_SUBSTITUTE_TYPE);
-			ValueTestGen(base->pv_iter, Rules::CORRECT_SUBSTITUTE_NUMERAL_SYS);
-			ValueTestGen(base->pv_iter, Rules::CORRECT_RANDOM_VAL);
+			//ValueTestGen(base->pv_iter, Rules::CORRECT_SUBSTITUTE_NUMERAL_SYS);
 		}
 		break;
 	}
 	case ElementType::TYPE_OP: {
-		OperationTestGen(Rules::CORRECT_SUBSTITUTION);
+		OperationTestGen(Rules::CORRECT_SUBSTITUTION);		// binary to binary
+		OperationTestGen(Rules::CORRECT_SUBSTITUTE_TYPE);	// binary to unary
 		break;
 	}
 
@@ -891,7 +853,7 @@ void TestGen::Correct() {
 		std::cout << "ERROR: correct test error\n";
 		exit(1);
 	}
-	//(*it)->RestoreOrigElem();
+	//(*it)->RestoreOrigElem();			// why it's not used ???
 }
 
 void TestGen::Incorrect() {
@@ -901,9 +863,7 @@ void TestGen::Incorrect() {
 
 	switch (type) {
 	case ElementType::TYPE_KEYWORD: {
-		//int mod = (*it)->GetMod();		// enum CLASS ???
-
-		KeywordTestGen(Rules::INCORRECT_TO_UPPER_CASE);
+		KeywordTestGen(Rules::INCORRECT_TO_UPPER_CASE); 
 		KeywordTestGen(Rules::INCORRECT_TO_NAME);
 		KeywordTestGen(Rules::INCORRECT_ABSENT);
 		KeywordTestGen(Rules::INCORRECT_SUBSTITUTION);
@@ -925,9 +885,11 @@ void TestGen::Incorrect() {
 			// def main ( [name here] ). Incorrect test
 			SpaceTestGen(Rules::INCORRECT_FUNC_PARAMS, 0);
 		}
-		// else DO NOTHING		???
+		else {
+			std::cout << "ERROR: SpaceTestGen INCORRECT\n";
+			exit(1);
+		}
 		break;
-
 	}
 	case ElementType::TYPE_NAME: {
 		// Currently only "main" supports	??? TODO
@@ -937,10 +899,7 @@ void TestGen::Incorrect() {
 		NameTestGen(Rules::INCORRECT_TO_NUMBER);
 		NameTestGen(Rules::INCORRECT_TO_KEYWORD);
 		NameTestGen(Rules::INCORRECT_ADD_NUM);	// double it maybe ???
-		//FuncNameTestGen(RuleName::FIRST_NUMBER);	// double it maybe ???
-
 		break;
-
 	}
 	case ElementType::TYPE_BRACKET: {
 		BracketTestGen(Rules::INCORRECT_ABSENT);
@@ -952,7 +911,6 @@ void TestGen::Incorrect() {
 	case ElementType::TYPE_COLON: {
 		ColonTestGen(Rules::INCORRECT_ABSENT);
 		ColonTestGen(Rules::INCORRECT_TO_SPECIAL_SYM);
-		//ColonTestGen(RuleName::...);
 		break;
 
 	}
@@ -960,6 +918,7 @@ void TestGen::Incorrect() {
 		std::string val = " ";
 		(*it)->SetValue(val);
 		IncorrectToText();
+		(*it)->RestoreOrigElem();
 		break;
 
 	}
@@ -987,22 +946,34 @@ void TestGen::Incorrect() {
 		break;
 	}
 
-	/*(*it)->RestoreOrigElem();*/
+	/*(*it)->RestoreOrigElem();*/		// why it's not used ???
 }
 
-//void TestGen::SetStatus() {
-//	status = "DONE";
-//}
-
 void TestGen::Generate() {
+	switch (lab_num) {
+		// case с 6 лабы без брейков и pushback добавлять только diff
+	case 1:
+		supported_types = { ModValue::VALUE_INT_DEC, ModValue::VALUE_FLOAT };
+		unsupported_types = { ModValue::VALUE_STR };
+		supported_bases = { ModValue::VALUE_INT_DEC, ModValue::VALUE_INT_BIN };
+		unsupported_bases = { ModValue::VALUE_INT_HEX, ModValue::VALUE_INT_OCT };
+		break;
+	
+	default:
+		// TODO
+		break;
+	}
+
+	
+
+	GenPattern();
 	for (it = pattern.begin(); it != pattern.end(); it++) {
 		Correct();
 		Incorrect();
 	}
 
 	// TEMPORARY FOR TESTING PURPOSES
-	// output correct_tests
-	// to file
+	// output tests to file
 	std::ofstream file("./TESTFILE.txt");
 	file << "CORRECT\n\n";
 	for (int i = 0; i < correct_tests.size(); i++) {
@@ -1040,7 +1011,7 @@ void TestGen::GenPattern() {
 			//new ElemSpace(),
 			//new ElemNewLine(),
 			//new ElemSpace(),		// ...
-			new ElemKeyword(ModKeyword::KEYWORD_RETURN),
+			//new ElemKeyword(ModKeyword::KEYWORD_RETURN),
 			//new ElemSpace(),
 			//// -1+(not 2)*(~3)/4
 			//new ElemUnOperation(ModOp::OP_UN_NEG),
@@ -1082,8 +1053,12 @@ void TestGen::GenPattern() {
 				//new ElemValue(ModValue::VALUE_FLOAT, {}),
 				//}),
 			//new ElemSpace()
-			new ElemNewLine()
+			new ElemNewLine()		// ALWAYS MUST BE AT THE END
 		};
+		break;
+	}
+	case 2: {
+		// TODO ...
 		break;
 	}
 	default:
@@ -1100,12 +1075,8 @@ void TestGen::GenPattern() {
 	//pattern.push_back(new ElemValue(ModValue::VALUE_STR));		// value as an argument
 }
 
-TestGen::TestGen(uint8_t lab_num)
+TestGen::TestGen()
 	:
-	name(""),
-	group(""),
-	lab_num(lab_num),
-	test(""),		// generated test
 	keywords({
 		{ KEYWORD_DEF, "def" },
 		{ KEYWORD_RETURN, "return" },
@@ -1155,9 +1126,7 @@ TestGen::TestGen(uint8_t lab_num)
 		{SP_SYM_LINE, "|"}
 		
 	})
-{
-	GenPattern();
-}
+{}
 
 TestGen::~TestGen() {
 }

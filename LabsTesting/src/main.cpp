@@ -81,8 +81,8 @@ void modify_input_code(std::string& data, const std::string& path) {
 }
 
 void t_generate(std::vector<TestGen*>& test_gens, int& labs_num, int i) {
-	//test_gens[i]->Generate();
 	test_gens[i]->status = (char*)"IN PROGRESS ...";
+	test_gens[i]->Generate();
 	std::cout << "NAME    [" << i << "]: " << test_gens[i]->name << std::endl;
 	std::cout << "GROUP   [" << i << "]: " << test_gens[i]->group << std::endl;
 	std::cout << "LAB NUM [" << i << "]: " << test_gens[i]->lab_num << std::endl;
@@ -95,9 +95,6 @@ void t_generate(std::vector<TestGen*>& test_gens, int& labs_num, int i) {
 		j--;
 	}
 	test_gens[i]->status = (char*)"DONE";
-	// ???
-	//test_gens.erase(test_gens.begin() + i);
-	//labs_num--;
 }
 
 void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std::thread>& threads) {
@@ -118,7 +115,7 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 		}
 		labs_num = atoi(buf);
 		for (int i = 0; i < labs_num; i++) {
-			test_gens.push_back(new TestGen(1));
+			test_gens.push_back(new TestGen(/*1*/));
 		}
 		button_enter = true;
 	}

@@ -82,8 +82,8 @@ private:
 	std::vector <PatternElement*>::iterator it;
 
 	// Do we need this ???
-	std::stringstream ssbuf_cor;
-	std::stringstream ssbuf_incor;
+	//std::stringstream ssbuf_cor;
+	//std::stringstream ssbuf_incor;
 
 	std::vector <Element> keywords;		// Element -> Keyword if there are problems 
 	std::vector <Element> brackets;		// Element -> Bracket if there are problems 
@@ -91,11 +91,18 @@ private:
 	std::vector <Element> binary_ops;		
 	//std::vector <Element> operations;			// ???
 	std::vector <Element> special_syms;
+	std::vector <uint8_t> supported_types;
+	std::vector<uint8_t>::iterator st_iter /*= supported_types.begin()*/;		// supported_types iter
+	std::vector <uint8_t> unsupported_types;
+	std::vector<uint8_t>::iterator ust_iter /*= unsupported_types.begin()*/;		// supported_types iter
+	std::vector <uint8_t> supported_bases;		// bin, oct, hex, dec
+	std::vector<uint8_t>::iterator sb_iter /*= supported_bases.begin()*/;		// supported_types iter
+	std::vector <uint8_t> unsupported_bases;		// bin, oct, hex, dec
+	std::vector<uint8_t>::iterator usb_iter /*= unsupported_bases.begin()*/;		// supported_types iter
 
-	std::string test;					// generated test
+	std::string test = "";					// generated test
 	std::vector <std::string> correct_tests;
 	std::vector <std::string> incorrect_tests;
-
 
 public:
 	char* status = (char*)"---";
@@ -113,12 +120,13 @@ public:
 
 private:
 	std::string ReadFile(const std::string& file);		// do we need this here ???
+	
 	void Correct();
 	void Incorrect();
 
 	void GenPattern();
 	void CorrectToText();
-	void CorrectToTextPV();		// ???
+	//void CorrectToTextPV();		// ???
 	void IncorrectToText();
 
 	std::string FindKeyword(int mod);
@@ -128,9 +136,7 @@ private:
 	void NameTestGen(Rules rule);
 	void BracketTestGen(Rules rule);
 	void ColonTestGen(Rules rule);
-
 	void ValueTestGen(std::vector<ElemValue*>::iterator, Rules rule);
-
 	void OperationTestGen(Rules rule);
 
 	// ???
@@ -142,12 +148,9 @@ private:
 	void StringTestGen(Rules rule);
 
 public:
-	//inline char* GetStatus() { return status; }
-	//void SetStatus();
-	TestGen(uint8_t lab_num /* variant*/);		// ???
+	TestGen();
 	~TestGen();
 	
 	void Generate();
 
 };
-
