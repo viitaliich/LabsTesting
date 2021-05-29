@@ -988,8 +988,7 @@ void TestGen::Incorrect() {
 			SpaceTestGen(Rules::INCORRECT_FUNC_PARAMS, 0);
 		}
 		else {
-			std::cout << "ERROR: SpaceTestGen INCORRECT\n";
-			exit(1);
+			// DO NOTHING
 		}
 		break;
 	}
@@ -1119,60 +1118,60 @@ void TestGen::GenPattern() {
 	case 1: {
 		pattern = {
 			// instead of push_back
-			//new ElemKeyword(ModKeyword::KEYWORD_DEF),
-			//new ElemSpace(),
-			//new ElemName("main"),
-			//new ElemSpace(),
-			//new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
-			//new ElemSpace(),
-			//new ElemRightBracket(ModBracket::BRACKET_RPAREN),
-			//new ElemSpace(),
-			//new ElemColon(),
-			//new ElemSpace(),
-			//new ElemNewLine(),
-			//new ElemSpace(),		// ...
-			//new ElemKeyword(ModKeyword::KEYWORD_RETURN),
-			//new ElemSpace(),
-			//// -1+(not 2)*(~3)/4
-			//new ElemUnOperation(ModOp::OP_UN_NEG),
-			//new ElemSpace(),
-			//new ElemValue(ModValue::VALUE_BASE, {
-				//new ElemValue(ModValue::VALUE_INT_DEC, {}),
-				//new ElemValue(ModValue::VALUE_FLOAT, {}),
-				//}),
-			//new ElemSpace(),
+			new ElemKeyword(ModKeyword::KEYWORD_DEF),
+			new ElemSpace(),
+			new ElemName("main"),
+			new ElemSpace(),
+			new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
+			new ElemSpace(),
+			new ElemRightBracket(ModBracket::BRACKET_RPAREN),
+			new ElemSpace(),
+			new ElemColon(),
+			new ElemSpace(),
+			new ElemNewLine(),
+			new ElemSpace(),		// ...
+			new ElemKeyword(ModKeyword::KEYWORD_RETURN),
+			new ElemSpace(),
+			// -1+(not 2)*(~3)/4
+			new ElemUnOperation(ModOp::OP_UN_NEG),
+			new ElemSpace(),
+			new ElemValue(ModValue::VALUE_BASE, {
+				new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				new ElemValue(ModValue::VALUE_FLOAT, {}),
+				}),
+			new ElemSpace(),
 			new ElemBinOperation(ModOp::OP_BIN_ADD),
-			//new ElemSpace(),
-			//new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
-			//new ElemSpace(),
-			//new ElemUnOperation(ModOp::OP_UN_NOT),
-			//new ElemSpace(),
-			//new ElemValue(ModValue::VALUE_BASE, {
-				//new ElemValue(ModValue::VALUE_INT_DEC, {}),
-				//new ElemValue(ModValue::VALUE_FLOAT, {}),
-				//}),
-			//new ElemSpace(),
-			//new ElemRightBracket(ModBracket::BRACKET_RPAREN),
-			//new ElemSpace(),
-			//new ElemBinOperation(ModOp::OP_BIN_MUL),
-			//new ElemSpace(),
-			//new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
-			//new ElemSpace(),
-			//new ElemUnOperation(ModOp::OP_UN_BITCOMP),
-			//new ElemSpace(),
-			//new ElemValue(ModValue::VALUE_BASE, {
-				//new ElemValue(ModValue::VALUE_INT_DEC, {}),
-				//new ElemValue(ModValue::VALUE_FLOAT, {}),
-				//}),
-			//new ElemSpace(),
-			//new ElemRightBracket(ModBracket::BRACKET_RPAREN),
-			//new ElemSpace(),
-			//new ElemBinOperation(ModOp::OP_BIN_DIV),
-			//new ElemValue(ModValue::VALUE_BASE, {
-				//new ElemValue(ModValue::VALUE_INT_DEC, {}),
-				//new ElemValue(ModValue::VALUE_FLOAT, {}),
-				//}),
-			//new ElemSpace()
+			new ElemSpace(),
+			new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
+			new ElemSpace(),
+			new ElemUnOperation(ModOp::OP_UN_NOT),
+			new ElemSpace(),
+			new ElemValue(ModValue::VALUE_BASE, {
+				new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				new ElemValue(ModValue::VALUE_FLOAT, {}),
+				}),
+			new ElemSpace(),
+			new ElemRightBracket(ModBracket::BRACKET_RPAREN),
+			new ElemSpace(),
+			new ElemBinOperation(ModOp::OP_BIN_MUL),
+			new ElemSpace(),
+			new ElemLeftBracket(ModBracket::BRACKET_LPAREN),
+			new ElemSpace(),
+			new ElemUnOperation(ModOp::OP_UN_BITCOMP),
+			new ElemSpace(),
+			new ElemValue(ModValue::VALUE_BASE, {
+				new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				new ElemValue(ModValue::VALUE_FLOAT, {}),
+				}),
+			new ElemSpace(),
+			new ElemRightBracket(ModBracket::BRACKET_RPAREN),
+			new ElemSpace(),
+			new ElemBinOperation(ModOp::OP_BIN_DIV),
+			new ElemValue(ModValue::VALUE_BASE, {
+				new ElemValue(ModValue::VALUE_INT_DEC, {}),
+				new ElemValue(ModValue::VALUE_FLOAT, {}),
+				}),
+			new ElemSpace(),
 			new ElemNewLine()		// ALWAYS MUST BE AT THE END
 		};
 		break;
