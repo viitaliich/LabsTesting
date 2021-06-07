@@ -44,8 +44,6 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 
 	static imgui_addons::ImGuiFileBrowser file_dialog;
 
-
-
 	//static char buf1[64] = ""; ImGui::InputText("default", buf1, 64);
 	static char buf[64] = "";
 	ImGui::InputText("Enter how many labs you want to test", buf, 64, ImGuiInputTextFlags_CharsDecimal);
@@ -59,7 +57,7 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 		}
 		labs_num = atoi(buf);
 		for (int i = 0; i < labs_num; i++) {
-			test_gens.push_back(new TestGen(/*1*/));
+			test_gens.push_back(new TestGen());
 		}
 		button_enter = true;
 	}
@@ -211,7 +209,7 @@ void ShowWindow(bool* p_open, std::vector<TestGen*>& test_gens, std::vector<std:
 				//test_gens.erase(test_gens.begin() + i);
 				//labs_num--;
 				
-#define THREAD(index) t ## index		// ???
+//#define THREAD(index) t ## index		// ???
 				/*std::thread THREAD(i)(t_generate, std::ref(test_gens), std::ref(labs_num), i);
 				threads.push_back(THREAD(i));*/
 				//std::thread THREAD(i)(t_generate, std::ref(test_gens), std::ref(labs_num), i);

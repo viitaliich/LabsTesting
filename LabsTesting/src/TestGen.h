@@ -143,7 +143,7 @@ private:
 	void Correct();
 	void Incorrect();
 
-	void GenPattern();
+	void GenPattern(); 
 	void CorrectToText();
 	//void CorrectToTextPV();		// ???
 	void IncorrectToText();

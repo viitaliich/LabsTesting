@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="PatternElement">
+    <Position X="11.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAiAAAAEAAEEACAABACEAAAAAAAgAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElemKeyword">
+    <Position X="13.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAABEAAAAAAAAAAAEAAAAgAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElemSpace">
+    <Position X="19.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAIAAAAAAAAAAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElemName">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAQAAAAAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElemLeftBracket">
+    <Position X="4.5" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAgAAAE=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElemRightBracket">
+    <Position X="8.75" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABIAABEAAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElemColon">
+    <Position X="15.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAQAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElemNewLine">
+    <Position X="21.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElemValue">
+    <Position X="2.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAABEAACAAAAAgAAAAAgAgAAgA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BaseValue">
+    <Position X="6.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAEAAAAgAAgA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElemUnOperation">
+    <Position X="11" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAIAAAAAAAAAAQBEAAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElemBinOperation">
+    <Position X="17.25" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAgABEAAgAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ElemEOF">
+    <Position X="23.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAABAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TestGen">
+    <Position X="0.5" Y="7.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>QAeBQMQQQIAGQgoAMQCAACMAAxBMVCCJAAGwAUIZsSE=</HashCode>
+      <FileName>src\TestGen.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Element">
+    <Position X="3" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\TestGen.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Keyword">
+    <Position X="3" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\TestGen.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Bracket">
+    <Position X="3" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>src\TestGen.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="ModKeyword">
+    <Position X="13" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ModSpace">
+    <Position X="9" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ModBracket">
+    <Position X="5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAIAAAAAAAAAAAAAAAAAAAAAIBAFA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ModValue">
+    <Position X="15" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAQAAAACAAAAAAAAABAAAAAAACAAAAAAAAAEAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ModOp">
+    <Position X="11" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABICAAAAAAAAAAAAQAAAAAACAAAgAAAAAQA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ModSpSym">
+    <Position X="7" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAiAQkAAAAAAAgAAAACAAAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="ElementType">
+    <Position X="5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABCAAAAAAAAgAAIQAAAAAAAAQAMAAAAAgACAAAAAA=</HashCode>
+      <FileName>src\PatternElement.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="LabNumber">
+    <Position X="9" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>src\TestGen.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Rules">
+    <Position X="11" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAQAAACgQCSYIAYAgAACAEIAAAKAAAAgABAgABAg=</HashCode>
+      <FileName>src\TestGen.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="IncorrectRules">
+    <Position X="7" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABChACAAAACAgCAAAEAAAAAAAAAAAoAgQAAA=</HashCode>
+      <FileName>src\TestGen.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
