@@ -1158,7 +1158,7 @@ void TestGen::Generate() {
 	// Mark
 	percent = correct_tests_num * 100 / tests_num;
 	mark = percent * max_mark / 100;
-	//std::cout << mark << std::endl;
+	std::cout << "MARK: " << mark << std::endl;
 
 
 	// TEMPORARY FOR TESTING PURPOSES
