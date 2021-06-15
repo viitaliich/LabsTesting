@@ -1,0 +1,121 @@
+RULES
+
+****************************************************************************
+def main ()
+	return 2
+
+KEYWORD-def__NAME__BRACKET_LEFT-paran__BRACKET_RIGHT-paran__NEW_LINE
+	__KEYWORD-return__VALUE-int-dec
+							int-hex
+							int-oct
+							int-bin
+							float
+							str
+CORRECT
+
+keyword:
+	***
+
+space/tab/new_line:
+	CORRECT_SPACES - допустимое количество пробелов 
+						между def и именем функции 	(1, 1+, tabs)
+						между именем функции и () 	(0, 1, 1+, tabs)
+						между () 					(0, 1, 1+, tabs)
+						между () и : 				(0, 1, 1+, tabs)
+						между return и return value (1, 1+, tabs)
+	
+
+	BLOCK - пробелы от края ???
+
+name:	[Currently only "main" supports as entry point function]
+	TO_NAME - замена на имя, соответствующее правилам языка
+	ADD_NUM - добавить цифру
+	ADD_UNDERSCORE - добавить подчеркивание
+	TO_UPPER_CASE
+
+brackets:
+	дублировать скобки: было (а+с), стало ((а+с))	???
+
+colon:
+	***
+
+new line:
+	CORRECT_MULT_NEWLINES - Multiple new lines
+
+value:
+	- SUBSTITUTE_TYPE - подмена на другой подходящий тип
+	- SUBSTITUTE_NUMERAL_SYS - подмена на другую подходящую систему счисления
+	RANDOM_VAL - генерация рандомного подходящего значения
+
+***
+
+INCORRECT
+
+keyword
+	TO_UPPER_CASE
+	TO_NAME - замена на имя, соответствующее правилам языка 
+	ABSENT - отсутствие
+	SUBSTITUTION - другое ключевое слово
+	INCORRECT_NO_EXP after return
+	
+space/tab/new_line:
+	INCORRECT_SPACES - недопустимое количество пробелов
+	TO_NAME - замена на имя, соответствующее правилам языка
+	FUNC_PARAMS - что-то внутри скобок кроме пробелов в аргументах функции
+	BLOCK - пробелы от края ???
+
+name:
+	ABSENT - отсутствие
+	ADD_SPECIAL_SYM - [@, $, %; |, (), [], {}, ... .]
+	TO_NUMBER
+	TO_KEYWORD - замена на ключевое слово
+		['False', 'None', 'True', 'and', 'as', 'assert', 'break', 'class', 'continue',
+		'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if',
+		'import', 'in', 'is', 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return',
+		'try', 'while', 'with', 'yield']
+	ADD_NUM - добавить цифру спереди
+
+brackets:
+	ABSENT - отсутствие
+	SUBSTITUTION - на другие скобки и противоположную ( [] {} "" '' <> )
+	WRONG_NUM - неверное количество ((()))
+
+colon:
+	ABSENT - отсутствие
+	TO_SPECIAL_SYM - . ; ... точка, точка с запятой
+
+new_line:
+	ABSENT
+
+value:
+	ABSENT - отсутствие
+	SUBSTITUTE_TYPE - подмена на другой НЕподходящий тип
+	SUBSTITUTE_NUMERAL_SYS - подмена на другую НЕподходящую систему счисления
+	TO_SPECIAL_SYM
+	TO_KEYWORD - замена на ключевое слово
+	TO_NAME - замена на имя, соответствующее правилам языка
+
+***************************************************************************************************
+-2
+~2
+not 2 (!)
+
+2+2
+2-2
+2*2
+2/2
+
+VALUE__OPERATION__VALUE
+
+	SPECIAL-SYM|KEYWORD
+
+***
+
+CORRECT operation:
+	SUBSTITUTION to supported op
+
+INCORRECT operation:
+	ABSENT
+	INCORRECT_SUBSTITUTE_TYPE
+	INCORRECT_SUBSTITUTION to unsupported op
+	WRONG_NUM
